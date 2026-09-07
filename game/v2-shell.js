@@ -243,16 +243,20 @@
     elements.bootOverlay.hidden = true;
     setStage(0);
     if (window.CoReadCompanion) window.CoReadCompanion.start();
-    if (resumeMode && window.CoReadEngine && window.CoReadEngine.resume) { window.CoReadEngine.resume(); return; }
-    if (resumeMode && window.CoReadEngine && window.CoReadEngine.resume) { window.CoReadEngine.resume(); return; }
+    if (resumeMode && window.CoReadEngine && window.CoReadEngine.resume) {
+      window.CoReadEngine.resume();
+      return;
+    }
     setAiText("你来了？电脑一会儿会亮，求助来了我叫你。");
     window.setTimeout(() => {
-      if (window.CoReadEngine && typeof window.CoReadEngine.onShellReady === "function") {
-        window.CoReadEngine.newGame ? window.CoReadEngine.newGame() : window.CoReadEngine.newGame ? window.CoReadEngine.newGame() : window.CoReadEngine.onShellReady();
+      if (window.CoReadEngine && typeof window.CoReadEngine.newGame === "function") {
+        window.CoReadEngine.newGame();
+      } else if (window.CoReadEngine && typeof window.CoReadEngine.onShellReady === "function") {
+        window.CoReadEngine.onShellReady();
       } else {
         demoArrival();
       }
-    }, 1500);
+    }, 1200);
   }
 
   function demoArrival() {
@@ -336,6 +340,8 @@
     refreshAiIndicator();
     elements.startButton.addEventListener("click", () => startShell(false));
     bindContinueButton();
+    const osStart = document.getElementById("osStartButton");
+    if (osStart) osStart.addEventListener("click", () => toast("共读OS · 知乎黑客松2026 参赛作品 · 由人与 AI 结对开发"));
     setClock();
     window.setInterval(setClock, 30000);
     focusWindow("browserWindow");

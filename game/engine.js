@@ -40,7 +40,11 @@
 
   function save() {
     if (S.stage === "boot") return;
-    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 2, stage: S.stage, state: serialize(), savedAt: Date.now() })); } catch (e) { /* 忽略 */ }
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 2, stage: S.stage, state: serialize(), savedAt: Date.now() })); } catch (e) { console.log("SAVE-ERR " + e.message); }
+  }
+
+  function readSaveJSON() {
+    try { return window.localStorage.getItem(SAVE_KEY); } catch (e) { return null; }
   }
 
   function readSave() {
@@ -394,6 +398,7 @@
     const D = S.dlg;
     if (!D || D.done) return;
     const conf = D.pack.methods[methodId];
+    if (!conf) return;
     if ((D.used[methodId] || 0) >= conf.maxPerQuestion || D.patience < conf.cost) return;
     const combo = D.last === "empathy" && methodId === "probe" ? "probe-hit" : D.last === "probe" && methodId === "advice" ? "advice-up" : null;
     const hit = evalHit(methodId, combo === "probe-hit");
@@ -598,7 +603,7 @@
   }
 
   function newGame() {
-    clearSave();
+    if (S.stage !== "boot") return;
     onShellReady(false);
   }
 
@@ -644,6 +649,7 @@
     playMethod,
     endDialogue,
     aiSuggest,
+    readSaveJSON,
     evalHit,
     calcQuality
   };
