@@ -88,6 +88,7 @@ await sleep(150);
 check('settle overlay shown', !$('#settleOverlay').hidden);
 check('settle: 3 hits listed', $('#settleHits').textContent.includes('答中'));
 check('settle: premium cards revealed', $('#settleCards').textContent.includes('精华卡'));
+check('settle: picked sentences listed', $('#settleCards').textContent.includes('自助机'));
 check('settle: fan leave behavior', $('#settleLeave').textContent.includes('关注'));
 check('stage advanced to settle', S().stage === undefined || true);
 

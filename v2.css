@@ -1268,3 +1268,10 @@ html, body {
   font: 800 10px/1 var(--display-font);
   transform: rotate(-6deg);
 }
+
+/* —— 结算：素材卡所选句子 —— */
+.settle-sent {
+  color: var(--ink-soft);
+  font: 600 10.5px/1.6 var(--mono-font);
+  margin: 4px 0 8px;
+}

@@ -19,6 +19,7 @@
   const pos = { x: 34, depth: 6, scale: 1 };
   let roamIndex = 0;
   let currentEnv = null;
+  let lastSpot = null;
   let started = false;
   const saidLines = new Set();
 
@@ -39,10 +40,26 @@
   };
 
   const thoughts = {
-    bed: ["这张纸上的日期，我圈出来了。", "床边安静，适合把材料再读一遍。"],
-    window: ["都这个点了，医院的咨询电话应该下班了吧。", "窗外那盏灯，和他说明天要去的医院是一个方向。"],
-    computer: ["我把两份材料的要点敲在屏幕上了，你回头看看。", "自助机、报到机……流程对上了。"],
-    board: ["第一张便签写什么……先记日期吧。", "便签贴得太高，下次我会先看到它。"]
+    bed: [
+    "这张纸上的日期，我圈出来了。",
+    "床边安静，适合把材料再读一遍。",
+    "读第二遍才发现，有一句我昨天看漏了。"
+  ],
+    window: [
+    "都这个点了，医院的咨询电话应该下班了吧。",
+    "窗外那盏灯还亮着，也有人今晚没睡。",
+    "明天他要是一个人去，希望有人先陪他把路走一遍。"
+  ],
+    computer: [
+    "我把两份材料的要点敲在屏幕上了，你回头看看。",
+    "自助机、报到机……流程对上了。",
+    "屏幕比纸好翻，但纸上有笔迹。"
+  ],
+    board: [
+    "第一张便签写什么……先记日期吧。",
+    "便签贴得太高，下次我会先看到它。",
+    "来源贴在三张纸上：谁说的、什么时候说的、能不能信。"
+  ]
   };
 
   function applyPos(p) {
@@ -81,19 +98,26 @@
     window.setTimeout(() => els.character.classList.remove("is-pulsing"), 420);
   }
 
-  function maybeThought(key) {
-    const pool = (thoughts[key] || []).filter((line) => !saidLines.has(line));
+  function speakFrom(spot) {
+    const pool = thoughts[spot] || [];
     if (!pool.length) return;
-    const line = pool[Math.floor(Math.random() * pool.length)];
+    const unused = pool.filter((line) => !saidLines.has(line));
+    const line = unused.length ? unused[Math.floor(Math.random() * unused.length)] : pool[Math.floor(Math.random() * pool.length)];
+    if (!unused.length) pool.forEach((line2) => saidLines.delete(line2));
     saidLines.add(line);
     say(line);
   }
 
+  function maybeThought(key) {
+    if (!started) return;
+    speakFrom(key);
+  }
   function startEnv(key) {
     const conf = envConf[key];
     if (!conf) return;
     clearEnv();
     currentEnv = key;
+    lastSpot = key;
     els.character.dataset.baseLabel = els.character.dataset.baseLabel || els.character.getAttribute("aria-label") || "共读伙伴 00";
     els.character.setAttribute("aria-label", "共读伙伴 00" + conf.label);
     els.character.style.setProperty("--environment-duration", conf.duration + "ms");
@@ -175,11 +199,8 @@
       });
     }
     els.character.addEventListener("click", () => {
-      const keys = Object.keys(thoughts);
-      const key = keys[Math.floor(Math.random() * keys.length)];
-      const pool = thoughts[key];
-      say(pool[Math.floor(Math.random() * pool.length)]);
-    });
+    speakFrom(currentEnv || lastSpot || "bed");
+  });
     els.scene.addEventListener("pointerdown", (event) => {
       if (event.target.closest("#roomComputer") || event.target.closest("#aiCharacter")) return;
       const rect = els.scene.getBoundingClientRect();

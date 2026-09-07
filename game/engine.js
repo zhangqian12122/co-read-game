@@ -374,10 +374,16 @@
       const card = S.cards[id];
       const cls = card.quality.key === "premium" ? "is-premium" : card.quality.key === "normal" ? "is-normal" : "is-waste";
       const name = card.quality.key === "premium" ? "精华卡" : card.quality.key === "normal" ? "普通卡" : "废卡";
-      return '<p class="' + cls + '"><strong>' + name + "</strong> " + material.kindLabel + "：" + card.quality.why + "</p>";
+      const pickedTexts = card.sentenceIds.map((sid) => {
+        const s = material.sentences.find((x) => x.id === sid);
+        return "「" + (s ? s.text : "") + "」";
+      }).join("");
+      return "<p class=" + cls + "><strong>" + name + "</strong> " + material.kindLabel + "：" + card.quality.why + "</p><p class=settle-sent>" + pickedTexts + "</p>";
     }).join("");
     el("settleLeave").innerHTML = "<p>" + S.settle.leave.text + "</p>" + (S.settle.leave.fan ? "<span class='settle-stamp'>+1 粉丝</span>" : "");
-    el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 ×" + Object.keys(S.cards).length + (S.settle.leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
+      const qualityCounts = { premium: 0, normal: 0, waste: 0 };
+      Object.values(S.cards).forEach((c) => { qualityCounts[c.quality.key] += 1; });
+    el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 精华×" + qualityCounts.premium + " 普通×" + qualityCounts.normal + " 废卡×" + qualityCounts.waste + (S.settle.leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
     el("settleOverlay").hidden = false;
     $("#settleContinue").onclick = () => showLetter();
     shell().setStage(3);
