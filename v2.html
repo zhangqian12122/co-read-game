@@ -57,7 +57,7 @@
           </section>
         </div>
       </section>
-      <section class="app-window chat-window" id="chatWindow" data-task="回答对话" aria-label="回答对话窗口">
+      <section class="app-window chat-window is-minimized" id="chatWindow" data-task="回答对话" aria-label="回答对话窗口">
         <header class="titlebar warm-titlebar">
           <div class="titlebar-title"><span class="mini-app-icon room-mini">答</span> 回答 · <span id="chatAskerName">求助者</span></div>
           <div class="window-controls">
@@ -179,6 +179,7 @@
           <span><i>3</i><b>回信</b><small>几天后见分晓</small></span>
         </div>
         <button class="boot-button" id="startButton" type="button">开始今晚的回答 <span>→</span></button>
+        <button class="boot-button boot-continue" id="continueButton" type="button" hidden>继续上次共读 <span>→</span></button>
         <small>回答署名：共读答主 · 你 × 共读伙伴 00</small>
       </div>
       <figure class="boot-scene" aria-label="夜晚的共读房间和伙伴 00">
@@ -219,6 +220,7 @@
     </article>
   </section>
 
+  <div class="guide-tip" id="guideTip" role="status"></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./ai-client.js?v=20260908-1"></script>
   <script src="./game/question-pack.js?v=20260908-1"></script>

@@ -1,23 +1,61 @@
-// engine.js - 回答主游戏 v2 引擎（M2：共读选材料 → 素材卡 → 卡牌对话 → 结算）
-// 查表执行：所有判定/台词来自 question-pack.js（设计总览 v1.1 冻结机制）
+// engine.js - 回答主游戏 v2 引擎（M2/M3：共读→素材卡→卡牌对话→结算→回信 + 存档 v2）
+// 查表执行：判定/台词来自 question-pack.js；状态自动存档，刷新后可「继续上次共读」。
 (() => {
   const shell = () => window.CoReadV2Shell;
-  const el = (name) => shell().elements[name] || document.getElementById(name);
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.prototype.slice.call((root || document).querySelectorAll(sel));
+  const SAVE_KEY = "coread-v2-save";
 
   const S = {
     stage: "boot",
     attention: 2,
     attentionMax: 2,
     inspected: new Set(),
-    cards: {},            // materialId -> { tag, sentenceIds[], quality }
-    hasCard: {},          // materialId -> true
+    cards: {},
+    chatLog: [],
     dialogue: null,
+    settle: null,
     growth: { proficiency: {}, fans: 0, exp: 0 }
   };
 
-  const moodIdx = (key) => S.dlg.pack.moodOrder.indexOf(key);
+  const el = (name) => shell().elements[name] || document.getElementById(name);
+
+  // —— 存档 v2 ——
+  function serialize() {
+    return {
+      stage: S.stage,
+      attentionMax: S.attentionMax,
+      cards: S.cards,
+      inspected: Array.from(S.inspected),
+      chatLog: S.chatLog,
+      growth: S.growth,
+      dlg: S.dlg ? {
+        mood: S.dlg.mood, patience: S.dlg.patience, patienceMax: S.dlg.patienceMax,
+        used: S.dlg.used, last: S.dlg.last, hits: S.dlg.hits, done: S.dlg.done,
+        unlocked: S.dlg.unlocked
+      } : null,
+      settle: S.settle ? { stale: S.settle.stale, hitsCount: S.settle.hitsCount, leaveText: S.settle.leave.text } : null
+    };
+  }
+
+  function save() {
+    if (S.stage === "boot") return;
+    try { window.localStorage.setItem(SAVE_KEY, JSON.stringify({ v: 2, stage: S.stage, state: serialize(), savedAt: Date.now() })); } catch (e) { /* 忽略 */ }
+  }
+
+  function readSave() {
+    try {
+      const raw = window.localStorage.getItem(SAVE_KEY);
+      const data = raw ? JSON.parse(raw) : null;
+      return data && data.v === 2 ? data : null;
+    } catch (e) { return null; }
+  }
+
+  function hasSave() { return Boolean(readSave()); }
+
+  function clearSave() {
+    try { window.localStorage.removeItem(SAVE_KEY); } catch (e) { /* 忽略 */ }
+  }
 
   function renderAttention() {
     const pips = el("attentionPips");
@@ -44,22 +82,26 @@
       card.innerHTML =
         '<div class="material-topline"><span class="source-kind">' + material.kindLabel + '</span><span class="material-date">' + material.date + '</span></div>' +
         "<h3>" + material.title + "</h3><p>" + material.excerpt + "</p>" +
-        '<div class="material-meta"><span>' + material.author + "</span><span>·</span><span>" + material.engagement + "</span></div>" +
+        '<div class="material-meta"><span>' + material.author + '</span><span>·</span><span>' + material.engagement + "</span></div>" +
         '<div class="material-actions"><button class="text-action inspect-material" type="button">' + (S.cards[material.id] ? "看素材卡" : inspected ? "再次展开" : "展开检查") + '</button><span class="pick-state">' + (S.cards[material.id] ? "已做成素材卡" : locked ? "注意力不够了" : "") + "</span></div>";
       card.querySelector(".inspect-material").addEventListener("click", () => openMaterial(material));
       list.append(card);
     });
   }
 
+  function tagLabel(tagId) {
+    const found = shell().pack.materials.find((m) => m.kind === tagId);
+    return found ? found.kindLabel : tagId;
+  }
+
   function renderTray() {
-    const pack = shell().pack;
     const tray = el("selectedMaterials");
     tray.innerHTML = "";
     const ids = Object.keys(S.cards);
     el("emptyDrop").hidden = ids.length > 0;
     el("trayCount").textContent = ids.length + " / " + S.attentionMax + " 份材料";
     ids.forEach((id) => {
-      const material = pack.materials.find((m) => m.id === id);
+      const material = shell().pack.materials.find((m) => m.id === id);
       const cardInfo = S.cards[id];
       const item = document.createElement("article");
       item.className = "tray-item";
@@ -69,12 +111,6 @@
     const ready = ids.length >= S.attention;
     el("synthesizeButton").disabled = !ready;
     el("synthesizeButton").textContent = ready ? "素材卡就绪，去找他聊聊" : "挑好句子，去找他聊聊";
-  }
-
-  function tagLabel(tagId) {
-    const pack = shell().pack;
-    const found = pack.materials.find((m) => m.kind === tagId);
-    return found ? found.kindLabel : tagId;
   }
 
   // —— 素材卡弹窗 ——
@@ -132,6 +168,7 @@
     });
     refreshModal();
     $("#materialModal").hidden = false;
+    shell().guide("modal", "伙伴划出了候选句：点句子挑进素材卡（最多 3 句），再给材料标来源，标错了会出废卡。");
   }
 
   function refreshModal() {
@@ -158,10 +195,12 @@
     renderMaterials();
     renderTray();
     renderAttention();
+    save();
     const count = Object.keys(S.cards).length;
     if (count === 1) shell().setAiText("素材卡做好了。再挑一份材料，我们就能去找他了。");
     if (count >= S.attention) {
       shell().setAiText("两张素材卡都好了。他还在等，我们去回复吧。");
+      shell().guide("cards", "两张素材卡就绪：点素材卡桌下的「去找他聊聊」，开始回答。");
       shell().toast("两份素材卡就绪：打开「回答对话」开始回复");
     }
   }
@@ -184,23 +223,28 @@
   };
 
   function chatMsg(who, name, text, quote) {
+    S.chatLog.push({ who, name, text, quote: quote || "" });
+    renderChatLine(S.chatLog[S.chatLog.length - 1]);
+  }
+
+  function renderChatLine(entry) {
     const thread = el("chatThread");
     const msg = document.createElement("div");
-    msg.className = "chat-msg is-" + who;
+    msg.className = "chat-msg is-" + entry.who;
     const avatar = document.createElement("span");
     avatar.className = "chat-avatar";
-    avatar.textContent = who === "asker" ? (shell().pack.question.askerShort || "?").slice(0, 1) : who === "player" ? "你" : "00";
+    avatar.textContent = entry.who === "asker" ? (shell().pack.question.askerShort || "?").slice(0, 1) : entry.who === "player" ? "你" : "00";
     const bubble = document.createElement("div");
     bubble.className = "chat-bubble";
     const strong = document.createElement("strong");
-    strong.textContent = name;
+    strong.textContent = entry.name;
     const p = document.createElement("p");
-    p.textContent = text;
+    p.textContent = entry.text;
     bubble.append(strong, p);
-    if (quote) {
+    if (entry.quote) {
       const q = document.createElement("p");
       q.className = "chat-quote";
-      q.textContent = "「" + quote + "」";
+      q.textContent = "「" + entry.quote + "」";
       bubble.append(q);
     }
     msg.append(avatar, bubble);
@@ -208,8 +252,14 @@
     thread.scrollTop = thread.scrollHeight;
   }
 
+  function renderChatLog() {
+    el("chatThread").innerHTML = "";
+    S.chatLog.forEach(renderChatLine);
+  }
+
   function renderDialogueUI() {
     const D = S.dlg;
+    if (!D) return;
     const pips = el("patiencePips");
     pips.innerHTML = "";
     for (let i = 0; i < D.patienceMax; i += 1) {
@@ -219,7 +269,7 @@
     }
     el("patienceText").textContent = D.patience + " / " + D.patienceMax;
     $$("#moodPips .mood-pip").forEach((pip) => {
-      const idx = moodIdx(pip.dataset.mood);
+      const idx = D.moodOrder.indexOf(pip.dataset.mood);
       pip.classList.toggle("is-reached", idx < D.mood);
       pip.classList.toggle("is-current", idx === D.mood);
     });
@@ -228,18 +278,19 @@
       const conf = D.pack.methods[id];
       const unlocked = D.unlocked.includes(id);
       const usedOut = (D.used[id] || 0) >= conf.maxPerQuestion;
-      const tooExpensive = D.patience < conf.cost;
-      button.disabled = !unlocked || usedOut || tooExpensive || Boolean(D.done);
+      const tooCheap = D.patience < conf.cost;
+      button.disabled = !unlocked || usedOut || tooCheap || Boolean(D.done);
       button.classList.toggle("is-locked", !unlocked);
       const small = button.querySelector("small");
       if (!unlocked) small.textContent = "等级解锁";
       else if (usedOut) small.textContent = "本题已用完";
-      else small.textContent = conf.cost + " 耐心 · " + (D.used[id] ? "已用 " + D.used[id] + " 次" : conf.label);
+      else small.textContent = conf.cost + " 耐心 · " + conf.label;
     });
-    const usedList = Object.keys(D.used);
     el("turnHint").textContent = D.done
       ? "对话结束 → 结算"
-      : "思路 " + (D.patience > 0 && !D.done ? 1 : 0) + " · 已打 " + usedList.length + " 张牌 · 耐心 " + D.patience + " / " + D.patienceMax;
+      : D.mood === D.moodOrder.length - 1
+        ? "他踏实了。可以就此收尾 → 点击「结束对话」"
+        : "思路 1 · 已打 " + Object.keys(D.used).length + " 张牌 · 耐心 " + D.patience + " / " + D.patienceMax;
   }
 
   function hasSentence(id) {
@@ -252,6 +303,14 @@
     if (methodId === "advice") return ["m1-s1", "m1-s2", "m4-s1"].some(hasSentence);
     if (methodId === "checklist") return ["m1-s1", "m1-s2", "m1-s3"].filter(hasSentence).length >= 2;
     return false;
+  }
+
+  function quoteFor(methodId) {
+    const quoteMap = { probe: "m4-s1", empathy: "m3-s1", advice: "m1-s1", checklist: "m1-s1", story: "m3-s1", tradeoff: "" };
+    const id = quoteMap[methodId];
+    if (!id || !hasSentence(id)) return "";
+    const material = shell().pack.materials.find((m) => m.sentences.some((s) => s.id === id));
+    return material.sentences.find((s) => s.id === id).text;
   }
 
   function playMethod(methodId) {
@@ -274,25 +333,15 @@
     chatMsg("asker", D.pack.question.askerShort, D.pack.matrix[methodId][moodKey][hit ? "hit" : "miss"]);
     shell().setAiText(hit ? "问中了！你看他的话多起来了。" : "……他好像没接住。换张牌，或者换句素材试试。");
     D.last = methodId;
+    save();
     renderDialogueUI();
     if (D.patience <= 0) window.setTimeout(() => endDialogue("patience"), 600);
-    else if (D.mood === D.moodOrder.length - 1) el("turnHint").textContent = "他踏实了。可以就此收尾 → 点击下方「结束对话」";
   }
 
-  function quoteFor(methodId) {
-    const quoteMap = { probe: "m4-s1", empathy: "m3-s1", advice: "m1-s1", checklist: "m1-s1", story: "m3-s1", tradeoff: "" };
-    const id = quoteMap[methodId];
-    if (!id || !hasSentence(id)) return "";
-    const material = shell().pack.materials.find((m) => m.sentences.some((s) => s.id === id));
-    const sentence = material.sentences.find((s) => s.id === id);
-    return sentence.text;
-  }
-
-  function endDialogue(reason) {
+  function endDialogue() {
     const D = S.dlg;
     if (!D || D.done) return;
     D.done = true;
-    renderDialogueUI();
     const hitsCount = D.hits.length;
     const steady = D.mood === D.moodOrder.length - 1;
     let leave = { text: "他默默消失了。几天后，你刷到他把同一个问题问向了别人。", fan: 0 };
@@ -300,6 +349,9 @@
     else if (steady) leave = { text: "认真道谢后离开。", fan: 0 };
     else if (D.mood >= 2) leave = { text: "客气地结束对话，没有后续。", fan: 0 };
     S.settle = { hitsCount, leave, stale: Object.values(S.cards).some((card) => card.quality.key === "waste") };
+    S.stage = "settle";
+    save();
+    renderDialogueUI();
     showSettle();
   }
 
@@ -316,14 +368,14 @@
       const name = card.quality.key === "premium" ? "精华卡" : card.quality.key === "normal" ? "普通卡" : "废卡";
       return '<p class="' + cls + '"><strong>' + name + "</strong> " + material.kindLabel + "：" + card.quality.why + "</p>";
     }).join("");
-    const leave = S.settle.leave;
-    el("settleLeave").innerHTML = "<p>" + leave.text + "</p>";
-    el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 ×" + Object.keys(S.cards).length + (leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
+    el("settleLeave").innerHTML = "<p>" + S.settle.leave.text + "</p>";
+    el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 ×" + Object.keys(S.cards).length + (S.settle.leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
     el("settleOverlay").hidden = false;
     shell().setStage(3);
   }
 
   function showLetter() {
+    S.stage = "letter";
     const letter = S.settle.stale ? shell().pack.letters.stale : shell().pack.letters.good;
     el("settleTitle").textContent = "回信 · " + letter.days + " 天后";
     el("settleHits").innerHTML = "<p>" + letter.text + "</p>";
@@ -331,9 +383,10 @@
     el("settleLeave").innerHTML = "";
     el("settleGains").innerHTML = "<p>" + letter.result + "</p><p><small>已记入共读札记：" + letter.memory + "</small></p>";
     $("#settleContinue").textContent = "再回答一题（刷新重开）";
-    $("#settleContinue").onclick = () => window.location.reload();
+    $("#settleContinue").onclick = () => { clearSave(); window.location.reload(); };
     shell().setStage(4);
     recordGrowth(letter);
+    save();
   }
 
   function recordGrowth(letter) {
@@ -345,10 +398,25 @@
     $("#principleCard").innerHTML = "<span>今晚的收获</span><p>" + (S.settle.stale ? "过时的信息会让人白跑一趟。先看日期，再开口。" : "先接住人，再给方法。帮一个人，就是帮一片人。") + "</p>";
   }
 
+  function bindEndButton() {
+    let endButton = $("#endDialogueButton");
+    if (!endButton) {
+      endButton = document.createElement("button");
+      endButton.id = "endDialogueButton";
+      endButton.className = "end-dialogue";
+      endButton.type = "button";
+      endButton.textContent = "结束对话，看看结果";
+      endButton.addEventListener("click", () => endDialogue());
+      el("turnHint").after(endButton);
+    }
+    endButton.hidden = false;
+  }
+
   function startDialogue() {
     const pack = shell().pack;
     if (Object.keys(S.cards).length < S.attention) { shell().toast("先在共读里做好两份素材卡。"); return; }
     S.stage = "dialogue";
+    S.chatLog = [];
     S.dlg = {
       pack,
       mood: 0,
@@ -362,31 +430,82 @@
       growth: S.growth,
       unlocked: ["empathy", "probe", "advice", "checklist"]
     };
-    el("chatThread").innerHTML = "";
     chatMsg("asker", pack.question.askerShort, pack.question.opening);
     shell().setAiText("他开口了。先用共情接住他，或者追问问清细节——素材卡上的句子就是你的底气。");
+    shell().guide("dialogue", "打方式牌回他：共情接情绪，追问问细节，清单给步骤。素材卡选得好，牌才打得中。");
     renderDialogueUI();
+    bindEndButton();
     shell().focusWindow("chatWindow");
     shell().setStage(2);
     el("synthesizeButton").disabled = true;
+    save();
+  }
+
+  function restoreResearch(saved) {
+    S.cards = saved.cards || {};
+    S.inspected = new Set(saved.inspected || []);
+    onShellReady(true);
+  }
+
+  function restoreDialogue(saved) {
+    S.cards = saved.cards || {};
+    S.inspected = new Set(saved.inspected || []);
+    S.chatLog = saved.chatLog || [];
+    S.growth = saved.growth || S.growth;
+    const pack = shell().pack;
+    S.stage = "dialogue";
+    S.dlg = {
+      pack,
+      mood: saved.dlg.mood,
+      moodOrder: pack.moodOrder,
+      patienceMax: saved.dlg.patienceMax,
+      patience: saved.dlg.patience,
+      used: saved.dlg.used || {},
+      last: saved.dlg.last,
+      hits: saved.dlg.hits || [],
+      done: saved.dlg.done,
+      growth: S.growth,
+      unlocked: saved.dlg.unlocked || ["empathy", "probe", "advice", "checklist"]
+    };
+    onShellReady(true);
+    renderChatLog();
+    renderDialogueUI();
     bindEndButton();
+    shell().focusWindow("chatWindow");
+    shell().setStage(2);
   }
 
-  function bindEndButton() {
-    let endButton = $("#endDialogueButton");
-    if (!endButton) {
-      endButton = document.createElement("button");
-      endButton.id = "endDialogueButton";
-      endButton.className = "end-dialogue";
-      endButton.type = "button";
-      endButton.textContent = "结束对话，看看结果";
-      endButton.addEventListener("click", () => endDialogue("manual"));
-      el("turnHint").after(endButton);
-    }
-    endButton.hidden = false;
+  function restoreSettle(saved, asLetter) {
+    restoreDialogue(saved);
+    S.settle = saved.settle && saved.settle.leave
+      ? saved.settle
+      : { stale: saved.settle.stale, hitsCount: saved.settle.hitsCount, leave: { text: saved.settle.leaveText || "", fan: 0 } };
+    if (asLetter) showLetter();
+    else showSettle();
   }
 
-  function onShellReady() {
+  function resume() {
+    let saved = readSave();
+    const inner = saved.state || {};
+    saved = Object.assign({}, inner, saved);
+    if (!saved) { newGame(); return; }
+    S.attentionMax = saved.attentionMax || 2;
+    S.growth = saved.growth || S.growth;
+    shell().elements.bootOverlay.hidden = true;
+    if (window.CoReadCompanion) window.CoReadCompanion.start();
+    if (saved.stage === "dialogue") restoreDialogue(saved);
+    else if (saved.stage === "settle") restoreSettle(saved, false);
+    else if (saved.stage === "letter") restoreSettle(saved, true);
+    else restoreResearch(saved);
+    shell().toast("已回到上次的共读进度");
+  }
+
+  function newGame() {
+    clearSave();
+    onShellReady(false);
+  }
+
+  function onShellReady(silent) {
     S.stage = "research";
     const pack = shell().pack;
     if (!pack) { shell().toast("文案包未加载"); return; }
@@ -401,8 +520,24 @@
     $("#settleContinue").addEventListener("click", showLetter);
     shell().setStage(1);
     shell().focusWindow("browserWindow");
-    shell().toast("收到一条来自林一舟的求助");
+    if (!silent) {
+      shell().toast("收到一条来自林一舟的求助");
+      shell().guide("research", "电脑收到求助了！点材料上的「展开检查」，看清作者和日期，再挑句子做成素材卡。");
+    }
   }
 
-  window.CoReadEngine = { onShellReady, state: S, playMethod, endDialogue, evalHit, calcQuality };
+  window.setInterval(save, 1500);
+  window.addEventListener("beforeunload", save);
+
+  window.CoReadEngine = {
+    onShellReady: () => onShellReady(false),
+    resume,
+    newGame,
+    hasSave,
+    state: S,
+    playMethod,
+    endDialogue,
+    evalHit,
+    calcQuality
+  };
 })();

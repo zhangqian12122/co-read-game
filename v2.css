@@ -1227,3 +1227,33 @@ html, body {
 .settle-block .is-waste { color: #a8433a; font-weight: 700; }
 .chat-quote { margin-top: 5px; padding-left: 8px; border-left: 3px solid var(--mint); color: var(--ink-soft); font: 400 11px/1.5 var(--ui-font); }
 .end-dialogue { margin: 0 12px 10px; padding: 8px 12px; border: 2px solid var(--ink); background: var(--yellow); font: 800 11px/1 var(--ui-font); cursor: pointer; box-shadow: 3px 3px 0 var(--shadow); }
+
+/* —— 新手引导条 + 继续按钮 —— */
+.guide-tip {
+  position: fixed;
+  z-index: 80;
+  top: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(560px, calc(100vw - 40px));
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  color: var(--ink);
+  font: 700 12px/1.5 var(--ui-font);
+  box-shadow: 4px 4px 0 rgba(15, 40, 73, .6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .25s steps(3);
+}
+
+.guide-tip.is-visible { opacity: 1; }
+
+.boot-continue {
+  background: var(--paper-bright);
+  color: var(--ink);
+  border: 3px solid var(--ink);
+  box-shadow: 5px 5px 0 #8a99ab;
+}
+
+.boot-continue:hover { box-shadow: 7px 7px 0 #8a99ab; }

@@ -239,14 +239,16 @@
   }
 
   // —— 开机流 ——
-  function startShell() {
+  function startShell(resumeMode) {
     elements.bootOverlay.hidden = true;
     setStage(0);
     if (window.CoReadCompanion) window.CoReadCompanion.start();
+    if (resumeMode && window.CoReadEngine && window.CoReadEngine.resume) { window.CoReadEngine.resume(); return; }
+    if (resumeMode && window.CoReadEngine && window.CoReadEngine.resume) { window.CoReadEngine.resume(); return; }
     setAiText("你来了？电脑一会儿会亮，求助来了我叫你。");
     window.setTimeout(() => {
       if (window.CoReadEngine && typeof window.CoReadEngine.onShellReady === "function") {
-        window.CoReadEngine.onShellReady();
+        window.CoReadEngine.newGame ? window.CoReadEngine.newGame() : window.CoReadEngine.newGame ? window.CoReadEngine.newGame() : window.CoReadEngine.onShellReady();
       } else {
         demoArrival();
       }
@@ -290,6 +292,7 @@
     $$,
     toast,
     setStage,
+    guide,
     setAiText,
     fillQuestion,
     focusWindow,
@@ -298,13 +301,41 @@
     get pack() { return window.CoReadV2Pack || null; }
   };
 
+  function bindContinueButton() {
+    const continueButton = $("#continueButton");
+    if (!continueButton) return;
+    if (window.CoReadEngine && window.CoReadEngine.hasSave && window.CoReadEngine.hasSave()) continueButton.hidden = false;
+    continueButton.addEventListener("click", () => startShell(true));
+  }
+
+  function guide(key, text) {
+    let flags = {};
+    try {
+      flags = JSON.parse(window.localStorage.getItem("coread-v2-guide") || "{}");
+      if (flags[key]) return;
+      flags[key] = true;
+      window.localStorage.setItem("coread-v2-guide", JSON.stringify(flags));
+    } catch (e) { return; }
+    let tip = document.getElementById("guideTip");
+    if (!tip) {
+      tip = document.createElement("div");
+      tip.id = "guideTip";
+      tip.className = "guide-tip";
+      document.body.append(tip);
+    }
+    tip.textContent = "指引：" + text;
+    tip.classList.add("is-visible");
+    window.setTimeout(() => tip.classList.remove("is-visible"), 6000);
+  }
+
   function initialize() {
     buildTaskButtons();
     bindWindowChrome();
     bindBedroomToggle();
     bindAiSettings();
     refreshAiIndicator();
-    elements.startButton.addEventListener("click", startShell);
+    elements.startButton.addEventListener("click", () => startShell(false));
+    bindContinueButton();
     setClock();
     window.setInterval(setClock, 30000);
     focusWindow("browserWindow");

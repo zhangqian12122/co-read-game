@@ -95,5 +95,39 @@ check('letter (good ending) shown', $('#settleTitle').textContent.includes('回�
 check('letter mentions 手续办好了', $('#settleHits').textContent.includes('手续办好了'));
 check('stage 4 = 回信', (() => { const steps = $$('#progressSteps span'); return steps[4].classList.contains('is-current'); })());
 
+
+// —— 存档 v2：刷新后「继续上次共读」——
+const saveJson = w.localStorage.getItem('coread-v2-save');
+check('autosave exists after play', Boolean(saveJson));
+check('guide tip element created in first run', Boolean(w.document.getElementById('guideTip')));
+
+const dom2 = new JSDOM(html, {
+  url: fileUrl,
+  runScripts: 'dangerously',
+  resources: 'usable',
+  pretendToBeVisual: true,
+  beforeParse(window2) {
+    window2.matchMedia = () => ({ matches: true, media: 'screen', addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent() { return false; } });
+    window2.HTMLElement.prototype.scrollIntoView = function () {};
+    window2.localStorage.setItem('coread-v2-save', saveJson);
+    window2.addEventListener('error', (e) => console.log('W2ERR ' + (e.error && e.error.stack ? e.error.stack.split(String.fromCharCode(10)).slice(0, 3).join(' || ') : String(e))));
+  }
+});
+const w2 = dom2.window;
+for (let i = 0; i < 200; i += 1) {
+  if (w2.CoReadV2Shell && w2.CoReadEngine && w2.CoReadV2Pack) break;
+  await sleep(50);
+}
+check('continue button shown when save exists', !w2.document.querySelector('#continueButton').hidden);
+w2.document.querySelector('#continueButton').click();
+await sleep(300);
+check('resume: back to letter stage', (() => { const steps = $2steps(w2); return steps[4].classList.contains('is-current'); })());
+check('resume: dialogue restored (mood steady)', w2.CoReadEngine.state.dlg && w2.CoReadEngine.state.dlg.mood === 3);
+check('resume: patience restored (7)', w2.CoReadEngine.state.dlg.patience === 7);
+check('resume: chat log rebuilt', w2.document.querySelectorAll('#chatThread .chat-msg').length >= 7);
+w2.close();
+
+function $2steps(win) { return Array.prototype.slice.call(win.document.querySelectorAll('#progressSteps span')); }
+
 console.log(failed === 0 ? 'ALL PASS' : failed + ' FAILED');
 process.exit(failed > 0 ? 1 : 0);

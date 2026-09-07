@@ -193,7 +193,7 @@
   }
 
   if (typeof window !== "undefined") window.CoReadV2Pack = pack;
-  if (typeof window !== "undefined") window.CoReadV2PackSchema = { sentenceTypes: ["dry", "fluff", "ad", "stale"], moodStages: moodOrder, validatePack };
+  if (typeof window !== "undefined") window.CoReadV2PackSchema = { sentenceTypes: ["dry", "fluff", "ad", "stale"], moodStages: pack.moodOrder, validatePack };
   if (typeof module !== "undefined" && module.exports) {
     module.exports = { questionPack, validatePack };
   }
