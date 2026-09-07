@@ -505,3 +505,60 @@ html, body {
 .tray-item + .tray-item { margin-top: 6px; }
 .tray-item strong { font: 800 10px/1 var(--mono-font); color: #8a6f4d; flex: none; }
 .tray-item span { font: 600 11px/1.4 var(--ui-font); }
+
+/* —— Windows 壁纸与图标（2026-09-08 用户指定，覆盖早前深蓝渐变） —— */
+.wallpaper {
+  background: url("./assets/wallpaper-bliss.svg") center / cover no-repeat;
+}
+
+.wallpaper::after {
+  color: rgba(255, 255, 255, .82);
+  text-shadow: 1px 1px 0 rgba(23, 36, 59, .55);
+}
+
+.dock-icon {
+  gap: 6px;
+}
+
+.dock-img {
+  width: 46px;
+  height: 46px;
+  image-rendering: pixelated;
+  filter: drop-shadow(3px 4px 0 rgba(16, 45, 82, .35));
+  transition: transform .1s steps(2);
+}
+
+.dock-icon:hover .dock-img { transform: translateY(-2px); }
+
+.dock-label {
+  padding: 2px 5px;
+  color: #fff;
+  font: 700 11px/1 var(--ui-font);
+  text-shadow: 1px 1px 0 rgba(16, 45, 82, .9), 0 0 8px rgba(16, 45, 82, .55);
+}
+
+.dock-icon.is-active .dock-label {
+  background: rgba(23, 105, 210, .6);
+  text-shadow: none;
+}
+
+/* —— 任务栏：XP 蓝 + 绿色开始键 —— */
+.taskbar {
+  background: linear-gradient(180deg, #5a92cf 0%, #2f66ad 10%, #1d4a8f 55%, #173d7c 100%);
+  border-top: 2px solid #7fa3c8;
+}
+
+.start-button {
+  background: linear-gradient(180deg, #8ed07f, #3f9a3f);
+  border: 2px solid #1d5b23;
+  font-style: italic;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5);
+}
+
+.task-button { border-color: #6d9ed4; color: #d7e4f2; }
+.task-button.is-active { background: #3f74b8; border-color: #a9c8e8; color: #fff; }
+.progress-steps { color: #b8cde4; }
+.progress-steps i { background: #5a82b4; }
+.progress-steps span.is-current { color: #ffd97a; }
+.progress-steps span.is-done { color: #d7e4f2; }
+.taskbar-time { color: #fff; }

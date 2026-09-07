@@ -1,0 +1,45 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1600 900' preserveAspectRatio='xMidYMid slice'>
+  <defs>
+    <linearGradient id='sky' x1='0' y1='0' x2='0' y2='1'>
+      <stop offset='0' stop-color='#2f7fd0'/>
+      <stop offset='.45' stop-color='#63aae8'/>
+      <stop offset='.78' stop-color='#b8dff7'/>
+      <stop offset='1' stop-color='#ddeffb'/>
+    </linearGradient>
+    <linearGradient id='hillFar' x1='0' y1='0' x2='0' y2='1'>
+      <stop offset='0' stop-color='#a7d477'/>
+      <stop offset='1' stop-color='#7dbb52'/>
+    </linearGradient>
+    <linearGradient id='hillNear' x1='0' y1='0' x2='0' y2='1'>
+      <stop offset='0' stop-color='#8ecb63'/>
+      <stop offset='.6' stop-color='#63a83e'/>
+      <stop offset='1' stop-color='#4c8a31'/>
+    </linearGradient>
+    <filter id='soft' x='-30%' y='-30%' width='160%' height='160%'>
+      <feGaussianBlur stdDeviation='6'/>
+    </filter>
+  </defs>
+  <rect width='1600' height='900' fill='url(#sky)'/>
+  <circle cx='1280' cy='150' r='220' fill='#ffffff' opacity='.14' filter='url(#soft)'/>
+  <g fill='#ffffff' filter='url(#soft)'>
+    <g opacity='.95'>
+      <ellipse cx='300' cy='170' rx='130' ry='42'/>
+      <ellipse cx='390' cy='140' rx='90' ry='34'/>
+      <ellipse cx='220' cy='150' rx='70' ry='28'/>
+    </g>
+    <g opacity='.8'>
+      <ellipse cx='900' cy='100' rx='150' ry='40'/>
+      <ellipse cx='1010' cy='80' rx='80' ry='28'/>
+    </g>
+    <g opacity='.9'>
+      <ellipse cx='1300' cy='320' rx='120' ry='34'/>
+      <ellipse cx='1220' cy='300' rx='70' ry='24'/>
+    </g>
+    <g opacity='.65'>
+      <ellipse cx='620' cy='250' rx='90' ry='26'/>
+    </g>
+  </g>
+  <path d='M0 640 Q 260 520 560 590 T 1120 600 T 1600 560 V900 H0 Z' fill='url(#hillFar)'/>
+  <path d='M0 720 Q 320 600 700 690 T 1600 700 V900 H0 Z' fill='url(#hillNear)'/>
+  <path d='M0 810 Q 400 720 860 780 T 1600 800 V900 H0 Z' fill='#3f7a29' opacity='.55'/>
+</svg>

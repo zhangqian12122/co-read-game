@@ -48,6 +48,8 @@ await sleep(100);
 check('material selected into tray', w.CoReadEngine.state.selected.length === 1);
 check('tray count updated', w.document.querySelector('#trayCount').textContent.includes('1'));
 
+check("windows-style dock icons", w.document.querySelectorAll(".dock-img").length === 4);
+check("wallpaper svg referenced", w.document.querySelector(".wallpaper") !== null);
 console.log(failed === 0 ? 'ALL PASS' : failed + ' FAILED');
 if (failed > 0) process.exit(1);
 
