@@ -1,9 +1,13 @@
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+  <defs>
+    <linearGradient id='pg' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#ffffff'/><stop offset='1' stop-color='#efe9d8'/></linearGradient>
+  </defs>
   <rect x='7' y='7' width='22' height='23' fill='#0f2849' opacity='.35'/>
-  <rect x='5' y='5' width='22' height='24' fill='#fffdf6' stroke='#17243b' stroke-width='2'/>
+  <rect x='5' y='5' width='22' height='24' fill='url(#pg)' stroke='#17243b' stroke-width='2'/>
   <circle cx='11' cy='5' r='2' fill='#76523f' stroke='#17243b' stroke-width='1.4'/>
   <circle cx='17' cy='5' r='2' fill='#76523f' stroke='#17243b' stroke-width='1.4'/>
   <circle cx='23' cy='5' r='2' fill='#76523f' stroke='#17243b' stroke-width='1.4'/>
   <path d='M9 13h14 M9 17h14 M9 21h9' stroke='#9baab9' stroke-width='2'/>
   <rect x='9' y='24' width='10' height='3' fill='#f1c959' stroke='#17243b' stroke-width='1.2'/>
+  <ellipse cx='11' cy='9' rx='6' ry='1.4' fill='#ffffff' opacity='.7'/>
 </svg>

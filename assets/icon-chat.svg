@@ -1,6 +1,11 @@
 <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'>
+  <defs>
+    <linearGradient id='bub' x1='0' y1='0' x2='0' y2='1'><stop offset='0' stop-color='#ffe9a6'/><stop offset='1' stop-color='#f1c959'/></linearGradient>
+  </defs>
   <rect x='6' y='9' width='25' height='20' fill='#0f2849' opacity='.35'/>
-  <path d='M4 6h22v14H14l-6 6v-6H4z' fill='#f1d887' stroke='#17243b' stroke-width='2'/>
+  <path d='M4 6h22v14H14l-6 6v-6H4z' fill='url(#bub)' stroke='#17243b' stroke-width='2'/>
+  <ellipse cx='11' cy='9.5' rx='7' ry='1.8' fill='#ffffff' opacity='.65'/>
   <path d='M8 11h14 M8 15h11' stroke='#17243b' stroke-width='2'/>
   <circle cx='27' cy='10' r='4' fill='#7fbaac' stroke='#17243b' stroke-width='2'/>
+  <ellipse cx='26' cy='8.8' rx='1.6' ry='.9' fill='#ffffff' opacity='.7'/>
 </svg>

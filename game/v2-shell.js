@@ -242,6 +242,7 @@
   function startShell() {
     elements.bootOverlay.hidden = true;
     setStage(0);
+    if (window.CoReadCompanion) window.CoReadCompanion.start();
     setAiText("你来了？电脑一会儿会亮，求助来了我叫你。");
     window.setTimeout(() => {
       if (window.CoReadEngine && typeof window.CoReadEngine.onShellReady === "function") {
