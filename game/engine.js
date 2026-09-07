@@ -208,6 +208,73 @@
     }
   }
 
+  function aiReady() {
+    return Boolean(window.CoReadAI && window.CoReadAI.isReady());
+  }
+
+  let aiBusy = false;
+  async function aiReact(hit) {
+    if (!aiReady() || aiBusy) return;
+    aiBusy = true;
+    try {
+      const D = S.dlg;
+      const payload = {
+        moment: hit ? "玩家刚打出一张命中提问者的牌" : "玩家刚打出的牌没有答中",
+        askerMood: D.pack.moodLabels[D.moodOrder[D.mood]],
+        askerPatience: D.patience,
+        question: D.pack.question.title,
+        cardSummary: Object.keys(S.cards).map((id) => {
+          const m = D.pack.materials.find((x) => x.id === id);
+          return m.kindLabel + "(" + S.cards[id].sentenceIds.length + "句)";
+        }).join("、")
+      };
+      const result = await window.CoReadAI.chatJson([
+        { role: "system", content: "你是共读伙伴00，正在旁观主人和一位知乎提问者对话。只输出JSON：{text:一句话点评(20字内,口语,不看镜头不说教)}" },
+        { role: "user", content: JSON.stringify(payload) }
+      ], { timeoutMs: 10000, maxTokens: 80, temperature: 0.9 });
+      if (result && typeof result.text === "string" && result.text.trim()) {
+        shell().setAiText(result.text.trim().slice(0, 40));
+      }
+    } catch (e) { /* 静默回退随机池 */ }
+    aiBusy = false;
+  }
+
+  async function aiSuggest() {
+    const D = S.dlg;
+    if (!D || D.done || D.suggested) return;
+    if (!aiReady()) { shell().toast("先在系统设置里开启 AI 增强，00 才能给建议。"); return; }
+    D.suggested = true;
+    renderDialogueUI();
+    const payload = {
+      question: D.pack.question.title,
+      askerMood: D.pack.moodLabels[D.moodOrder[D.mood]],
+      patienceLeft: D.patience,
+      playedCards: D.hits.concat(Object.keys(D.used).filter((id) => !D.hits.includes(id))).join("、"),
+      availableMethods: D.unlocked,
+      cardSummary: Object.keys(S.cards).map((id) => {
+        const m = D.pack.materials.find((x) => x.id === id);
+        const sents = m.sentences.filter((s) => S.cards[id].sentenceIds.includes(s.id)).map((s) => s.text).join("；");
+        return m.kindLabel + "：" + sents;
+      })
+    };
+    shell().setAiText("我想想……");
+    try {
+      const result = await window.CoReadAI.chatJson([
+        { role: "system", content: "你是共读伙伴00。根据素材卡内容和提问者当前状态，建议主人下一步该打哪种回答方式。availableMethods 里选一个。只输出JSON：{method:方式id, reason:一句话理由(20字内,口语)}。不代主人打牌，只建议。" },
+        { role: "user", content: JSON.stringify(payload) }
+      ], { timeoutMs: 15000, maxTokens: 120, temperature: 0.7 });
+      if (!result || !D.unlocked.includes(result.method)) throw new Error("bad");
+      const label = D.pack.methods[result.method] ? D.pack.methods[result.method].label : result.method;
+      chatMsg("companion", "共读伙伴 00", "我建议打「" + label + "」——" + String(result.reason || "").slice(0, 30));
+      shell().setAiText("只是建议，最后还是你来定。");
+    } catch (e) {
+      D.suggested = false;
+      shell().setAiText("……我一时也没想好，你再打一张试试。");
+    }
+    renderDialogueUI();
+    save();
+  }
+
   function bindModal() {
     document.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
@@ -218,7 +285,6 @@
     $("#closeMaterialModal").addEventListener("click", () => { $("#materialModal").hidden = true; });
     $("#modalCancel").addEventListener("click", () => { $("#materialModal").hidden = true; });
     $("#modalConfirm").addEventListener("click", confirmCard);
-    el("synthesizeButton").addEventListener("click", startDialogue);
   }
 
   // —— 卡牌对话 ——
@@ -283,6 +349,7 @@
       pip.classList.toggle("is-current", idx === D.mood);
     });
     $$("#handCards .method-card").forEach((button) => {
+      if (button.id === "aiSuggestButton") { button.disabled = D.done || D.suggested || !aiReady(); return; }
       const id = button.dataset.method;
       const conf = D.pack.methods[id];
       const unlocked = D.unlocked.includes(id);
@@ -343,6 +410,7 @@
     const reactions = shell().pack.companion && shell().pack.companion[hit ? "reactionHit" : "reactionMiss"];
     const pool = reactions && reactions.length ? reactions : [hit ? "问中了！" : "……没接住，换张牌试试。" ];
     shell().setAiText(pool[Math.floor(Math.random() * pool.length)]);
+    aiReact(hit);
     D.last = methodId;
     const endButton = $("#endDialogueButton");
     if (endButton) endButton.disabled = false;
@@ -451,6 +519,7 @@
       patienceMax: pack.question.patienceBase + 2,
       patience: pack.question.patienceBase + 2,
       used: {},
+      suggested: false,
       last: null,
       hits: [],
       done: false,
@@ -543,6 +612,8 @@
     renderTray();
     bindModal();
     el("synthesizeButton").addEventListener("click", startDialogue);
+    const suggestButton = document.getElementById("aiSuggestButton");
+    if (suggestButton) suggestButton.addEventListener("click", aiSuggest);
     $$("#handCards .method-card").forEach((button) => button.addEventListener("click", () => playMethod(button.dataset.method)));
     shell().setStage(1);
     shell().focusWindow("browserWindow");

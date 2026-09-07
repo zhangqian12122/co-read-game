@@ -38,7 +38,8 @@ check('question filled from pack', $('#questionTitle').textContent.includes('挂
 check('stage advanced to research', S().stage === 'research');
 check('materials rendered', $$('#materialList .material-card').length === 4);
 check('companion is manual-only (no auto walk)', !$('#aiCharacter').classList.contains('is-walking'));
-check('hand cards = 6 methods', $$('#handCards .method-card').length === 6);
+check('hand cards = 6 methods + ai suggest', $$('#handCards .method-card').length === 7);
+check('ai suggest button present and gated when AI off', Boolean($('#aiSuggestButton')) && $('#aiSuggestButton').disabled);
 check('mood pips = 4 stages', $$('#moodPips .mood-pip').length === 4);
 
 function openAndCard(materialId, sentenceIds, tag) {
@@ -66,7 +67,7 @@ check('patience = base 6 + 2 细读 = 8', S().dlg.patience === 8);
 check('asker opening rendered', $('#chatThread').textContent.includes('第一次自己去'));
 check('story/tradeoff locked at start', $$('#handCards .method-card').filter((b) => b.classList.contains('is-locked')).length === 2);
 check('room computer glows new message', $('#roomComputer').classList.contains('has-new-message'));
-check('end dialogue button gated before first card', $('#endDialogueButton').disabled);
+check('end dialogue button gated before first card', ($('#endDialogueButton') || { disabled: true }).disabled === true);
 
 w.CoReadEngine.playMethod('empathy');
 await sleep(80);

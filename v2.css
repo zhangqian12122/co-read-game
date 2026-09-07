@@ -1279,3 +1279,11 @@ html, body {
 /* —— 静默结局：卧室灯光变暗 —— */
 .bedroom-panel.is-dim .room-scene { filter: brightness(.55) saturate(.75); transition: filter 1.2s steps(8); }
 .bedroom-panel.is-dim .wall-note { opacity: .5; }
+
+/* —— 00 的建议（AI 增强） —— */
+.method-card.is-ai {
+  border-color: var(--mint);
+  background: #eef6f2;
+}
+.method-card.is-ai:not(:disabled) { box-shadow: 3px 3px 0 rgba(63, 111, 99, .5); }
+.method-card.is-ai small { color: #3f6f63; }
