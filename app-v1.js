@@ -881,7 +881,7 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
 const elements = {
-  desktop: $("#desktop"), bootOverlay: $("#bootOverlay"), startButton: $("#startButton"), chapterName: $("#chapterName"), addressBar: $("#addressBar"), systemClock: $("#systemClock"), taskbarTime: $("#taskbarTime"),
+  desktop: $("#desktop"), bootOverlay: $("#bootOverlay"), startButton: $("#startButton"), continueButton: $("#continueButton"), saveHint: $("#saveHint"), chapterName: $("#chapterName"), addressBar: $("#addressBar"), systemClock: $("#systemClock"), taskbarTime: $("#taskbarTime"),
   onboardingGuide: $("#onboardingGuide"), onboardingStep: $("#onboardingStep"), onboardingTitle: $("#onboardingTitle"), onboardingText: $("#onboardingText"), onboardingAction: $("#onboardingAction"), onboardingDismiss: $("#onboardingDismiss"),
   questionKicker: $("#questionKicker"), questionTitle: $("#questionTitle"), questionBody: $("#questionBody"), askerNote: $("#askerNote"), questionStats: $("#questionStats"),
   researchEyebrow: $("#researchEyebrow"), researchTitle: $("#researchTitle"), researchInstruction: $("#researchInstruction"), trayEyebrow: $("#trayEyebrow"),
@@ -997,6 +997,7 @@ function openFirstQuestionFromComputer() {
   setAiText("看到了，叫悠一，他好像第一次自己去医院，你先读读他怎么说，我也一起看");
   focusWindow("browserWindow");
   updateOnboardingGuide();
+  checkpoint(state.chapterId + "-research");
 }
 
 function handleOnboardingAction() {
@@ -1105,6 +1106,7 @@ function finishChapterOneCoda(message) {
   hideRoomDialogueActions();
   setAiText(message);
   window.setTimeout(() => setNotification("archive", "+", "收到一份新档案", "档案 01 · 一条没有官方答案的路"), 720);
+  checkpoint("hospital-complete");
 }
 
 function resolveCompanionName(keepNumber = false) {
@@ -1749,6 +1751,7 @@ function performOpenMaterial(materialId) {
   renderMaterials();
   updateOnboardingGuide();
   if (state.companionEmotion !== "doubt" && state.companionEmotion !== "permission-wait") setCompanionEmotion("inspect", 1300);
+  checkpoint(state.chapterId + "-research");
 }
 
 function closeMaterialModal() {
@@ -1790,6 +1793,7 @@ function commitMaterialSelection(materialId, transitOrigin = null) {
       ? "两张纸都在这儿了。你觉得它们各自能说明什么？"
       : "两张纸都到了，先一张张看吧，别急着合在一起。");
   }
+  checkpoint(state.chapterId + "-research");
 }
 
 function removeMaterial(materialId) {
@@ -1801,6 +1805,7 @@ function removeMaterial(materialId) {
   renderMaterials();
   renderTray();
   setAiText("好，这张先拿回去。刚才贴的标签也不算了。");
+  checkpoint(state.chapterId + "-research");
 }
 
 function isTagConflict(material, tagId) {
@@ -1819,6 +1824,7 @@ function setMaterialTag(materialId, tagId) {
   state.tagHistory[materialId] ||= [];
   state.tagHistory[materialId].push({ tagId, conflicted: isTagConflict(material, tagId) });
   renderTray();
+  checkpoint(state.chapterId + "-research");
   const review = getTagReview();
   elements.roomScene.classList.toggle("tag-conflict", review.conflicts.length > 0 || Boolean(state.autoFlaggedMaterialId));
   elements.roomScene.classList.toggle("tag-all-official", review.allOfficial);
@@ -2036,6 +2042,7 @@ function openDecision() {
   updateProgress(1);
   const review = getTagReview();
   setAiText(review.conflicts.length ? "这张标签还是对不上。真要带着这个问号回他吗？" : "两张纸我都看完了。那我们先帮他做哪件事？" );
+  checkpoint(state.chapterId + "-synthesis");
 }
 
 function deriveMisjudgmentHistory(chapterId, selected, tags, tagHistory) {
@@ -2183,6 +2190,7 @@ function openResponseDraft(decision, evaluation) {
   renderTray();
   elements.draftWorkshop.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
   setAiText(getDraftOpening(decision.id));
+  checkpoint(state.chapterId + "-drafting");
 }
 
 function chooseResponseDraft(choiceId) {
@@ -2204,6 +2212,7 @@ function chooseResponseDraft(choiceId) {
   elements.sendDraftAction.hidden = false;
   elements.sendDraftAction.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "nearest" });
   setAiText(approach.partner);
+  checkpoint(state.chapterId + "-draft-ready");
 }
 
 function commitDecision(decision, evaluation) {
@@ -2248,6 +2257,7 @@ function commitDecision(decision, evaluation) {
       updateProgress(3);
     }, 1200);
   }
+  checkpoint(state.chapterId + "-responded");
 }
 
 function sendResponseDraft() {
@@ -3228,6 +3238,7 @@ function openCareerFollowup() {
     action: harmful ? "回复林岸" : "读完，回房间看看"
   });
   renderInitialPublicDiscussion(state.outcome);
+  checkpoint("career-followup");
 }
 
 function openFollowup() {
@@ -3251,6 +3262,7 @@ function openFollowup() {
   });
   renderInitialPublicDiscussion(outcome);
   if (!harmful) showHospitalFollowupReplyChoices();
+  checkpoint("hospital-followup");
 }
 
 function continueFollowupInRoom() {
@@ -3287,6 +3299,7 @@ function continueFollowupInRoom() {
       showPermissionActions(permissionCopy);
       state.roomAftermathTimer = null;
     }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 900);
+    checkpoint("hospital-aftermath");
     return;
   }
   if (state.chapterId === "career" && (state.step === "career-followup-reading" || state.step === "career-followup-challenge-resolved") && state.route) {
@@ -3388,6 +3401,7 @@ function loadCareerChapter() {
     setWallNote(traitEvent.wall);
   }
   setAiText(intro);
+  checkpoint("career-research");
 }
 
 function getFirstChapterEndingEchoes() {
@@ -3483,6 +3497,7 @@ function showEnding() {
   state.notificationMode = null;
   state.step = "ending";
   window.requestAnimationFrame(() => elements.endingTitle.focus({ preventScroll: true }));
+  checkpoint("ending");
 }
 
 function chooseFinalConversation(choiceId) {
@@ -3537,6 +3552,7 @@ function completeSecondChapter(route) {
   updateProgress(4);
   window.setTimeout(placeAutonomyFold, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 720);
   window.setTimeout(() => showFinalConversation(route), window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 980);
+  checkpoint("ending-conversation");
 }
 
 function updateProgress(activeIndex) {
@@ -3578,10 +3594,157 @@ function startGame() {
     if (state.interactionRevision !== scheduledAtRevision || state.selected.length || state.currentMaterial) return;
     receiveFirstQuestion();
   }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 320 : 2100);
+  checkpoint("hospital-research");
+}
+
+
+// —— 检查点存档：场景入口自动存档，启动页可继续上次共读 ——
+
+function checkpoint(position) {
+  if (window.CoReadSave) window.CoReadSave.capture(position);
+}
+
+function handleStartButton() {
+  if (window.CoReadSave && window.CoReadSave.hasSave()) {
+    if (!window.confirm("开始新的共读档案会清掉上次的存档，确定吗？")) return;
+    window.CoReadSave.clear();
+  }
+  startGame();
+}
+
+function applySavedState(data) {
+  Object.keys(data).forEach((key) => {
+    if (key === "inspected" || key === "ambientSpeechHistory") {
+      state[key] = new Set(data[key] || []);
+      return;
+    }
+    if (key in state) state[key] = data[key];
+  });
+}
+
+function syncWindowChrome() {
+  const front = $(".app-window").find((item) => item.classList.contains("is-front"));
+  $(".desktop-icon[data-focus]").forEach((button) => {
+    button.classList.toggle("is-active", Boolean(front) && button.dataset.focus === front.id);
+  });
+  $("[data-window-task]").forEach((button) => {
+    button.classList.toggle("is-active", Boolean(front) && button.dataset.windowTask === front.id);
+  });
+}
+
+function restoreBaseScene(scene) {
+  renderChapterCopy();
+  renderMaterials();
+  renderTray();
+  renderMemoryRecords();
+  updateCompanionIdentity();
+  if (window.CoReadSave) window.CoReadSave.applyScene(scene);
+  setBrowserLaunchAvailable(state.browserUnlocked);
+  if (state.computerMessageReady) {
+    const taskButton = $("[data-window-task=browserWindow]")[0];
+    if (taskButton) taskButton.textContent = "知乎 · 1 条新消息";
+  }
+  updateOnboardingGuide();
+  syncWindowChrome();
+}
+
+function restoreRespondedScene() {
+  const snapshot = state.chapterId === "hospital" ? state.chapterOneSnapshot : state.chapterTwoSnapshot;
+  if (!snapshot) return;
+  if (state.chapterId === "hospital") {
+    setClock("16:24");
+    const harmful = snapshot.evaluation.grade === "misleading";
+    setNotification("followup", "!", harmful ? "悠一又发来一条消息" : "收到一条回访", harmful ? "语气似乎不太对" : "来自：悠一");
+  } else {
+    setClock("09:32");
+    setNotification("career-followup", "信", "几周后来信", "来自：林岸");
+  }
+  updateProgress(3);
+}
+
+function restoreHospitalFollowup() {
+  openFollowup();
+  if (state.outcome && state.outcome.requiresAccountability && !state.accountabilityChoice) showAccountabilityChoices();
+}
+
+function resumeGame() {
+  const save = window.CoReadSave ? window.CoReadSave.readSave() : null;
+  if (!save) return;
+  applySavedState(save.state || {});
+  state.started = true;
+  state.currentMaterial = null;
+  state.pendingChapterAction = null;
+  restoreBaseScene(save.scene);
+  switch (save.position) {
+    case "hospital-synthesis":
+    case "career-synthesis":
+      openDecision();
+      break;
+    case "hospital-drafting":
+    case "career-drafting":
+      openResponseDraft(getAvailableDecisions().find((item) => item.id === state.decision), state.draftEvaluation);
+      break;
+    case "hospital-draft-ready":
+    case "career-draft-ready":
+      openResponseDraft(getAvailableDecisions().find((item) => item.id === state.decision), state.draftEvaluation);
+      chooseResponseDraft(state.draftChoice);
+      break;
+    case "hospital-responded":
+    case "career-responded":
+      restoreRespondedScene();
+      break;
+    case "hospital-followup":
+      restoreHospitalFollowup();
+      break;
+    case "hospital-aftermath":
+      showPermissionActions(hospitalPermissionCopies[state.outcome && state.outcome.permissionMode ? state.outcome.permissionMode : "source"]);
+      break;
+    case "hospital-naming":
+      showCompanionNaming();
+      break;
+    case "career-followup":
+      state.step = "career-followup-pending";
+      openCareerFollowup();
+      break;
+    case "ending-conversation":
+      completeSecondChapter(state.route);
+      break;
+    case "ending":
+      showEnding();
+      break;
+    case "ended-room":
+      focusWindow("roomWindow");
+      break;
+    default:
+      if (state.chapterId === "hospital" && state.step === "research" && !state.browserUnlocked && !state.computerMessageReady) {
+        window.clearTimeout(state.introTimer);
+        state.introTimer = window.setTimeout(() => {
+          state.introTimer = null;
+          receiveFirstQuestion();
+        }, 1400);
+      }
+      break;
+  }
+  elements.bootOverlay.hidden = true;
+  elements.endingOverlay.hidden = save.position !== "ending";
+  syncWindowChrome();
+}
+
+function refreshBootSaveUi() {
+  if (!window.CoReadSave || !elements.continueButton) return;
+  const meta = window.CoReadSave.saveMeta();
+  if (!meta) return;
+  const time = new Date(meta.savedAt);
+  const pad = (value) => String(value).padStart(2, "0");
+  elements.continueButton.hidden = false;
+  if (elements.saveHint) {
+    elements.saveHint.hidden = false;
+    elements.saveHint.textContent = "检测到 " + meta.chapterLabel + " 的存档 · " + (time.getMonth() + 1) + "月" + time.getDate() + "日 " + pad(time.getHours()) + ":" + pad(time.getMinutes());
+  }
 }
 
 function bindEvents() {
-  elements.startButton.addEventListener("click", startGame);
+  elements.startButton.addEventListener("click", handleStartButton);
   elements.onboardingAction.addEventListener("click", handleOnboardingAction);
   elements.onboardingDismiss.addEventListener("click", () => {
     state.onboardingDismissed = true;
@@ -3619,8 +3782,12 @@ function bindEvents() {
     state.step = "ended-room";
     setNotification("ending", "✓", "档案 00—01 已完成", "点击可以再看一次结局");
     focusWindow("roomWindow");
+    checkpoint("ended-room");
   });
-  elements.endingRestart.addEventListener("click", () => window.location.reload());
+  elements.endingRestart.addEventListener("click", () => {
+    if (window.CoReadSave) window.CoReadSave.clear();
+    window.location.reload();
+  });
   elements.confirmChapterReview.addEventListener("click", () => {
     const pending = state.pendingChapterAction;
     hideRoomDialogueActions();
@@ -3680,6 +3847,7 @@ function initialize() {
   updateCompanionIdentity();
   bindWindowManager();
   bindEvents();
+  refreshBootSaveUi();
 }
 
 initialize();

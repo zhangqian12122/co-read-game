@@ -2184,3 +2184,23 @@
   .ai-character { left: 47.5%; bottom: 5.2%; transform: translateX(-50%); }
   .autonomy-fold.is-placed { opacity: .82; transform: translate(0, 0) rotate(-3deg) skewX(-5deg); }
 }
+
+/* —— 存档：启动页继续按钮 —— */
+.boot-content .boot-continue {
+  display: block;
+  margin-top: 10px;
+  color: #dfe9ee;
+  background: transparent;
+  border: 2px solid #5f7d92;
+  box-shadow: 4px 4px 0 rgba(23, 62, 111, .6);
+}
+
+.boot-content .boot-continue:hover {
+  box-shadow: 6px 6px 0 rgba(23, 62, 111, .6);
+}
+
+.boot-content > .boot-save-hint {
+  bottom: 34px;
+  color: #a9b6c9;
+  font: 9px/1 var(--mono-font);
+}
