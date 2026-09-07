@@ -70,7 +70,7 @@
     timers.emotion = null;
     if (emotion) stopWalk();
     ["emotion-receive", "emotion-inspect", "emotion-doubt", "emotion-resolve", "emotion-permission-wait"].forEach((c) => els.character.classList.remove(c));
-    if (!emotion) { scheduleRoam(9000); return; }
+    if (!emotion) return;
     els.character.classList.add("emotion-" + emotion);
     if (duration > 0) timers.emotion = window.setTimeout(() => setEmotion(null), duration);
   }
@@ -91,7 +91,7 @@
 
   function startEnv(key) {
     const conf = envConf[key];
-    if (!conf) { scheduleRoam(); return; }
+    if (!conf) return;
     clearEnv();
     currentEnv = key;
     els.character.dataset.baseLabel = els.character.dataset.baseLabel || els.character.getAttribute("aria-label") || "共读伙伴 00";
@@ -103,7 +103,6 @@
     maybeThought(key);
     timers.env = window.setTimeout(() => {
       clearEnv();
-      scheduleRoam(9000 + Math.round(Math.random() * 5000));
     }, reduceMotion() ? 400 : conf.duration);
   }
 
@@ -133,21 +132,7 @@
     window.requestAnimationFrame(() => els.character.classList.remove("is-roam-frozen"));
   }
 
-  function canRoam() {
-    return started
-      && !els.character.classList.contains("is-walking")
-      && !currentEnv && !reduceMotion();
-  }
 
-  function scheduleRoam(delay) {
-    window.clearTimeout(timers.roam);
-    if (!started || reduceMotion()) return;
-    timers.roam = window.setTimeout(() => {
-      timers.roam = null;
-      if (!started || els.character.classList.contains("is-walking") || currentEnv) { scheduleRoam(4000); return; }
-      walkTo(roamTargets[roamIndex % roamTargets.length], () => scheduleRoam(10000 + Math.round(Math.random() * 5000)));
-    }, delay === undefined ? 6000 : delay);
-  }
 
   function walkTo(target, done) {
     const dx = target.x - pos.x;
@@ -211,7 +196,7 @@
   }
 
   window.CoReadCompanion = {
-    start() { started = true; applyPos(pos); bindRoom(); scheduleRoam(5000); },
+    start() { started = true; applyPos(pos); bindRoom(); },
     stop() { started = false; stopWalk(); },
     setEmotion,
     say,

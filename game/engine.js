@@ -1,99 +1,408 @@
-// engine.js - 回答主游戏 v2 引擎（M0：接题→共读的选材料闭环；M2 在此扩展候选句/卡牌对话）
+// engine.js - 回答主游戏 v2 引擎（M2：共读选材料 → 素材卡 → 卡牌对话 → 结算）
+// 查表执行：所有判定/台词来自 question-pack.js（设计总览 v1.1 冻结机制）
 (() => {
   const shell = () => window.CoReadV2Shell;
-  const state = {
+  const el = (name) => shell().elements[name] || document.getElementById(name);
+  const $ = (sel, root) => (root || document).querySelector(sel);
+  const $$ = (sel, root) => Array.prototype.slice.call((root || document).querySelectorAll(sel));
+
+  const S = {
     stage: "boot",
     attention: 2,
     attentionMax: 2,
-    selected: [],
-    inspected: new Set()
+    inspected: new Set(),
+    cards: {},            // materialId -> { tag, sentenceIds[], quality }
+    hasCard: {},          // materialId -> true
+    dialogue: null,
+    growth: { proficiency: {}, fans: 0, exp: 0 }
   };
 
-  function el(name) { return shell().elements[name]; }
+  const moodIdx = (key) => S.dlg.pack.moodOrder.indexOf(key);
 
   function renderAttention() {
     const pips = el("attentionPips");
     pips.innerHTML = "";
-    for (let i = 0; i < state.attentionMax; i += 1) {
+    for (let i = 0; i < S.attentionMax; i += 1) {
       const pip = document.createElement("span");
-      if (i < state.selected.length) pip.className = "is-used";
+      if (i < Object.keys(S.cards).length) pip.className = "is-used";
       pips.append(pip);
     }
-    el("attentionText").textContent = (state.attentionMax - state.selected.length) + " / " + state.attentionMax;
+    el("attentionText").textContent = (S.attentionMax - Object.keys(S.cards).length) + " / " + S.attentionMax;
   }
 
   function renderMaterials() {
     const pack = shell().pack;
     const list = el("materialList");
     list.innerHTML = "";
-    if (!pack) return;
     pack.materials.forEach((material) => {
-      const selected = state.selected.includes(material.id);
-      const inspected = state.inspected.has(material.id);
-      const locked = state.selected.length >= state.attention && !selected;
+      const hasCard = Boolean(S.cards[material.id]);
+      const locked = Object.keys(S.cards).length >= S.attention && !hasCard;
+      const inspected = S.inspected.has(material.id);
       const card = document.createElement("article");
-      card.className = "material-card" + (selected ? " is-selected" : "") + (locked ? " is-locked" : "");
+      card.className = "material-card" + (hasCard ? " is-selected" : "") + (locked ? " is-locked" : "");
       card.dataset.materialId = material.id;
       card.innerHTML =
-        '<div class="material-topline"><span class="source-kind">' + material.kindLabel + "</span><span class=\"material-date\">" + material.date + "</span></div>" +
+        '<div class="material-topline"><span class="source-kind">' + material.kindLabel + '</span><span class="material-date">' + material.date + '</span></div>' +
         "<h3>" + material.title + "</h3><p>" + material.excerpt + "</p>" +
         '<div class="material-meta"><span>' + material.author + "</span><span>·</span><span>" + material.engagement + "</span></div>" +
-        '<div class="material-actions"><button class="text-action inspect-material" type="button">' + (inspected ? "再次查看" : "展开检查") + '</button><button class="send-action select-material" type="button"' + (locked || !inspected ? " disabled" : "") + ">" + (selected ? "已在素材桌" : locked ? "注意力不够了" : !inspected ? "先打开看看" : "递给共读伙伴") + "</button></div>";
+        '<div class="material-actions"><button class="text-action inspect-material" type="button">' + (S.cards[material.id] ? "看素材卡" : inspected ? "再次展开" : "展开检查") + '</button><span class="pick-state">' + (S.cards[material.id] ? "已做成素材卡" : locked ? "注意力不够了" : "") + "</span></div>";
       card.querySelector(".inspect-material").addEventListener("click", () => openMaterial(material));
-      card.querySelector(".select-material").addEventListener("click", () => selectMaterial(material));
       list.append(card);
     });
-  }
-
-  function openMaterial(material) {
-    state.inspected.add(material.id);
-    shell().toast("已展开「" + material.title + "」——候选句挑选将在下一步接入。");
-    renderMaterials();
-  }
-
-  function selectMaterial(material) {
-    if (state.selected.includes(material.id)) { shell().toast("这份材料已经在素材桌上了。"); return; }
-    if (state.selected.length >= state.attention) { shell().toast("注意力只够细读两份，先放回一份。"); return; }
-    state.selected.push(material.id);
-    shell().setAiText("这份是「" + material.kindLabel + "」。先看看署名和日期，再决定信它几分。");
-    renderMaterials();
-    renderAttention();
-    renderTray();
-    if (state.selected.length >= state.attention) {
-      el("synthesizeButton").disabled = false;
-      el("synthesizeButton").textContent = "素材卡就绪，去找他聊聊";
-      shell().setStage(2);
-    }
   }
 
   function renderTray() {
     const pack = shell().pack;
     const tray = el("selectedMaterials");
     tray.innerHTML = "";
-    el("emptyDrop").hidden = state.selected.length > 0;
-    el("trayCount").textContent = state.selected.length + " / " + state.attentionMax + " 份材料";
-    state.selected.forEach((id) => {
+    const ids = Object.keys(S.cards);
+    el("emptyDrop").hidden = ids.length > 0;
+    el("trayCount").textContent = ids.length + " / " + S.attentionMax + " 份材料";
+    ids.forEach((id) => {
       const material = pack.materials.find((m) => m.id === id);
+      const cardInfo = S.cards[id];
       const item = document.createElement("article");
       item.className = "tray-item";
-      item.innerHTML = "<strong>" + material.kindLabel + "</strong><span>" + material.title + "</span>";
+      item.innerHTML = "<strong>" + material.kindLabel + "</strong><span>" + material.title + "（" + cardInfo.sentenceIds.length + " 句 · 来源标「" + tagLabel(cardInfo.tag) + "」）</span>";
       tray.append(item);
     });
+    const ready = ids.length >= S.attention;
+    el("synthesizeButton").disabled = !ready;
+    el("synthesizeButton").textContent = ready ? "素材卡就绪，去找他聊聊" : "挑好句子，去找他聊聊";
+  }
+
+  function tagLabel(tagId) {
+    const pack = shell().pack;
+    const found = pack.materials.find((m) => m.kind === tagId);
+    return found ? found.kindLabel : tagId;
+  }
+
+  // —— 素材卡弹窗 ——
+  let modalMaterial = null;
+  let pickedIds = [];
+  let pickedTag = null;
+
+  function openMaterial(material) {
+    modalMaterial = material;
+    pickedIds = [];
+    pickedTag = null;
+    S.inspected.add(material.id);
+    const existing = S.cards[material.id];
+    if (existing) { pickedIds = existing.sentenceIds.slice(); pickedTag = existing.tag; }
+    el("modalKind").textContent = material.kindLabel;
+    el("modalTitle").textContent = material.title;
+    el("modalLedger").innerHTML =
+      '<div class="ledger-item"><span>作者 / 来源</span><strong>' + material.author + "</strong></div>" +
+      '<div class="ledger-item"><span>发布时间</span><strong>' + material.date + "</strong></div>" +
+      '<div class="ledger-item"><span>可信度提示</span><strong>' + material.caution + "</strong></div>";
+    el("modalBodyText").innerHTML = material.body.map((p) => "<p>" + p + "</p>").join("");
+    const list = el("sentenceList");
+    list.innerHTML = "";
+    material.sentences.forEach((sentence) => {
+      const button = document.createElement("button");
+      button.className = "sentence-item" + (pickedIds.includes(sentence.id) ? " is-picked" : "");
+      button.type = "button";
+      button.dataset.sentenceId = sentence.id;
+      button.textContent = sentence.text;
+      button.addEventListener("click", () => {
+        const idx = pickedIds.indexOf(sentence.id);
+        if (idx >= 0) pickedIds.splice(idx, 1);
+        else if (pickedIds.length < 3) pickedIds.push(sentence.id);
+        else { shell().toast("素材卡最多放三句，先取消一句。"); return; }
+        button.classList.toggle("is-picked", pickedIds.includes(sentence.id));
+        refreshModal();
+      });
+      list.append(button);
+    });
+    const tags = el("tagOptions");
+    tags.innerHTML = "";
+    const kindLabels = { official: "官方信息", guide: "老攻略", experience: "个人经历", asker: "提问者补充" };
+    Object.keys(kindLabels).forEach((kind) => {
+      const button = document.createElement("button");
+      button.className = "tag-option" + (pickedTag === kind ? " is-picked" : "");
+      button.type = "button";
+      button.dataset.tag = kind;
+      button.textContent = kindLabels[kind];
+      button.addEventListener("click", () => {
+        pickedTag = kind;
+        $$(".tag-option", tags).forEach((b) => b.classList.toggle("is-picked", b === button));
+        refreshModal();
+      });
+      tags.append(button);
+    });
+    refreshModal();
+    $("#materialModal").hidden = false;
+  }
+
+  function refreshModal() {
+    el("sentenceCount").textContent = pickedIds.length + " / 3";
+    $("#modalConfirm").disabled = !(pickedIds.length >= 1 && pickedTag);
+  }
+
+  function calcQuality(material, card) {
+    const sents = material.sentences.filter((s) => card.sentenceIds.includes(s.id));
+    if (sents.some((s) => s.type === "ad")) return { key: "waste", why: "混进了广告句" };
+    if (sents.some((s) => s.type === "stale")) return { key: "waste", why: "过时句没有处理（" + material.date + " 的信息）" };
+    if (card.tag !== material.kind) return { key: "waste", why: "来源标错了（其实是「" + material.kindLabel + "」）" };
+    if (sents.every((s) => s.type === "dry")) return { key: "premium", why: "句句对题" };
+    return { key: "normal", why: "干货里带了一两句闲话" };
+  }
+
+  function confirmCard() {
+    if (!modalMaterial || !(pickedIds.length >= 1 && pickedTag)) return;
+    const material = modalMaterial;
+    const card = { tag: pickedTag, sentenceIds: pickedIds.slice() };
+    card.quality = calcQuality(material, card);
+    S.cards[material.id] = card;
+    $("#materialModal").hidden = true;
+    renderMaterials();
+    renderTray();
+    renderAttention();
+    const count = Object.keys(S.cards).length;
+    if (count === 1) shell().setAiText("素材卡做好了。再挑一份材料，我们就能去找他了。");
+    if (count >= S.attention) {
+      shell().setAiText("两张素材卡都好了。他还在等，我们去回复吧。");
+      shell().toast("两份素材卡就绪：打开「回答对话」开始回复");
+    }
+  }
+
+  function bindModal() {
+    $("#closeMaterialModal").addEventListener("click", () => { $("#materialModal").hidden = true; });
+    $("#modalCancel").addEventListener("click", () => { $("#materialModal").hidden = true; });
+    $("#modalConfirm").addEventListener("click", confirmCard);
+    el("synthesizeButton").addEventListener("click", startDialogue);
+  }
+
+  // —— 卡牌对话 ——
+  const playerLines = {
+    empathy: "第一次都这样，谁都有第一次，别怕，我们一步步来。",
+    probe: "那个……学校医保的手续，你办了吗？",
+    advice: "我的建议：先把医保手续办好，再按官方流程挂号。",
+    story: "讲个别人的第一次——他也在大厅站了十分钟不敢动，后来发现跟着指示牌走就行。",
+    checklist: "清单给你：①身份证 ②医保码 ③导诊台问科室 ④报到机报到。",
+    tradeoff: "咱们把两条路的利弊摆一摆……"
+  };
+
+  function chatMsg(who, name, text, quote) {
+    const thread = el("chatThread");
+    const msg = document.createElement("div");
+    msg.className = "chat-msg is-" + who;
+    const avatar = document.createElement("span");
+    avatar.className = "chat-avatar";
+    avatar.textContent = who === "asker" ? (shell().pack.question.askerShort || "?").slice(0, 1) : who === "player" ? "你" : "00";
+    const bubble = document.createElement("div");
+    bubble.className = "chat-bubble";
+    const strong = document.createElement("strong");
+    strong.textContent = name;
+    const p = document.createElement("p");
+    p.textContent = text;
+    bubble.append(strong, p);
+    if (quote) {
+      const q = document.createElement("p");
+      q.className = "chat-quote";
+      q.textContent = "「" + quote + "」";
+      bubble.append(q);
+    }
+    msg.append(avatar, bubble);
+    thread.append(msg);
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  function renderDialogueUI() {
+    const D = S.dlg;
+    const pips = el("patiencePips");
+    pips.innerHTML = "";
+    for (let i = 0; i < D.patienceMax; i += 1) {
+      const pip = document.createElement("span");
+      if (i >= D.patience) pip.className = "is-spent";
+      pips.append(pip);
+    }
+    el("patienceText").textContent = D.patience + " / " + D.patienceMax;
+    $$("#moodPips .mood-pip").forEach((pip) => {
+      const idx = moodIdx(pip.dataset.mood);
+      pip.classList.toggle("is-reached", idx < D.mood);
+      pip.classList.toggle("is-current", idx === D.mood);
+    });
+    $$("#handCards .method-card").forEach((button) => {
+      const id = button.dataset.method;
+      const conf = D.pack.methods[id];
+      const unlocked = D.unlocked.includes(id);
+      const usedOut = (D.used[id] || 0) >= conf.maxPerQuestion;
+      const tooExpensive = D.patience < conf.cost;
+      button.disabled = !unlocked || usedOut || tooExpensive || Boolean(D.done);
+      button.classList.toggle("is-locked", !unlocked);
+      const small = button.querySelector("small");
+      if (!unlocked) small.textContent = "等级解锁";
+      else if (usedOut) small.textContent = "本题已用完";
+      else small.textContent = conf.cost + " 耐心 · " + (D.used[id] ? "已用 " + D.used[id] + " 次" : conf.label);
+    });
+    const usedList = Object.keys(D.used);
+    el("turnHint").textContent = D.done
+      ? "对话结束 → 结算"
+      : "思路 " + (D.patience > 0 && !D.done ? 1 : 0) + " · 已打 " + usedList.length + " 张牌 · 耐心 " + D.patience + " / " + D.patienceMax;
+  }
+
+  function hasSentence(id) {
+    return Object.values(S.cards).some((card) => card.sentenceIds.includes(id));
+  }
+
+  function evalHit(methodId, forceHit) {
+    if (methodId === "probe") return forceHit || hasSentence("m4-s1");
+    if (methodId === "empathy") return hasSentence("m3-s1");
+    if (methodId === "advice") return ["m1-s1", "m1-s2", "m4-s1"].some(hasSentence);
+    if (methodId === "checklist") return ["m1-s1", "m1-s2", "m1-s3"].filter(hasSentence).length >= 2;
+    return false;
+  }
+
+  function playMethod(methodId) {
+    const D = S.dlg;
+    if (!D || D.done) return;
+    const conf = D.pack.methods[methodId];
+    if ((D.used[methodId] || 0) >= conf.maxPerQuestion || D.patience < conf.cost) return;
+    const combo = D.last === "empathy" && methodId === "probe" ? "probe-hit" : D.last === "probe" && methodId === "advice" ? "advice-up" : null;
+    const hit = evalHit(methodId, combo === "probe-hit");
+    D.patience -= conf.cost;
+    if (hit && (methodId === "empathy" || methodId === "probe")) D.patience = Math.min(D.patienceMax, D.patience + 1);
+    D.used[methodId] = (D.used[methodId] || 0) + 1;
+    D.growth.proficiency[methodId] = (D.growth.proficiency[methodId] || 0) + 1;
+    if (hit) {
+      D.mood = Math.min(D.moodOrder.length - 1, D.mood + (combo === "advice-up" ? 2 : 1));
+      D.hits.push(methodId);
+    }
+    const moodKey = D.moodOrder[D.mood];
+    chatMsg("player", "共读答主 · 你", playerLines[methodId], quoteFor(methodId));
+    chatMsg("asker", D.pack.question.askerShort, D.pack.matrix[methodId][moodKey][hit ? "hit" : "miss"]);
+    shell().setAiText(hit ? "问中了！你看他的话多起来了。" : "……他好像没接住。换张牌，或者换句素材试试。");
+    D.last = methodId;
+    renderDialogueUI();
+    if (D.patience <= 0) window.setTimeout(() => endDialogue("patience"), 600);
+    else if (D.mood === D.moodOrder.length - 1) el("turnHint").textContent = "他踏实了。可以就此收尾 → 点击下方「结束对话」";
+  }
+
+  function quoteFor(methodId) {
+    const quoteMap = { probe: "m4-s1", empathy: "m3-s1", advice: "m1-s1", checklist: "m1-s1", story: "m3-s1", tradeoff: "" };
+    const id = quoteMap[methodId];
+    if (!id || !hasSentence(id)) return "";
+    const material = shell().pack.materials.find((m) => m.sentences.some((s) => s.id === id));
+    const sentence = material.sentences.find((s) => s.id === id);
+    return sentence.text;
+  }
+
+  function endDialogue(reason) {
+    const D = S.dlg;
+    if (!D || D.done) return;
+    D.done = true;
+    renderDialogueUI();
+    const hitsCount = D.hits.length;
+    const steady = D.mood === D.moodOrder.length - 1;
+    let leave = { text: "他默默消失了。几天后，你刷到他把同一个问题问向了别人。", fan: 0 };
+    if (steady && hitsCount >= 2) leave = { text: "关注了你，说「下次还来找你」。", fan: 1 };
+    else if (steady) leave = { text: "认真道谢后离开。", fan: 0 };
+    else if (D.mood >= 2) leave = { text: "客气地结束对话，没有后续。", fan: 0 };
+    S.settle = { hitsCount, leave, stale: Object.values(S.cards).some((card) => card.quality.key === "waste") };
+    showSettle();
+  }
+
+  function showSettle() {
+    const D = S.dlg;
+    el("settleTitle").textContent = D.mood === D.moodOrder.length - 1 ? "他踏实下来了" : shell().pack.moodLabels[D.moodOrder[D.mood]] + "地结束了对话";
+    el("settleHits").innerHTML = D.hits.length
+      ? D.hits.map((id) => "<p>✔ " + D.pack.methods[id].label + "——答中了</p>").join("")
+      : "<p>没有答中任何一招。</p>";
+    el("settleCards").innerHTML = Object.keys(S.cards).map((id) => {
+      const material = shell().pack.materials.find((m) => m.id === id);
+      const card = S.cards[id];
+      const cls = card.quality.key === "premium" ? "is-premium" : card.quality.key === "normal" ? "is-normal" : "is-waste";
+      const name = card.quality.key === "premium" ? "精华卡" : card.quality.key === "normal" ? "普通卡" : "废卡";
+      return '<p class="' + cls + '"><strong>' + name + "</strong> " + material.kindLabel + "：" + card.quality.why + "</p>";
+    }).join("");
+    const leave = S.settle.leave;
+    el("settleLeave").innerHTML = "<p>" + leave.text + "</p>";
+    el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 ×" + Object.keys(S.cards).length + (leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
+    el("settleOverlay").hidden = false;
+    shell().setStage(3);
+  }
+
+  function showLetter() {
+    const letter = S.settle.stale ? shell().pack.letters.stale : shell().pack.letters.good;
+    el("settleTitle").textContent = "回信 · " + letter.days + " 天后";
+    el("settleHits").innerHTML = "<p>" + letter.text + "</p>";
+    el("settleCards").innerHTML = "";
+    el("settleLeave").innerHTML = "";
+    el("settleGains").innerHTML = "<p>" + letter.result + "</p><p><small>已记入共读札记：" + letter.memory + "</small></p>";
+    $("#settleContinue").textContent = "再回答一题（刷新重开）";
+    $("#settleContinue").onclick = () => window.location.reload();
+    shell().setStage(4);
+    recordGrowth(letter);
+  }
+
+  function recordGrowth(letter) {
+    const growth = $("#growthList");
+    growth.innerHTML = "";
+    const item = document.createElement("li");
+    item.innerHTML = "<span class='growth-dot'></span> " + letter.memory;
+    growth.append(item);
+    $("#principleCard").innerHTML = "<span>今晚的收获</span><p>" + (S.settle.stale ? "过时的信息会让人白跑一趟。先看日期，再开口。" : "先接住人，再给方法。帮一个人，就是帮一片人。") + "</p>";
+  }
+
+  function startDialogue() {
+    const pack = shell().pack;
+    if (Object.keys(S.cards).length < S.attention) { shell().toast("先在共读里做好两份素材卡。"); return; }
+    S.stage = "dialogue";
+    S.dlg = {
+      pack,
+      mood: 0,
+      moodOrder: pack.moodOrder,
+      patienceMax: pack.question.patienceBase + 2,
+      patience: pack.question.patienceBase + 2,
+      used: {},
+      last: null,
+      hits: [],
+      done: false,
+      growth: S.growth,
+      unlocked: ["empathy", "probe", "advice", "checklist"]
+    };
+    el("chatThread").innerHTML = "";
+    chatMsg("asker", pack.question.askerShort, pack.question.opening);
+    shell().setAiText("他开口了。先用共情接住他，或者追问问清细节——素材卡上的句子就是你的底气。");
+    renderDialogueUI();
+    shell().focusWindow("chatWindow");
+    shell().setStage(2);
+    el("synthesizeButton").disabled = true;
+    bindEndButton();
+  }
+
+  function bindEndButton() {
+    let endButton = $("#endDialogueButton");
+    if (!endButton) {
+      endButton = document.createElement("button");
+      endButton.id = "endDialogueButton";
+      endButton.className = "end-dialogue";
+      endButton.type = "button";
+      endButton.textContent = "结束对话，看看结果";
+      endButton.addEventListener("click", () => endDialogue("manual"));
+      el("turnHint").after(endButton);
+    }
+    endButton.hidden = false;
   }
 
   function onShellReady() {
-    state.stage = "research";
+    S.stage = "research";
     const pack = shell().pack;
     if (!pack) { shell().toast("文案包未加载"); return; }
     shell().fillQuestion(pack.question);
-    el("researchInstruction").textContent = "注意力只够细读两份。先打开材料看清作者和日期，再决定把哪份递给伙伴。";
+    el("researchInstruction").textContent = "注意力只够细读两份。展开材料 → 挑最多 3 句做成素材卡 → 标对来源。";
     renderAttention();
     renderMaterials();
     renderTray();
+    bindModal();
+    el("synthesizeButton").addEventListener("click", startDialogue);
+    $$("#handCards .method-card").forEach((button) => button.addEventListener("click", () => playMethod(button.dataset.method)));
+    $("#settleContinue").addEventListener("click", showLetter);
     shell().setStage(1);
     shell().focusWindow("browserWindow");
     shell().toast("收到一条来自林一舟的求助");
   }
 
-  window.CoReadEngine = { onShellReady, state };
+  window.CoReadEngine = { onShellReady, state: S, playMethod, endDialogue, evalHit, calcQuality };
 })();

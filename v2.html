@@ -190,6 +190,35 @@
     </div>
   </section>
 
+  <section class="modal-backdrop" id="materialModal" hidden>
+    <article class="material-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header"><div><span class="eyebrow" id="modalKind">材料</span><h2 id="modalTitle"></h2></div><button class="close-modal" id="closeMaterialModal" type="button" aria-label="关闭">×</button></header>
+      <div class="modal-ledger" id="modalLedger"></div>
+      <div class="modal-bodytext" id="modalBodyText"></div>
+      <div class="sentence-pick">
+        <div class="sentence-pick-head"><span class="eyebrow">伙伴划出的候选句 · 最多挑 3 句</span><strong id="sentenceCount">0 / 3</strong></div>
+        <div class="sentence-list" id="sentenceList"></div>
+        <p class="sentence-hint">选的时候不告诉你对错——是不是好句子，结算回见分晓。</p>
+      </div>
+      <div class="source-tag-row"><span class="eyebrow">给这份材料标来源：</span><div class="tag-options" id="tagOptions"></div></div>
+      <footer class="modal-actions"><button class="secondary-action2" id="modalCancel" type="button">返回列表</button><button class="primary-action compact" id="modalConfirm" type="button" disabled>做成素材卡</button></footer>
+    </article>
+  </section>
+
+  <section class="settle-overlay" id="settleOverlay" hidden>
+    <article class="settle-card">
+      <span class="eyebrow">本局结算 · 挂号题</span>
+      <h2 id="settleTitle"></h2>
+      <div class="settle-grid">
+        <div class="settle-block"><span>答中清单</span><div id="settleHits"></div></div>
+        <div class="settle-block"><span>素材卡开卡</span><div id="settleCards"></div></div>
+        <div class="settle-block"><span>他的离开方式</span><div id="settleLeave"></div></div>
+        <div class="settle-block"><span>入账</span><div id="settleGains"></div></div>
+      </div>
+      <button class="boot-button" id="settleContinue" type="button">等他的回信 <span>→</span></button>
+    </article>
+  </section>
+
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./ai-client.js?v=20260908-1"></script>
   <script src="./game/question-pack.js?v=20260908-1"></script>
