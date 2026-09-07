@@ -562,3 +562,8 @@ html, body {
 .progress-steps span.is-current { color: #ffd97a; }
 .progress-steps span.is-done { color: #d7e4f2; }
 .taskbar-time { color: #fff; }
+
+/* —— 壁纸：2026-09-08 用户指定改用原版 Bliss 图（覆盖手绘 SVG 版） —— */
+.wallpaper {
+  background: url("./assets/wallpaper-bliss.jpg") center / cover no-repeat;
+}

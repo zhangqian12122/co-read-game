@@ -35,7 +35,7 @@
 - 情感主线：「帮一个人就是帮一片人；有些问题不需要解决，需要有人陪」
 
 ## 更新（2026-09-08 · 用户本人指定，等效锁定）
-- 桌面壁纸：Windows 经典 Bliss 风（蓝天白云草地，assets/wallpaper-bliss.svg，手绘 SVG 非版权图），覆盖原深蓝渐变
+- 桌面壁纸：Windows XP 原版 Bliss 图（assets/wallpaper-bliss.jpg，2026-09-08 用户提供，替换早期手绘 SVG 版）
 - 桌面图标：Windows 软件图标风 SVG（assets/icon-browser / icon-chat / icon-notes / icon-settings），白色标签文字 + 深色投影，选中态蓝色底
 - 任务栏：XP 蓝渐变 + 绿色斜体开始键
 - 其余令牌（窗口描边/字体/卧室暖色/知乎蓝）不变，仍然锁定

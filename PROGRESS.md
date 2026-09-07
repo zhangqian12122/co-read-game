@@ -20,3 +20,8 @@
 - 完成：用户反馈落实——桌面壁纸换 Windows 经典 Bliss 风 SVG；四个桌面图标改 Windows 软件图标风 SVG；任务栏改 XP 蓝渐变+绿色开始键；test-v2 加 2 项断言（16/16 PASS）
 - 遗留：无
 - 下一步：M1 候选句与台词矩阵
+
+## 2026-09-08 01:30（人工会话 · 壁纸改用原版 Bliss 图）
+- 完成：用户提供原版 Bliss JPG（assets/wallpaper-bliss.jpg），v2.css 壁纸引用切换；server.js MIME 补 .jpg/.svg
+- 遗留：无
+- 下一步：M1 候选句与台词矩阵
