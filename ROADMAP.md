@@ -28,8 +28,9 @@
 - 验收：浏览器打开 /v2 看到完整布局，窗口可拖动，卧室面板可折叠
 
 ## M1 · 挂号题文案包（game/question-pack.js）
-- [ ] Schema：help（描述+主锚点+副锚点）/ materials×4（全文+候选句标注 干货|废话|广告|过时）/ patience 基线 / 台词矩阵（6方式×4状态×命中|答偏）/ 判定表 / 两版回信
-- [ ] 按设计总览试玩示例写全林一舟挂号题
+- [x] Schema：help（描述+主锚点+副锚点）/ materials×4（全文+候选句标注 干货|废话|广告|过时）/ patience 基线 / 台词矩阵（6方式×4状态×命中|答偏）/ 判定表 / 两版回信
+- [x] 按设计总览试玩示例写全林一舟挂号题（19 候选句 / 6×4×2 台词矩阵 / 判定表 / 两版回信）
+- [x] validatePack 校验 + test-pack.mjs（11 项）+ game/export-pack.mjs → docs/挂号题文案包.md
 - 验收：文案包通过 schema 校验函数；导出 markdown 给队友
 
 ## M2 · 引擎（game/engine.js）

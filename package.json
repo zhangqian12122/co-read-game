@@ -10,7 +10,7 @@
     "start": "node server.js",
     "desktop": "electron .",
     "make:win": "electron-builder --win nsis --x64 --config forge.config.cjs",
-    "test": "node smoke.mjs && node test-save.mjs"
+    "test": "node smoke.mjs && node test-save.mjs && node test-pack.mjs && node test-v2.mjs"
   },
   "dependencies": {
     "electron-squirrel-startup": "1.0.1"
