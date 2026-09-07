@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#17375f">
+  <title>回答主游戏｜知乎 · 共读OS v2</title>
+  <link rel="stylesheet" href="./v2.css?v=20260908-1">
+</head>
+<body>
+  <main class="os-root" id="osRoot" aria-label="回答主游戏 虚拟电脑桌面">
+    <section class="workspace" id="workspace">
+      <div class="wallpaper" aria-hidden="true"></div>
+      <nav class="dock-icons" aria-label="桌面软件">
+        <button class="dock-icon is-active" data-open="browserWindow" type="button">
+          <span class="dock-shape dock-zhihu" aria-hidden="true">知</span><span>知乎浏览器</span>
+        </button>
+        <button class="dock-icon" data-open="chatWindow" type="button">
+          <span class="dock-shape dock-chat" aria-hidden="true">答</span><span>回答对话</span>
+        </button>
+        <button class="dock-icon" data-open="memoryWindow" type="button">
+          <span class="dock-shape dock-memory" aria-hidden="true">札</span><span>共读札记</span>
+        </button>
+        <button class="dock-icon" data-open="settingsWindow" type="button">
+          <span class="dock-shape dock-settings" aria-hidden="true">设</span><span>系统设置</span>
+        </button>
+      </nav>
+      <section class="app-window browser-window is-front" id="browserWindow" data-task="知乎浏览器" aria-label="知乎浏览器窗口">
+        <header class="titlebar blue-titlebar">
+          <div class="titlebar-title"><span class="mini-app-icon">知</span> 知乎 · 共读浏览器</div>
+          <div class="window-controls">
+            <button class="window-control" data-win="minimize" type="button" aria-label="最小化知乎浏览器">—</button>
+            <button class="window-control close-control" data-win="close" type="button" aria-label="关闭知乎浏览器">×</button>
+          </div>
+        </header>
+        <div class="browser-toolbar">
+          <button class="nav-button" type="button" aria-label="后退">‹</button>
+          <button class="nav-button" type="button" aria-label="前进">›</button>
+          <div class="address-bar" id="addressBar"><span class="lock-dot"></span> zhihu.local/question/waiting</div>
+          <span class="connection-label">模拟内容</span>
+        </div>
+        <div class="zhihu-nav"><strong class="zhihu-wordmark">知乎</strong><span>首页</span><span>等你来答</span><span>关注</span><span class="nav-spacer"></span><span class="co-read-indicator"><i></i> 共读中</span></div>
+        <div class="browser-page">
+          <section class="question-panel">
+            <div class="question-kicker" id="questionKicker">等待求助进入…</div>
+            <h1 id="questionTitle">今晚还没有新的求助</h1>
+            <p class="question-body" id="questionBody">电脑亮起之后，第一条求助会出现在这里。</p>
+            <div class="question-stats" id="questionStats"><span>0 个回答</span><span>0 人关注</span></div>
+          </section>
+          <section class="research-section" aria-labelledby="researchTitle">
+            <header class="section-heading">
+              <div><span class="eyebrow" id="researchEyebrow">共读调查 / 01</span><h2 id="researchTitle">先看哪两份材料？</h2></div>
+              <div class="attention-meter" aria-live="polite"><span>注意力</span><div class="attention-pips" id="attentionPips"></div><strong id="attentionText">2 / 2</strong></div>
+            </header>
+            <p class="section-instruction" id="researchInstruction">打开材料，看清作者、日期和来源，再挑句子做成素材卡。</p>
+            <div class="material-list" id="materialList" aria-live="polite"></div>
+          </section>
+        </div>
+      </section>
+      <section class="app-window chat-window" id="chatWindow" data-task="回答对话" aria-label="回答对话窗口">
+        <header class="titlebar warm-titlebar">
+          <div class="titlebar-title"><span class="mini-app-icon room-mini">答</span> 回答 · <span id="chatAskerName">求助者</span></div>
+          <div class="window-controls">
+            <button class="window-control" data-win="minimize" type="button" aria-label="最小化回答对话">—</button>
+            <button class="window-control close-control" data-win="close" type="button" aria-label="关闭回答对话">×</button>
+          </div>
+        </header>
+        <div class="chat-status">
+          <div class="mood-track" aria-label="求助者状态"><span>状态</span>
+            <div class="mood-pips" id="moodPips">
+              <span class="mood-pip" data-mood="panic">慌乱</span><i></i>
+              <span class="mood-pip" data-mood="dazed">懵懂</span><i></i>
+              <span class="mood-pip" data-mood="getting">了解</span><i></i>
+              <span class="mood-pip" data-mood="steady">踏实</span>
+            </div>
+          </div>
+          <div class="patience-meter" aria-label="求助者耐心"><span>耐心</span><div class="patience-pips" id="patiencePips"></div><strong id="patienceText">0 / 0</strong></div>
+        </div>
+        <div class="chat-thread" id="chatThread" aria-live="polite">
+          <div class="chat-msg is-asker"><span class="chat-avatar">?</span><div class="chat-bubble"><strong>求助者</strong><p>共读结束后，对话会在这里开始。</p></div></div>
+        </div>
+        <div class="turn-hint" id="turnHint">思路 1 · 每回合打出一张「回答方式」</div>
+        <div class="hand-cards" id="handCards">
+          <button class="method-card" data-method="empathy" type="button" disabled><strong>共情</strong><small>1 耐心 · 安抚情绪</small></button>
+          <button class="method-card" data-method="probe" type="button" disabled><strong>追问</strong><small>1 耐心 · 问出情况</small></button>
+          <button class="method-card" data-method="advice" type="button" disabled><strong>建议</strong><small>1 耐心 · 给个方向</small></button>
+          <button class="method-card" data-method="story" type="button" disabled><strong>案例</strong><small>2 耐心 · 亲历故事</small></button>
+          <button class="method-card" data-method="checklist" type="button" disabled><strong>清单</strong><small>2 耐心 · 可执行步骤</small></button>
+          <button class="method-card" data-method="tradeoff" type="button" disabled><strong>利弊摊开</strong><small>3 耐心 · 两边摆开</small></button>
+        </div>
+      </section>
+      <aside class="app-window memory-window is-closed" id="memoryWindow" data-task="共读札记" aria-label="共读札记窗口">
+        <header class="titlebar dark-titlebar">
+          <div class="titlebar-title">共读札记.txt</div>
+          <div class="window-controls">
+            <button class="window-control" data-win="minimize" type="button" aria-label="最小化共读札记">—</button>
+            <button class="window-control close-control" data-win="close" type="button" aria-label="关闭共读札记">×</button>
+          </div>
+        </header>
+        <div class="memory-content">
+          <span class="eyebrow">共读札记 / 成长记录</span>
+          <h3 id="growthTitle">你们一起做过的事会留在这里</h3>
+          <ul class="growth-list" id="growthList"><li><span class="growth-dot empty"></span> 第一页还是空的</li></ul>
+          <div class="principle-card" id="principleCard"><span>第一张空白页</span><p>还没有写下任何东西。</p></div>
+        </div>
+      </aside>
+      <aside class="app-window settings-window is-closed" id="settingsWindow" data-task="系统设置" aria-label="系统设置窗口">
+        <header class="titlebar dark-titlebar">
+          <div class="titlebar-title">系统设置.exe · AI 增强</div>
+          <div class="window-controls">
+            <button class="window-control" data-win="minimize" type="button" aria-label="最小化系统设置">—</button>
+            <button class="window-control close-control" data-win="close" type="button" aria-label="关闭系统设置">×</button>
+          </div>
+        </header>
+        <div class="ai-settings-content">
+          <span class="eyebrow">AI 增强 / 实验功能</span>
+          <h3>给共读伙伴接上真实的大模型</h3>
+          <p class="ai-settings-note">关闭或未配置时，伙伴使用内置脚本，游戏流程完整可玩。所有配置只保存在本机浏览器。</p>
+          <label class="ai-field ai-toggle-field"><input type="checkbox" id="aiEnabledToggle"><span>启用 AI 增强模式</span></label>
+          <label class="ai-field"><span>接口地址（OpenAI 兼容）</span><input id="aiBaseUrl" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" autocomplete="off"></label>
+          <label class="ai-field"><span>API Key</span><input id="aiApiKey" type="password" placeholder="粘贴服务商提供的密钥" autocomplete="off"></label>
+          <label class="ai-field"><span>模型名</span><input id="aiModel" type="text" placeholder="glm-4-flash" autocomplete="off"></label>
+          <div class="ai-settings-actions">
+            <button class="secondary-action" id="aiTestButton" type="button">测试连接</button>
+            <span id="aiTestResult" aria-live="polite"></span>
+          </div>
+          <div class="ai-preset-row">
+            <span>快速填入：</span>
+            <button class="text-action" data-ai-preset="zhipu" type="button">智谱 GLM</button>
+            <button class="text-action" data-ai-preset="deepseek" type="button">DeepSeek</button>
+          </div>
+        </div>
+      </aside>
+    </section>
+    <aside class="bedroom-panel" id="bedroomPanel" aria-label="共读房间">
+      <header class="bedroom-head">
+        <span class="bedroom-title"><span class="mini-app-icon room-mini">▦</span> 共读房间</span>
+        <button class="bedroom-collapse" id="collapseBedroom" type="button" aria-label="折叠卧室面板">»</button>
+      </header>
+      <div class="room-scene" id="roomScene">
+        <div class="room-canvas">
+          <img class="room-base-art" src="./assets/room-stage-0-v1.png" alt="夜晚的共读房间" draggable="false">
+          <div class="wall-note is-empty" aria-live="polite" aria-label="伙伴留在墙上的便签"><span id="wallNote"></span></div>
+          <div class="ai-character stage-zero" id="aiCharacter" role="button" tabindex="0" aria-label="共读伙伴 00">
+            <span class="ai-character-art ai-character-sprite" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="ai-dialogue" id="aiDialogue" aria-live="polite">
+          <span class="speaker" id="aiSpeaker">共读伙伴 00</span>
+          <p id="aiText">我是共读伙伴 00。你负责怎么回答，我帮你盯材料，也会记住我们每次怎么选。</p>
+        </div>
+      </div>
+      <div class="reading-tray">
+        <div class="tray-heading"><div><span class="eyebrow">素材卡桌</span><strong id="trayCount">0 / 3 句</strong></div><span class="tray-note">从材料里挑出的句子会摆在这里</span></div>
+        <div class="drop-zone" id="dropZone" aria-label="素材卡桌"><div class="empty-drop" id="emptyDrop"><p>桌上还没有素材卡</p><small>在材料里点选句子，最多挑三句</small></div><div class="selected-materials" id="selectedMaterials"></div></div>
+        <button class="primary-action" id="synthesizeButton" type="button" disabled>挑好句子，去找他聊聊</button>
+      </div>
+    </aside>
+    <button class="bedroom-expand" id="expandBedroom" type="button" aria-label="展开卧室面板" hidden>«</button>
+    <footer class="taskbar">
+      <button class="start-button" type="button"><span>▦</span> 共读OS</button>
+      <div class="task-buttons" id="taskButtons"></div>
+      <div class="progress-steps" id="progressSteps" aria-label="事件进度"><span class="is-current">接题</span><i></i><span>共读</span><i></i><span>对话</span><i></i><span>结算</span><i></i><span>回信</span></div>
+      <div class="taskbar-time" id="taskbarTime">22:40</div>
+    </footer>
+  </main>
+
+  <section class="boot-overlay" id="bootOverlay" aria-labelledby="bootTitle">
+    <div class="boot-card">
+      <div class="boot-content">
+        <div class="boot-index">CO-READ OS / V2</div>
+        <p class="boot-kicker">知乎回答主 · 今晚 22:40</p>
+        <h1 id="bootTitle">帮刚开始独立生活的年轻人，<br>答好第一封求助。</h1>
+        <p class="boot-copy">你是一名知乎回答主。求助进来后，先在知乎里共读材料、挑出真正有用的句子做成素材卡，再和求助者对话。他慌不慌、信不信你，都看你怎么答。</p>
+        <div class="boot-objective"><span>今晚的目标</span><p>陪第一位求助者把问题理清楚，让他踏实下来。</p></div>
+        <div class="boot-route" aria-label="一局的三个阶段">
+          <span><i>1</i><b>共读</b><small>选两份材料，挑三句</small></span>
+          <span><i>2</i><b>回答</b><small>打方式牌，接住他</small></span>
+          <span><i>3</i><b>回信</b><small>几天后见分晓</small></span>
+        </div>
+        <button class="boot-button" id="startButton" type="button">开始今晚的回答 <span>→</span></button>
+        <small>回答署名：共读答主 · 你 × 共读伙伴 00</small>
+      </div>
+      <figure class="boot-scene" aria-label="夜晚的共读房间和伙伴 00">
+        <img class="boot-scene-room" src="./assets/room-stage-0-v1.png" alt="" aria-hidden="true">
+        <span class="boot-scene-light" aria-hidden="true"></span>
+        <img class="boot-scene-character" src="./assets/ai-character-stage-0-v1.png" alt="房间里的共读伙伴 00">
+        <figcaption><small>CO-READ ROOM / 00</small><strong>房间里的伙伴在等你</strong><span>电脑亮起来，第一封求助就到</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./ai-client.js?v=20260908-1"></script>
+  <script src="./game/question-pack.js?v=20260908-1"></script>
+  <script src="./game/engine.js?v=20260908-1"></script>
+  <script src="./game/v2-shell.js?v=20260908-1"></script>
+</body>
+</html>
