@@ -131,5 +131,61 @@ w2.close();
 
 function $2steps(win) { return Array.prototype.slice.call(win.document.querySelectorAll('#progressSteps span')); }
 
+const S3 = () => w3.CoReadEngine.state;
+
+// —— 失败结局：全打偏 → 默默消失 → 没有等到回信 ——
+const dom3 = new JSDOM(html, {
+  url: fileUrl,
+  runScripts: 'dangerously',
+  resources: 'usable',
+  pretendToBeVisual: true,
+  beforeParse(window3) {
+    window3.matchMedia = () => ({ matches: true, media: 'screen', addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent() { return false; } });
+    window3.HTMLElement.prototype.scrollIntoView = function () {};
+  }
+});
+const w3 = dom3.window;
+for (let i = 0; i < 200; i += 1) {
+  if (w3.CoReadV2Shell && w3.CoReadEngine && w3.CoReadV2Pack) break;
+  await sleep(50);
+}
+const q3 = (win, sel) => Array.prototype.slice.call(win.document.querySelectorAll(sel));
+const one3 = (win, sel) => win.document.querySelector(sel);
+function cardIt(materialId, sentenceIds, tag) {
+  one3(w3, '#materialList .material-card[data-material-id="' + materialId + '"] .inspect-material').click();
+  sentenceIds.forEach((id) => {
+    q3(w3, '#sentenceList .sentence-item').find((b) => b.dataset.sentenceId === id).click();
+  });
+  q3(w3, '#tagOptions .tag-option').find((b) => b.dataset.tag === tag).click();
+  one3(w3, '#modalConfirm').click();
+}
+w3.document.querySelector('#startButton').click();
+await sleep(2100);
+cardIt('m2', ['m2-s4', 'm2-s5'], 'guide');
+await sleep(60);
+cardIt('m1', ['m1-s4', 'm1-s5'], 'official');
+await sleep(60);
+check('bad cards judged waste', S3().cards.m2.quality.key === 'waste' && S3().cards.m1.quality.key === 'waste');
+one3(w3, '#synthesizeButton').click();
+await sleep(200);
+check('bad-run dialogue starts at panic', S3().dlg && S3().dlg.mood === 0);
+['empathy', 'probe', 'advice', 'checklist', 'probe', 'advice'].forEach((m) => {
+  if (S3().dlg && !S3().dlg.done) w3.CoReadEngine.playMethod(m);
+});
+while (S3().dlg && !S3().dlg.done && S3().dlg.patience > 0) w3.CoReadEngine.playMethod('advice');
+await sleep(900);
+await sleep(900);
+check('bad-run patience drained to 0', S3().dlg.patience <= 0 && S3().dlg.done);
+check('bad-run mood never rose above dazed (forced probe hit)', S3().dlg.mood <= 1);
+check('bad-run silently gone', one3(w3, '#settleLeave').textContent.includes('默默消失'));
+check('bad-run silent flag set', S3().settle.silent === true);
+one3(w3, '#settleContinue').click();
+await sleep(150);
+check('silent letter title', one3(w3, '#settleTitle').textContent.includes('没有等到回信'));
+check('silent letter body', one3(w3, '#settleHits').textContent.includes('别人在答'));
+w3.close();
+
+console.log(failed === 0 ? 'ALL PASS' : failed + ' FAILED');
+process.exit(failed > 0 ? 1 : 0);
 console.log(failed === 0 ? 'ALL PASS' : failed + ' FAILED');
 process.exit(failed > 0 ? 1 : 0);

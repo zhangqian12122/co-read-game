@@ -1257,3 +1257,14 @@ html, body {
 }
 
 .boot-continue:hover { box-shadow: 7px 7px 0 #8a99ab; }
+
+/* —— 结算：粉丝印章 —— */
+.settle-stamp {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 7px;
+  border: 2px solid var(--coral);
+  color: var(--coral);
+  font: 800 10px/1 var(--display-font);
+  transform: rotate(-6deg);
+}

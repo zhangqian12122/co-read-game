@@ -132,6 +132,8 @@
       '<div class="ledger-item"><span>发布时间</span><strong>' + material.date + "</strong></div>" +
       '<div class="ledger-item"><span>可信度提示</span><strong>' + material.caution + "</strong></div>";
     el("modalBodyText").innerHTML = material.body.map((p) => "<p>" + p + "</p>").join("");
+    const inspectLines = shell().pack.companion && shell().pack.companion.inspectLines;
+    if (inspectLines && inspectLines[material.id] && !S.cards[material.id]) shell().setAiText(inspectLines[material.id]);
     const list = el("sentenceList");
     list.innerHTML = "";
     material.sentences.forEach((sentence) => {
@@ -331,7 +333,9 @@
     const moodKey = D.moodOrder[D.mood];
     chatMsg("player", "共读答主 · 你", playerLines[methodId], quoteFor(methodId));
     chatMsg("asker", D.pack.question.askerShort, D.pack.matrix[methodId][moodKey][hit ? "hit" : "miss"]);
-    shell().setAiText(hit ? "问中了！你看他的话多起来了。" : "……他好像没接住。换张牌，或者换句素材试试。");
+    const reactions = shell().pack.companion && shell().pack.companion[hit ? "reactionHit" : "reactionMiss"];
+    const pool = reactions && reactions.length ? reactions : [hit ? "问中了！" : "……没接住，换张牌试试。" ];
+    shell().setAiText(pool[Math.floor(Math.random() * pool.length)]);
     D.last = methodId;
     const endButton = $("#endDialogueButton");
     if (endButton) endButton.disabled = false;
@@ -351,6 +355,8 @@
     else if (steady) leave = { text: "认真道谢后离开。", fan: 0 };
     else if (D.mood >= 2) leave = { text: "客气地结束对话，没有后续。", fan: 0 };
     S.settle = { hitsCount, leave, stale: Object.values(S.cards).some((card) => card.quality.key === "waste") };
+    S.settle.silent = leave.fan === 0 && D.mood <= 1;
+    save();
     S.stage = "settle";
     save();
     renderDialogueUI();
@@ -370,7 +376,7 @@
       const name = card.quality.key === "premium" ? "精华卡" : card.quality.key === "normal" ? "普通卡" : "废卡";
       return '<p class="' + cls + '"><strong>' + name + "</strong> " + material.kindLabel + "：" + card.quality.why + "</p>";
     }).join("");
-    el("settleLeave").innerHTML = "<p>" + S.settle.leave.text + "</p>";
+    el("settleLeave").innerHTML = "<p>" + S.settle.leave.text + "</p>" + (S.settle.leave.fan ? "<span class='settle-stamp'>+1 粉丝</span>" : "");
     el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 ×" + Object.keys(S.cards).length + (S.settle.leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
     el("settleOverlay").hidden = false;
     $("#settleContinue").onclick = () => showLetter();
@@ -380,8 +386,9 @@
   function showLetter() {
     if (S.stage === "letter") return;
     S.stage = "letter";
-    const letter = S.settle.stale ? shell().pack.letters.stale : shell().pack.letters.good;
-    el("settleTitle").textContent = "回信 · " + letter.days + " 天后";
+    const silentLetter = { days: 3, text: "（这一夜之后，你没有等到他的回信。）几天后你刷到：他把同样的问题又问了一遍——这次，是别人在答。", result: "那条求助没能被接住。", memory: "有一条求助，我们没能接住。下一次，先把人接住再开口。" };
+    const letter = S.settle.silent ? silentLetter : S.settle.stale ? shell().pack.letters.stale : shell().pack.letters.good;
+    el("settleTitle").textContent = (S.settle.silent ? "没有等到回信 · " : "回信 · ") + letter.days + " 天后";
     el("settleHits").innerHTML = "<p>" + letter.text + "</p>";
     el("settleCards").innerHTML = "";
     el("settleLeave").innerHTML = "";
