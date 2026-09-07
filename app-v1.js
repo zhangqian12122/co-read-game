@@ -3678,14 +3678,17 @@ function resumeGame() {
   switch (save.position) {
     case "hospital-synthesis":
     case "career-synthesis":
+    case "custom-synthesis":
       openDecision();
       break;
     case "hospital-drafting":
     case "career-drafting":
+    case "custom-drafting":
       openResponseDraft(getAvailableDecisions().find((item) => item.id === state.decision), state.draftEvaluation);
       break;
     case "hospital-draft-ready":
-    case "career-draft-ready": {
+    case "career-draft-ready":
+    case "custom-draft-ready": {
       const savedDraftChoice = state.draftChoice;
       openResponseDraft(getAvailableDecisions().find((item) => item.id === state.decision), state.draftEvaluation);
       chooseResponseDraft(savedDraftChoice);
@@ -3693,6 +3696,7 @@ function resumeGame() {
     }
     case "hospital-responded":
     case "career-responded":
+    case "custom-responded":
       restoreRespondedScene();
       break;
     case "hospital-followup":
@@ -3705,6 +3709,7 @@ function resumeGame() {
       showCompanionNaming();
       break;
     case "career-followup":
+    case "custom-followup":
       state.step = "career-followup-pending";
       openCareerFollowup();
       break;

@@ -284,16 +284,29 @@
       <div class="ending-archive" id="endingArchive" hidden></div>
       <footer class="ending-actions">
         <button class="ending-secondary" id="endingStay" type="button">留在房间看看</button>
-        <button class="ending-primary" id="endingRestart" type="button">重新体验 <span>↻</span></button>
+                <button class="ending-secondary" id="endingCustomArchive" type="button">AI 共读 · 换你出题</button>
+<button class="ending-primary" id="endingRestart" type="button">重新体验 <span>↻</span></button>
       </footer>
       <small class="ending-scope">档案 00—01 到这里结束</small>
     </article>
   </section>
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <section class="modal-backdrop" id="customArchiveModal" hidden>
+    <article class="custom-archive-modal" role="dialog" aria-modal="true" aria-labelledby="customArchiveTitle">
+      <header class="modal-header"><div><span class="eyebrow">AI 共读 · 自定义档案</span><h2 id="customArchiveTitle">把你在乎的问题，变成下一份共读档案</h2></div><button class="close-modal" id="closeCustomArchive" type="button" aria-label="关闭">×</button></header>
+      <p class="custom-archive-note">粘贴任意知乎风格的问题（标题+补充说明），AI 会把它结构化成一份新的可玩档案：四份带作者和日期的材料、来源标签、共同决定与回答草稿。内容为模拟演绎，仅用于共读练习。</p>
+      <textarea id="customQuestionInput" rows="7" placeholder="例：大学生第一次自己去医院，挂号前需要准备什么？&#10;&#10;一个人在外地上学，最近要独自去医院，从没挂过号，很紧张……"></textarea>
+      <div class="custom-archive-actions">
+        <button class="secondary-action" id="customGenerateButton" type="button">生成共读档案</button>
+        <span id="customArchiveStatus" aria-live="polite"></span>
+      </div>
+    </article>
+  </section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./ai-client.js?v=20260907-2"></script>
   <script src="./save-system.js?v=20260907-1"></script>
   <script src="./app-v1.js?v=20260907-2"></script>
   <script src="./ai-enhance.js?v=20260907-2"></script>
+  <script src="./ai-archive.js?v=20260907-2"></script>
 </body>
 </html>
