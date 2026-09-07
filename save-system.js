@@ -12,7 +12,7 @@
     "accountabilityChoice", "accountabilityAftermathChoice", "accountabilityResolution",
     "careerAccountabilityChoice", "careerAccountabilityResolution", "finalChoice",
     "draftChoice", "draftEvaluation", "hospitalFollowupReplyChoice", "hospitalFollowupClosingChoice",
-    "hospitalConversationResolution", "memoryRecords", "traitEvents",
+    "hospitalConversationResolution", "aiDraftLine", "memoryRecords", "traitEvents",
     "onboardingDismissed", "computerMessageReady", "browserUnlocked",
     "chapterTwoPermissionResolved", "autoFlaggedMaterialId", "autoFlagCopy",
     "chapterOneSnapshot", "chapterTwoSnapshot", "locked"
