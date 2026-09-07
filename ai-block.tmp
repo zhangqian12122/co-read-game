@@ -1,0 +1,67 @@
+
+// —— AI 增强：设置面板与状态指示 ——
+
+function aiPresetValues(name) {
+  if (name === "zhipu") return { baseUrl: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-flash" };
+  if (name === "deepseek") return { baseUrl: "https://api.deepseek.com/v1", model: "deepseek-chat" };
+  return null;
+}
+
+function refreshAiIndicator() {
+  const indicator = document.getElementById("");
+  if (!indicator) return;
+  const text = document.getElementById("");
+  const ready = Boolean(window.CoReadAI && window.CoReadAI.isReady());
+  indicator.classList.toggle("", ready);
+  if (text) text.textContent = ready ? "AI 增强 · 开" : "AI 增强 · 关";
+  const settingsWindow = getWindowElement("");
+  if (settingsWindow) settingsWindow.classList.toggle("", ready);
+}
+
+function bindAiSettings() {
+  const settingsWindow = getWindowElement("");
+  const indicator = document.getElementById("");
+  if (!settingsWindow || !indicator || !window.CoReadAI) return;
+  const enabledToggle = settingsWindow.querySelector("");
+  const baseUrl = settingsWindow.querySelector("");
+  const apiKey = settingsWindow.querySelector("");
+  const model = settingsWindow.querySelector("");
+  const testButton = settingsWindow.querySelector("");
+  const testResult = settingsWindow.querySelector("");
+  const current = window.CoReadAI.get();
+  enabledToggle.checked = current.enabled;
+  baseUrl.value = current.baseUrl;
+  apiKey.value = current.apiKey;
+  model.value = current.model;
+  const sync = () => {
+    window.CoReadAI.update({ enabled: enabledToggle.checked, baseUrl: baseUrl.value.trim(), apiKey: apiKey.value.trim(), model: model.value.trim() });
+    refreshAiIndicator();
+  };
+  enabledToggle.addEventListener("", sync);
+  baseUrl.addEventListener("", sync);
+  apiKey.addEventListener("", sync);
+  model.addEventListener("", sync);
+  Array.prototype.forEach.call(settingsWindow.querySelectorAll("[data-ai-preset]"), (button) => {
+    button.addEventListener("", () => {
+      const preset = aiPresetValues(button.dataset.aiPreset);
+      if (!preset) return;
+      baseUrl.value = preset.baseUrl;
+      model.value = preset.model;
+      enabledToggle.checked = true;
+      sync();
+      testResult.textContent = "已填入，填上 Key 即可测试";
+    });
+  });
+  testButton.addEventListener("", async () => {
+    sync();
+    testResult.textContent = "连接中……";
+    try {
+      const reply = await window.CoReadAI.test();
+      testResult.textContent = "连接成功：" + reply;
+    } catch (error) {
+      testResult.textContent = "连接失败，检查地址和 Key（" + error.message + ")";
+    }
+    refreshAiIndicator();
+  });
+  indicator.addEventListener("", () => focusWindow(""));
+}

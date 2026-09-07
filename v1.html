@@ -12,7 +12,7 @@
   <link rel="preload" as="image" href="./assets/ai-character-bed-sequence-v5.png?v=20260831-1">
   <link rel="preload" as="image" href="./assets/ai-character-bed-seated-v1.png?v=20260831-1">
   <link rel="stylesheet" href="./styles.css?v=20260830-5">
-  <link rel="stylesheet" href="./v1.css?v=20260907-1">
+  <link rel="stylesheet" href="./v1.css?v=20260907-2">
 </head>
 <body>
   <main class="desktop" id="desktop" aria-label="共读模式虚拟桌面">
@@ -20,6 +20,7 @@
     <header class="system-strip">
       <div class="system-brand"><span class="brand-pixel"></span> ZHIHU / CO-READ OS</div>
       <div class="chapter-name" id="chapterName">档案 00 · 第一次独自去医院</div>
+      <button class="ai-indicator" id="aiIndicator" type="button" aria-label="打开 AI 增强设置"><i aria-hidden="true"></i><span id="aiIndicatorText">AI 增强 · 关</span></button>
       <div class="system-clock" id="systemClock">21:08</div>
     </header>
 
@@ -192,6 +193,34 @@
       </div>
     </aside>
 
+    <section class="app-window ai-settings-window is-closed" id="aiSettingsWindow" aria-labelledby="aiSettingsTitle">
+      <header class="titlebar dark-titlebar">
+        <div class="titlebar-title" id="aiSettingsTitle">系统设置.exe</div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化系统设置" title="最小化">—</button>
+          <button class="window-control" data-window-action="close" type="button" aria-label="关闭系统设置" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="ai-settings-content">
+        <span class="eyebrow">AI 增强 / 实验功能</span>
+        <h3>给共读伙伴接上真实的大模型</h3>
+        <p class="ai-settings-note">关闭或未配置时，伙伴使用内置脚本，游戏流程完整可玩。所有配置只保存在本机浏览器。</p>
+        <label class="ai-field ai-toggle-field"><input type="checkbox" id="aiEnabledToggle"><span>启用 AI 增强模式</span></label>
+        <label class="ai-field"><span>接口地址（OpenAI 兼容）</span><input id="aiBaseUrl" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" autocomplete="off"></label>
+        <label class="ai-field"><span>API Key</span><input id="aiApiKey" type="password" placeholder="粘贴服务商提供的密钥" autocomplete="off"></label>
+        <label class="ai-field"><span>模型名</span><input id="aiModel" type="text" placeholder="glm-4-flash" autocomplete="off"></label>
+        <div class="ai-settings-actions">
+          <button class="secondary-action" id="aiTestButton" type="button">测试连接</button>
+          <span id="aiTestResult" aria-live="polite"></span>
+        </div>
+        <div class="ai-preset-row">
+          <span>快速填入：</span>
+          <button class="text-action" data-ai-preset="zhipu" type="button">智谱 GLM</button>
+          <button class="text-action" data-ai-preset="deepseek" type="button">DeepSeek</button>
+        </div>
+      </div>
+    </section>
+
     <button class="followup-notification" id="followupNotification" type="button" hidden>
       <span class="notification-pixel" id="notificationPixel">!</span><span><strong id="notificationTitle">收到一条回访</strong><small id="notificationDetail">来自：悠一</small></span>
     </button>
@@ -262,7 +291,8 @@
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./ai-client.js?v=20260907-2"></script>
   <script src="./save-system.js?v=20260907-1"></script>
-  <script src="./app-v1.js?v=20260907-1"></script>
+  <script src="./app-v1.js?v=20260907-2"></script>
 </body>
 </html>

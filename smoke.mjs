@@ -235,7 +235,7 @@ if (!v1Js.includes('state.permission === "allow"') || !v1Js.includes("showChapte
 if (!["route-verifier", "route-listener", "route-initiator"].every((token) => v1Js.includes(token) && v1Css.includes(`.${token}`))) {
   throw new Error("v1 三条路线缺少房间或札记回声接线");
 }
-if (!v1Html.includes("./v1.css?v=20260907-1") || !v1Html.includes("./app-v1.js?v=20260907-1")) {
+if (!v1Html.includes("./v1.css?v=20260907-2") || !v1Html.includes("./app-v1.js?v=20260907-2")) {
   throw new Error("v1 视觉资源版本号未更新");
 }
 if (!v1Js.includes("const finalConversationChoices") || !["together", "ask", "reread"].every((choice) => v1Js.includes(`${choice}: {`)) || !v1Js.includes('state.step = "ending-conversation"') || !v1Js.includes('state.step = "ending"') || !v1Js.includes('notificationMode === "ending"')) {
@@ -449,4 +449,4 @@ if (!v1Css.includes(".question-body { font-size: 14px; }") || !v1Css.includes(".
   throw new Error("v1 正文、评论、伙伴对话或结局文字仍未统一放大");
 }
 
-console.log("PASS v1 正式房间与伙伴封面、房间收信与电脑主动开题、伙伴口语整理、整体可读性放大、开场三步预告、随进度变化的跨窗口引导、六帧读纸、脚底锚定步态、不透明床边站姿、承重坐姿、自主观察、两章统一公开评论、两章发送前草稿取舍、全选项隐藏属性审计、跨章属性事件、结局属性回声、二次回应、跨章关系记忆、仅作用于新增设施的成长视觉层、三种结局与 20260907-1 资源版本已锁定");
+console.log("PASS v1 正式房间与伙伴封面、房间收信与电脑主动开题、伙伴口语整理、整体可读性放大、开场三步预告、随进度变化的跨窗口引导、六帧读纸、脚底锚定步态、不透明床边站姿、承重坐姿、自主观察、两章统一公开评论、两章发送前草稿取舍、全选项隐藏属性审计、跨章属性事件、结局属性回声、二次回应、跨章关系记忆、仅作用于新增设施的成长视觉层、三种结局与 20260907-2 资源版本已锁定");

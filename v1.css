@@ -2204,3 +2204,112 @@
   color: #a9b6c9;
   font: 9px/1 var(--mono-font);
 }
+
+/* —— AI 增强：指示灯与设置窗口 —— */
+.ai-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 8px;
+  border: 1px solid #5a6f82;
+  background: #10233c;
+  color: #9fb0be;
+  font: 700 8px/1 var(--mono-font);
+  letter-spacing: .08em;
+  cursor: pointer;
+}
+
+.ai-indicator i {
+  width: 6px;
+  height: 6px;
+  background: #5a6f82;
+}
+
+.ai-indicator.is-on {
+  border-color: #7fc48b;
+  color: #b5e4bd;
+}
+
+.ai-indicator.is-on i {
+  background: #7fc48b;
+  box-shadow: 0 0 4px #7fc48b;
+}
+
+.ai-settings-window {
+  width: min(430px, calc(100vw - 60px));
+}
+
+.ai-settings-content {
+  display: grid;
+  gap: 10px;
+  max-height: min(430px, calc(100dvh - 160px));
+  padding: 14px 16px 16px;
+  overflow: auto;
+  background: #14202e;
+  color: #cfd9e2;
+}
+
+.ai-settings-content h3 {
+  font-family: var(--display-font);
+  font-size: 15px;
+  color: #eef4f8;
+}
+
+.ai-settings-note {
+  color: #8d9cab;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.ai-field {
+  display: grid;
+  gap: 4px;
+  font: 700 9px/1 var(--mono-font);
+  color: #9fb0be;
+}
+
+.ai-field input {
+  padding: 7px 9px;
+  border: 2px solid #33475d;
+  background: #0e1826;
+  color: #e6eef4;
+  font: 600 11px/1.3 var(--mono-font);
+}
+
+.ai-field input:focus {
+  outline: none;
+  border-color: #7fc48b;
+}
+
+.ai-toggle-field {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 11px;
+  color: #e6eef4;
+}
+
+.ai-toggle-field input {
+  width: 15px;
+  height: 15px;
+  accent-color: #7fc48b;
+}
+
+.ai-settings-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+#aiTestResult {
+  font: 700 9px/1.4 var(--mono-font);
+  color: #b5e4bd;
+}
+
+.ai-preset-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font: 700 9px/1 var(--mono-font);
+  color: #8d9cab;
+}
