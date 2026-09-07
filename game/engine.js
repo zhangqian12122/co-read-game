@@ -356,6 +356,8 @@
     else if (D.mood >= 2) leave = { text: "客气地结束对话，没有后续。", fan: 0 };
     S.settle = { hitsCount, leave, stale: Object.values(S.cards).some((card) => card.quality.key === "waste") };
     S.settle.silent = leave.fan === 0 && D.mood <= 1;
+    const bedroom = document.getElementById("bedroomPanel");
+    if (bedroom) bedroom.classList.toggle("is-dim", S.settle.silent);
     save();
     S.stage = "settle";
     save();

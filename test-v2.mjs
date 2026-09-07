@@ -180,6 +180,7 @@ check('bad-run patience drained to 0', S3().dlg.patience <= 0 && S3().dlg.done);
 check('bad-run mood never rose above dazed (forced probe hit)', S3().dlg.mood <= 1);
 check('bad-run silently gone', one3(w3, '#settleLeave').textContent.includes('默默消失'));
 check('bad-run silent flag set', S3().settle.silent === true);
+check('bedroom lights dim on silent ending', w3.document.querySelector('#bedroomPanel').classList.contains('is-dim'));
 one3(w3, '#settleContinue').click();
 await sleep(150);
 check('silent letter title', one3(w3, '#settleTitle').textContent.includes('没有等到回信'));

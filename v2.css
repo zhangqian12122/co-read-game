@@ -1275,3 +1275,7 @@ html, body {
   font: 600 10.5px/1.6 var(--mono-font);
   margin: 4px 0 8px;
 }
+
+/* —— 静默结局：卧室灯光变暗 —— */
+.bedroom-panel.is-dim .room-scene { filter: brightness(.55) saturate(.75); transition: filter 1.2s steps(8); }
+.bedroom-panel.is-dim .wall-note { opacity: .5; }
