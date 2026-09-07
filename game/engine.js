@@ -607,6 +607,17 @@
     onShellReady(false);
   }
 
+  function reset() {
+    clearSave();
+    S.cards = {};
+    S.inspected = new Set();
+    S.chatLog = [];
+    S.growth = { proficiency: {}, fans: 0, exp: 0 };
+    S.dlg = null;
+    S.settle = null;
+    onShellReady(false);
+  }
+
   function onShellReady(silent) {
     S.stage = "research";
     const pack = shell().pack;
@@ -650,6 +661,7 @@
     endDialogue,
     aiSuggest,
     readSaveJSON,
+    reset,
     evalHit,
     calcQuality
   };
