@@ -169,6 +169,7 @@
       tags.append(button);
     });
     refreshModal();
+    document.getElementById("modalConfirm").textContent = existing ? "更新素材卡" : "做成素材卡";
     $("#materialModal").hidden = false;
     shell().guide("modal", "伙伴划出了候选句：点句子挑进素材卡（最多 3 句），再给材料标来源，标错了会出废卡。");
   }
@@ -208,6 +209,12 @@
   }
 
   function bindModal() {
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        const modal = document.getElementById("materialModal");
+        if (modal) modal.hidden = true;
+      }
+    });
     $("#closeMaterialModal").addEventListener("click", () => { $("#materialModal").hidden = true; });
     $("#modalCancel").addEventListener("click", () => { $("#materialModal").hidden = true; });
     $("#modalConfirm").addEventListener("click", confirmCard);
