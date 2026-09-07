@@ -30,6 +30,19 @@ check('v2 scripts booted (shell/engine/pack/companion)', Boolean(w.CoReadV2Shell
 check('boot overlay visible', !$('#bootOverlay').hidden);
 check('taskbar buttons built', $$('#taskButtons .task-button').length === 4);
 
+// —— AI 建议路径（mock LLM，注入于开机前使按钮可用）——
+w.CoReadAI = {
+  isReady: () => true,
+  get: () => ({}),
+  update: () => {},
+  chat: async () => '连接成功',
+  chatJson: async (messages) => {
+    const c = messages[1].content;
+    if (c.includes('availableMethods')) return { method: 'probe', reason: '先问清医保手续' };
+    return { text: '稳住，按流程来。' };
+  }
+};
+
 $('#startButton').click();
 await sleep(2100);
 
@@ -66,6 +79,11 @@ check('dialogue started at panic', S().dlg && S().dlg.mood === 0);
 check('patience = base 6 + 2 细读 = 8', S().dlg.patience === 8);
 check('asker opening rendered', $('#chatThread').textContent.includes('第一次自己去'));
 check('story/tradeoff locked at start', $$('#handCards .method-card').filter((b) => b.classList.contains('is-locked')).length === 2);
+check('ai suggest enabled with mock AI', !$('#aiSuggestButton').disabled);
+$('#aiSuggestButton').click();
+await sleep(400);
+check('ai suggest companion bubble', $('#chatThread').textContent.includes('我建议打「追问」'));
+check('ai suggest marked used', $('#aiSuggestButton').disabled);
 check('room computer glows new message', $('#roomComputer').classList.contains('has-new-message'));
 check('end dialogue button gated before first card', ($('#endDialogueButton') || { disabled: true }).disabled === true);
 

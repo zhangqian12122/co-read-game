@@ -200,9 +200,10 @@
     renderAttention();
     save();
     const count = Object.keys(S.cards).length;
-    if (count === 1) shell().setAiText("素材卡做好了。再挑一份材料，我们就能去找他了。");
+    const rl = shell().pack.companion.researchLines;
+    if (count === 1) shell().setAiText(rl.firstMaterial.replace("{kind}", material.kindLabel));
     if (count >= S.attention) {
-      shell().setAiText("两张素材卡都好了。他还在等，我们去回复吧。");
+      shell().setAiText(rl.bothMaterials);
       shell().guide("cards", "两张素材卡就绪：点素材卡桌下的「去找他聊聊」，开始回答。");
       shell().toast("两份素材卡就绪：打开「回答对话」开始回复");
     }
@@ -642,6 +643,7 @@
     state: S,
     playMethod,
     endDialogue,
+    aiSuggest,
     evalHit,
     calcQuality
   };
