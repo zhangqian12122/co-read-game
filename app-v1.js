@@ -3623,11 +3623,11 @@ function applySavedState(data) {
 }
 
 function syncWindowChrome() {
-  const front = $(".app-window").find((item) => item.classList.contains("is-front"));
-  $(".desktop-icon[data-focus]").forEach((button) => {
+  const front = $$(".app-window").find((item) => item.classList.contains("is-front"));
+  $$(".desktop-icon[data-focus]").forEach((button) => {
     button.classList.toggle("is-active", Boolean(front) && button.dataset.focus === front.id);
   });
-  $("[data-window-task]").forEach((button) => {
+  $$("[data-window-task]").forEach((button) => {
     button.classList.toggle("is-active", Boolean(front) && button.dataset.windowTask === front.id);
   });
 }
@@ -3641,7 +3641,7 @@ function restoreBaseScene(scene) {
   if (window.CoReadSave) window.CoReadSave.applyScene(scene);
   setBrowserLaunchAvailable(state.browserUnlocked);
   if (state.computerMessageReady) {
-    const taskButton = $("[data-window-task=browserWindow]")[0];
+    const taskButton = $$("[data-window-task=browserWindow]")[0];
     if (taskButton) taskButton.textContent = "知乎 · 1 条新消息";
   }
   updateOnboardingGuide();
@@ -3685,10 +3685,12 @@ function resumeGame() {
       openResponseDraft(getAvailableDecisions().find((item) => item.id === state.decision), state.draftEvaluation);
       break;
     case "hospital-draft-ready":
-    case "career-draft-ready":
+    case "career-draft-ready": {
+      const savedDraftChoice = state.draftChoice;
       openResponseDraft(getAvailableDecisions().find((item) => item.id === state.decision), state.draftEvaluation);
-      chooseResponseDraft(state.draftChoice);
+      chooseResponseDraft(savedDraftChoice);
       break;
+    }
     case "hospital-responded":
     case "career-responded":
       restoreRespondedScene();
@@ -3745,6 +3747,7 @@ function refreshBootSaveUi() {
 
 function bindEvents() {
   elements.startButton.addEventListener("click", handleStartButton);
+  elements.continueButton.addEventListener("click", resumeGame);
   elements.onboardingAction.addEventListener("click", handleOnboardingAction);
   elements.onboardingDismiss.addEventListener("click", () => {
     state.onboardingDismissed = true;

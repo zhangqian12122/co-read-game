@@ -10,13 +10,14 @@
     "start": "node server.js",
     "desktop": "electron .",
     "make:win": "electron-builder --win nsis --x64 --config forge.config.cjs",
-    "test": "node smoke.mjs"
+    "test": "node smoke.mjs && node test-save.mjs"
   },
   "dependencies": {
     "electron-squirrel-startup": "1.0.1"
   },
   "devDependencies": {
     "electron": "44.1.1",
-    "electron-builder": "26.15.3"
+    "electron-builder": "26.15.3",
+    "jsdom": "^30.0.1"
   }
 }

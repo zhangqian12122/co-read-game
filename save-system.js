@@ -151,5 +151,10 @@
     }
   }
 
-  window.CoReadSave = { capture, applyScene, readSave, hasSave, saveMeta, clear, SAVE_VERSION };
+  function capture(position) {
+  const payload = { v: SAVE_VERSION, position, savedAt: Date.now(), state: captureState(), scene: captureScene() };
+  try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); } catch (error) { /* 忽略写入失败 */ }
+  return payload;
+}
+window.CoReadSave = { capture, applyScene, readSave, hasSave, saveMeta, clear, SAVE_VERSION };
 })();
