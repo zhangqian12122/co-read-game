@@ -333,6 +333,8 @@
     chatMsg("asker", D.pack.question.askerShort, D.pack.matrix[methodId][moodKey][hit ? "hit" : "miss"]);
     shell().setAiText(hit ? "问中了！你看他的话多起来了。" : "……他好像没接住。换张牌，或者换句素材试试。");
     D.last = methodId;
+    const endButton = $("#endDialogueButton");
+    if (endButton) endButton.disabled = false;
     save();
     renderDialogueUI();
     if (D.patience <= 0) window.setTimeout(() => endDialogue("patience"), 600);
@@ -371,10 +373,12 @@
     el("settleLeave").innerHTML = "<p>" + S.settle.leave.text + "</p>";
     el("settleGains").innerHTML = "<p>熟练度 +" + Object.values(D.growth.proficiency).reduce((a, b) => a + b, 0) + " · 素材卡 ×" + Object.keys(S.cards).length + (S.settle.leave.fan ? " · 新粉丝 ×1" : "") + "</p>";
     el("settleOverlay").hidden = false;
+    $("#settleContinue").onclick = () => showLetter();
     shell().setStage(3);
   }
 
   function showLetter() {
+    if (S.stage === "letter") return;
     S.stage = "letter";
     const letter = S.settle.stale ? shell().pack.letters.stale : shell().pack.letters.good;
     el("settleTitle").textContent = "回信 · " + letter.days + " 天后";
@@ -406,6 +410,7 @@
       endButton.className = "end-dialogue";
       endButton.type = "button";
       endButton.textContent = "结束对话，看看结果";
+      endButton.disabled = true;
       endButton.addEventListener("click", () => endDialogue());
       el("turnHint").after(endButton);
     }
@@ -517,11 +522,18 @@
     bindModal();
     el("synthesizeButton").addEventListener("click", startDialogue);
     $$("#handCards .method-card").forEach((button) => button.addEventListener("click", () => playMethod(button.dataset.method)));
-    $("#settleContinue").addEventListener("click", showLetter);
     shell().setStage(1);
     shell().focusWindow("browserWindow");
     if (!silent) {
       shell().toast("收到一条来自林一舟的求助");
+    const computer = document.getElementById("roomComputer");
+    if (computer) {
+      computer.classList.add("has-new-message");
+      computer.addEventListener("click", () => {
+        computer.classList.remove("has-new-message");
+        shell().focusWindow("browserWindow");
+      });
+    }
       shell().guide("research", "电脑收到求助了！点材料上的「展开检查」，看清作者和日期，再挑句子做成素材卡。");
     }
   }

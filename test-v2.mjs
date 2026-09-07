@@ -65,6 +65,8 @@ check('dialogue started at panic', S().dlg && S().dlg.mood === 0);
 check('patience = base 6 + 2 细读 = 8', S().dlg.patience === 8);
 check('asker opening rendered', $('#chatThread').textContent.includes('第一次自己去'));
 check('story/tradeoff locked at start', $$('#handCards .method-card').filter((b) => b.classList.contains('is-locked')).length === 2);
+check('room computer glows new message', $('#roomComputer').classList.contains('has-new-message'));
+check('end dialogue button gated before first card', $('#endDialogueButton').disabled);
 
 w.CoReadEngine.playMethod('empathy');
 await sleep(80);
