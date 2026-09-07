@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#15355f">
+  <title>共读模式｜首个可玩版本 v1</title>
+  <link rel="preload" as="image" href="./assets/ai-character-read-sequence-v2.png?v=20260831-1">
+  <link rel="preload" as="image" href="./assets/ai-character-walk-side-v3.png?v=20260831-1">
+  <link rel="preload" as="image" href="./assets/ai-character-walk-front-v2.png?v=20260831-1">
+  <link rel="preload" as="image" href="./assets/ai-character-walk-back-v4.png?v=20260831-1">
+  <link rel="preload" as="image" href="./assets/ai-character-bed-sequence-v5.png?v=20260831-1">
+  <link rel="preload" as="image" href="./assets/ai-character-bed-seated-v1.png?v=20260831-1">
+  <link rel="stylesheet" href="./styles.css?v=20260830-5">
+  <link rel="stylesheet" href="./v1.css?v=20260902-76">
+</head>
+<body>
+  <main class="desktop" id="desktop" aria-label="共读模式虚拟桌面">
+    <div class="desktop-grain" aria-hidden="true"></div>
+    <header class="system-strip">
+      <div class="system-brand"><span class="brand-pixel"></span> ZHIHU / CO-READ OS</div>
+      <div class="chapter-name" id="chapterName">档案 00 · 第一次独自去医院</div>
+      <div class="system-clock" id="systemClock">21:08</div>
+    </header>
+
+    <nav class="desktop-icons" aria-label="桌面应用">
+      <button class="desktop-icon is-active" data-focus="browserWindow" type="button">
+        <span class="icon-shape browser-icon" aria-hidden="true"></span><span>浏览器</span>
+      </button>
+      <button class="desktop-icon" data-focus="roomWindow" type="button">
+        <span class="icon-shape room-icon" aria-hidden="true"></span><span>共读房间</span>
+      </button>
+      <button class="desktop-icon" data-focus="memoryWindow" type="button">
+        <span class="icon-shape memory-icon" aria-hidden="true"></span><span>共读札记</span>
+      </button>
+    </nav>
+
+    <section class="app-window browser-window is-front" id="browserWindow" aria-labelledby="browserTitle">
+      <header class="titlebar blue-titlebar">
+        <div class="titlebar-title" id="browserTitle"><span class="mini-app-icon">知</span> 知乎 · 共读模式</div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化知乎窗口" title="最小化">—</button>
+          <button class="window-control" data-window-action="maximize" type="button" aria-label="最大化窗口" title="最大化">□</button>
+          <button class="window-control close-control" data-window-action="close" type="button" aria-label="关闭知乎窗口" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="browser-toolbar">
+        <button class="nav-button" type="button" aria-label="后退">‹</button>
+        <button class="nav-button" type="button" aria-label="前进">›</button>
+        <div class="address-bar" id="addressBar"><span class="lock-dot"></span> zhihu.local/question/first-hospital-visit</div>
+        <span class="connection-label">模拟内容</span>
+      </div>
+      <div class="zhihu-nav">
+        <strong class="zhihu-wordmark">知乎</strong><span>首页</span><span>等你来答</span><span>关注</span>
+        <span class="nav-spacer"></span><span class="co-read-indicator"><i></i> 共读中</span>
+      </div>
+      <div class="browser-page">
+        <aside class="onboarding-guide" id="onboardingGuide" aria-labelledby="onboardingTitle" hidden>
+          <div class="onboarding-guide-index" id="onboardingStep">第一次共读 · 1 / 3</div>
+          <div class="onboarding-guide-copy"><strong id="onboardingTitle">先看两份材料</strong><p id="onboardingText">点开材料，先看清是谁写的、什么时候写的，再决定要不要递给伙伴。</p></div>
+          <button class="onboarding-guide-action" id="onboardingAction" type="button">去看材料 <span>→</span></button>
+          <button class="onboarding-guide-close" id="onboardingDismiss" type="button" aria-label="收起新手引导" title="收起引导">×</button>
+        </aside>
+        <section class="question-panel">
+          <div class="question-kicker" id="questionKicker">生活经验 · 校园生活</div>
+          <h1 id="questionTitle">大学生第一次自己去医院，挂号前需要准备什么？</h1>
+          <p class="question-body" id="questionBody">一个人在外地上大学，最近需要去医院看看，但从来没独自挂过号。网上流程很多，我不知道哪些现在还适用，也有点紧张，主要担心东西没带齐，或者到了医院才发现挂错科。</p>
+          <div class="asker-note" id="askerNote" hidden></div>
+          <div class="question-stats" id="questionStats"><span>18 个回答</span><span>96 人关注</span><span>最后编辑于今天</span></div>
+        </section>
+        <section class="research-section" aria-labelledby="researchTitle">
+          <header class="section-heading">
+            <div><span class="eyebrow" id="researchEyebrow">共读调查 / 01</span><h2 id="researchTitle">先看哪两份材料？</h2></div>
+            <div class="attention-meter" aria-live="polite"><span>注意力</span><div class="attention-pips" id="attentionPips"></div><strong id="attentionText">2 / 2</strong></div>
+          </header>
+          <p class="section-instruction" id="researchInstruction">先打开材料，看看作者、日期和来源，再选两份递给伙伴。没看过的材料不能选。</p>
+          <div class="material-list" id="materialList" aria-live="polite"></div>
+        </section>
+        <section class="inline-response-panel" id="responsePanel" aria-labelledby="decisionTitle" hidden>
+          <header class="inline-panel-heading"><span class="eyebrow" id="decisionEyebrow">决定回复次序 / 02</span><h2 id="decisionTitle">看完这些材料，你们准备先替悠一做什么？</h2></header>
+          <aside class="partner-synthesis" id="aiSummary" aria-live="polite"></aside>
+          <p class="decision-prompt" id="decisionPrompt"></p>
+          <div class="decision-options" id="decisionOptions"></div>
+          <section class="draft-workshop" id="draftWorkshop" aria-labelledby="draftWorkshopTitle" hidden>
+            <header class="draft-workshop-heading"><span id="draftWorkshopStatus">房间里的伙伴还在看草稿</span><h3 id="draftWorkshopTitle">这段话准备怎么开头？</h3></header>
+            <div class="draft-thread" id="draftThread" aria-live="polite"></div>
+            <div class="draft-options" id="draftOptions"></div>
+            <div class="draft-preview" id="draftPreview" hidden><span>准备发出的开头</span><p id="draftPreviewText"></p></div>
+            <button class="send-draft-action" id="sendDraftAction" type="button" hidden>把这段发出去 <span>→</span></button>
+          </section>
+        </section>
+        <section class="inline-followup-panel" id="followupPanel" aria-labelledby="followupTitle" hidden>
+          <header class="inline-panel-heading"><span class="eyebrow" id="followupEyebrow">次日 16:24</span><h2 id="followupTitle">悠一回复了你们</h2></header>
+          <p class="followup-result" id="followupResult"></p>
+          <div class="message-thread"><div class="message-avatar" id="followupAvatar">悠</div><div class="message-bubble"><strong id="followupAuthor">提问者 · 悠一</strong><p id="followupText"></p></div></div>
+          <section class="public-discussion" id="publicDiscussion" aria-label="公开回答下的讨论" hidden>
+            <header class="public-discussion-heading"><span>回答下的讨论</span><small id="publicCommentCount"></small></header>
+            <div class="public-comments" id="publicComments" aria-live="polite"></div>
+            <aside class="private-companion-note" id="privateCompanionNote" hidden>
+              <span>房间里的伙伴 · 只有你能看见</span><p id="privateCompanionText"></p>
+            </aside>
+            <div class="public-exchange-status" id="publicExchangeStatus" hidden><i></i><span>有人正在回复</span></div>
+          </section>
+          <section class="accountability-panel" id="accountabilityPanel" aria-labelledby="accountabilityTitle" hidden>
+            <div class="accountability-heading"><span id="accountabilityStatus">悠一还在线</span><h3 id="accountabilityTitle">你准备怎么回？</h3></div>
+            <div class="accountability-options" id="accountabilityOptions"></div>
+            <div class="accountability-outcome" id="accountabilityOutcome" hidden>
+              <span id="accountabilityReplyLabel">你们发出的回复</span><p id="accountabilityReply"></p>
+              <span id="accountabilityReactionLabel">悠一的反应</span><p id="accountabilityReaction"></p>
+            </div>
+          </section>
+          <button class="inline-return-action" id="followupContinue" type="button">读完，回房间看看 <span>→</span></button>
+        </section>
+      </div>
+    </section>
+
+    <section class="app-window room-window" id="roomWindow" aria-labelledby="roomTitle">
+      <header class="titlebar warm-titlebar">
+        <div class="titlebar-title" id="roomTitle"><span class="mini-app-icon room-mini">▦</span> 共读房间.exe <small class="titlebar-note">双击进入房间</small></div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化共读房间" title="最小化">—</button>
+          <button class="window-control" data-window-action="maximize" type="button" aria-label="最大化共读房间" title="最大化">□</button>
+          <button class="window-control close-control" data-window-action="close" type="button" aria-label="关闭共读房间" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="room-scene" id="roomScene">
+        <div class="room-canvas">
+          <img class="room-base-art" src="./assets/room-stage-0-v1.png?v=20260830-2" width="1672" height="941" alt="共读伙伴尚未积累太多记忆的房间" draggable="false">
+          <img class="room-prop room-prop-books" src="./assets/room-prop-books-v1.png?v=20260830-2" width="1254" height="1254" alt="" aria-hidden="true" draggable="false">
+          <img class="room-prop room-prop-notes" src="./assets/room-prop-hospital-notes-v1.png?v=20260830-2" width="1448" height="1086" alt="" aria-hidden="true" draggable="false">
+          <img class="room-prop room-prop-lantern" src="./assets/room-prop-memory-lantern-v1.png?v=20260830-2" width="1060" height="1484" alt="" aria-hidden="true" draggable="false">
+          <div class="room-reading-seat" id="roomReadingSeat" aria-hidden="true"><div class="room-material-stack" id="roomMaterialStack"></div></div>
+          <button class="room-computer" id="roomComputer" type="button" aria-label="房间里的电脑，目前没有新消息">
+            <span id="roomComputerScreen" aria-hidden="true"></span>
+            <span class="room-computer-message" id="roomComputerMessage" hidden><i aria-hidden="true"></i>收到一条新提问</span>
+          </button>
+          <div class="room-environment-responses" aria-hidden="true">
+            <span class="environment-window-light"></span>
+            <span class="environment-board-note"><i></i></span>
+            <span class="environment-bed-dent"></span>
+          </div>
+          <div class="autonomy-fold" id="autonomyFold" data-origin="companion" aria-hidden="true"><i></i><span>00</span></div>
+          <div class="wall-note is-empty" aria-live="polite" aria-label="伙伴留在墙上的便签"><span id="wallNote"></span></div>
+          <span class="room-memory-beacon" id="shelfBook" aria-hidden="true"></span>
+          <div class="ai-character stage-zero" id="aiCharacter" role="button" tabindex="0" aria-controls="aiDialogue" aria-label="尚未完整理解世界的共读伙伴 00" title="查看伙伴刚才的话">
+            <span class="ai-character-art ai-character-sprite" aria-hidden="true"></span>
+          </div>
+          <div class="ai-dialogue" id="aiDialogue" aria-live="polite">
+            <span class="speaker" id="aiSpeaker">共读伙伴 00</span><p id="aiText">我是共读伙伴 00，你决定最后怎么回，我帮你看材料，也会记住我们今晚怎么选。</p>
+            <div class="room-dialogue-actions" id="roomDialogueActions" hidden>
+              <p id="permissionPrompt"></p>
+              <button class="dialogue-choice" id="permissionAllow" data-permission="allow" type="button" hidden></button>
+              <button class="dialogue-choice" id="permissionAsk" data-permission="ask" type="button" hidden></button>
+              <button class="dialogue-choice" id="confirmChapterReview" type="button" hidden>一起核对，再继续</button>
+              <div class="companion-naming" id="companionNaming" hidden>
+                <label for="companionNameInput">在札记封面写一个称呼</label>
+                <div class="companion-name-row">
+                  <input id="companionNameInput" type="text" maxlength="8" autocomplete="off" placeholder="输入 1—8 个字" aria-describedby="companionNameHint">
+                  <button class="dialogue-choice" id="confirmCompanionName" type="button">写在封面</button>
+                </div>
+                <button class="naming-skip" id="skipCompanionName" type="button">保留编号 00</button>
+                <span class="companion-name-hint" id="companionNameHint">这个称呼会留到后面的档案里。</span>
+              </div>
+              <div class="final-conversation" id="finalConversation" hidden>
+                <span class="final-conversation-label">今晚最后一句</span>
+                <div class="final-choice-list" id="finalChoiceList"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="reading-tray">
+        <div class="tray-heading"><div><span class="eyebrow" id="trayEyebrow">伙伴的共读桌面</span><strong id="trayCount">0 / 2</strong></div><span class="tray-note">从调查页递来的材料会留在这里</span></div>
+        <div class="drop-zone" id="dropZone" aria-label="伙伴的共读桌面"><div class="empty-drop" id="emptyDrop"><span class="desk-slots" aria-hidden="true"><i></i><i></i></span><p>桌上还没有材料</p><small>先在调查页打开材料，再点“递给伙伴”</small></div><div class="selected-materials" id="selectedMaterials"></div></div>
+        <button class="primary-action" id="synthesizeButton" type="button" disabled>看完并标注两份材料后继续</button>
+      </div>
+    </section>
+
+    <aside class="app-window memory-window is-closed" id="memoryWindow" aria-labelledby="memoryTitle">
+      <header class="titlebar dark-titlebar">
+        <div class="titlebar-title" id="memoryTitle">共读札记.txt</div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化共读札记" title="最小化">—</button>
+          <button class="window-control" data-window-action="maximize" type="button" aria-label="最大化共读札记" title="最大化">□</button>
+          <button class="window-control close-control" data-window-action="close" type="button" aria-label="关闭共读札记" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="memory-content">
+        <span class="eyebrow">共读札记 / 可选查看</span><h3 id="growthTitle">你们一起做过的事会留在这里</h3>
+        <ul class="growth-list" id="growthList"><li><span class="growth-dot empty"></span> 第一页还是空的</li></ul>
+        <div class="principle-card" id="principleCard"><span>第一张空白页</span><p>还没有写下任何东西。</p></div>
+      </div>
+    </aside>
+
+    <button class="followup-notification" id="followupNotification" type="button" hidden>
+      <span class="notification-pixel" id="notificationPixel">!</span><span><strong id="notificationTitle">收到一条回访</strong><small id="notificationDetail">来自：悠一</small></span>
+    </button>
+
+    <div class="material-transit-layer" id="materialTransitLayer" aria-hidden="true"></div>
+
+    <footer class="taskbar">
+      <button class="start-button" type="button"><span>▦</span> 共读</button>
+      <button class="task-button is-active" data-focus="browserWindow" data-window-task="browserWindow" type="button">知乎 · 调查材料</button>
+      <button class="task-button" data-focus="roomWindow" data-window-task="roomWindow" type="button">共读房间.exe</button>
+      <div class="progress-steps" id="progressSteps" aria-label="事件进度"><span class="is-current">阅读</span><i></i><span>整理</span><i></i><span>回应</span><i></i><span>回访</span></div>
+      <div class="taskbar-time" id="taskbarTime">21:08</div>
+    </footer>
+  </main>
+
+  <section class="boot-overlay" id="bootOverlay" aria-labelledby="bootTitle">
+    <div class="boot-card">
+      <div class="boot-content">
+        <div class="boot-index">CO-READ ARCHIVE / 00</div>
+        <p class="boot-kicker">知乎共读计划 · 今晚 21:08</p><h1 id="bootTitle">和房间里的伙伴，<br>回一封公开提问。</h1>
+        <p class="boot-copy">你负责最后怎么回，伙伴负责陪你看材料，也会记住你们今晚怎么选。你们给的是公开建议，回答发出去以后，看到的人不止提问者。</p>
+        <div class="boot-objective"><span>今晚的房间</span><p>电脑还没亮，先进去和伙伴见个面，等消息来了再说。</p></div>
+        <div class="boot-route" aria-label="第一次共读的三个步骤">
+          <span><i>1</i><b>调查</b><small>打开材料，看作者和日期</small></span>
+          <span><i>2</i><b>共读</b><small>选两份，告诉伙伴怎么用</small></span>
+          <span><i>3</i><b>回答</b><small>一起改草稿，最后由你发送</small></span>
+        </div>
+        <button class="boot-button" id="startButton" type="button">以共读答主身份进入 <span>→</span></button><small>回答署名：共读答主 · 你 × 共读伙伴 00</small>
+      </div>
+      <figure class="boot-scene" aria-label="夜晚的共读房间和房间里的伙伴 00">
+        <img class="boot-scene-room" src="./assets/room-stage-0-v1.png?v=20260830-2" alt="" aria-hidden="true">
+        <span class="boot-scene-light" aria-hidden="true"></span>
+        <img class="boot-scene-character" src="./assets/ai-character-stage-0-v1.png?v=20260830-2" alt="房间里的共读伙伴 00">
+        <figcaption><small>CO-READ ROOM / 00</small><strong>房间里的伙伴还没名字</strong><span>它正拿着第一份空白札记等你</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="modal-backdrop" id="materialModal" hidden>
+    <article class="material-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header"><div><span class="eyebrow" id="modalType">材料</span><h2 id="modalTitle"></h2></div><button class="close-modal" id="closeModal" type="button" aria-label="关闭">×</button></header>
+      <div class="source-ledger" id="modalLedger"></div><div class="modal-body" id="modalBody"></div><div class="modal-caution" id="modalCaution"></div>
+      <footer class="modal-actions"><button class="secondary-action" id="modalCloseAction" type="button">返回材料列表</button><button class="primary-action compact" id="modalSendAction" type="button">递给共读伙伴</button></footer>
+    </article>
+  </section>
+
+  <section class="ending-overlay" id="endingOverlay" aria-labelledby="endingTitle" hidden>
+    <article class="ending-card">
+      <header class="ending-header">
+        <span class="ending-eyebrow">首个可玩版本 · 完成</span>
+        <span class="ending-number" aria-hidden="true">00—01</span>
+      </header>
+      <p class="ending-companion-line" id="endingCompanionLine"></p>
+      <h1 id="endingTitle" tabindex="-1"></h1>
+      <p class="ending-body" id="endingBody"></p>
+      <div class="ending-rule" aria-hidden="true"><i></i><span></span><i></i></div>
+      <button class="ending-memory-toggle" id="endingMemoryToggle" type="button" aria-expanded="false">翻开最后一页札记 <span>＋</span></button>
+      <div class="ending-archive" id="endingArchive" hidden></div>
+      <footer class="ending-actions">
+        <button class="ending-secondary" id="endingStay" type="button">留在房间看看</button>
+        <button class="ending-primary" id="endingRestart" type="button">重新体验 <span>↻</span></button>
+      </footer>
+      <small class="ending-scope">档案 00—01 到这里结束</small>
+    </article>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app-v1.js?v=20260902-76"></script>
+</body>
+</html>

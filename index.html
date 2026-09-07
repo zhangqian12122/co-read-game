@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#15355f">
+  <title>共读模式｜像素美术原型 v0.2</title>
+  <link rel="stylesheet" href="./styles.css?v=20260830-5">
+</head>
+<body>
+  <main class="desktop" id="desktop" aria-label="共读模式虚拟桌面">
+    <div class="desktop-grain" aria-hidden="true"></div>
+    <header class="system-strip">
+      <div class="system-brand"><span class="brand-pixel"></span> ZHIHU / CO-READ OS</div>
+      <div class="chapter-name">档案 00 · 第一次独自去医院</div>
+      <div class="system-clock" id="systemClock">21:08</div>
+    </header>
+
+    <nav class="desktop-icons" aria-label="桌面应用">
+      <button class="desktop-icon is-active" data-focus="browserWindow" type="button">
+        <span class="icon-shape browser-icon" aria-hidden="true"></span>
+        <span>浏览器</span>
+      </button>
+      <button class="desktop-icon" data-focus="roomWindow" type="button">
+        <span class="icon-shape room-icon" aria-hidden="true"></span>
+        <span>共读房间</span>
+      </button>
+      <button class="desktop-icon" data-focus="memoryWindow" type="button">
+        <span class="icon-shape memory-icon" aria-hidden="true"></span>
+        <span>共读札记</span>
+      </button>
+    </nav>
+
+    <section class="app-window browser-window is-front" id="browserWindow" aria-labelledby="browserTitle">
+      <header class="titlebar blue-titlebar">
+        <div class="titlebar-title" id="browserTitle"><span class="mini-app-icon">知</span> 知乎 · 共读模式</div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化知乎窗口" title="最小化">—</button>
+          <button class="window-control" data-window-action="maximize" type="button" aria-label="最大化知乎窗口" title="最大化">□</button>
+          <button class="window-control close-control" data-window-action="close" type="button" aria-label="关闭知乎窗口" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="browser-toolbar">
+        <button class="nav-button" type="button" aria-label="后退">‹</button>
+        <button class="nav-button" type="button" aria-label="前进">›</button>
+        <div class="address-bar"><span class="lock-dot"></span> zhihu.local/question/first-hospital-visit</div>
+        <span class="connection-label">模拟内容</span>
+      </div>
+      <div class="zhihu-nav">
+        <strong class="zhihu-wordmark">知乎</strong>
+        <span>首页</span><span>等你来答</span><span>关注</span>
+        <span class="nav-spacer"></span>
+        <span class="co-read-indicator"><i></i> 共读中</span>
+      </div>
+
+      <div class="browser-page">
+        <section class="question-panel">
+          <div class="question-kicker">生活经验 · 校园生活</div>
+          <h1>大学生第一次自己去医院，挂号前需要准备什么？</h1>
+          <p class="question-body">一个人在外地上大学，最近需要去医院看看，但从来没独自挂过号。网上流程很多，我不知道哪些现在还适用，也有点紧张。</p>
+          <div class="asker-note"><span>题主补充</span> 我最怕的不是排队，是到了窗口才发现少带东西、挂错科室。</div>
+          <div class="question-stats"><span>18 个回答</span><span>96 人关注</span><span>最后编辑于今天</span></div>
+        </section>
+
+        <section class="research-section" aria-labelledby="researchTitle">
+          <header class="section-heading">
+            <div>
+              <span class="eyebrow">共读调查 / 01</span>
+              <h2 id="researchTitle">你准备让它先看见什么？</h2>
+            </div>
+            <div class="attention-meter" aria-live="polite">
+              <span>注意力</span>
+              <div class="attention-pips" id="attentionPips"></div>
+              <strong id="attentionText">2 / 2</strong>
+            </div>
+          </header>
+          <p class="section-instruction">展开材料检查作者、时间与来源，再拖入右侧房间。只能深入两份；选择本身会成为AI的第一段学习经历。</p>
+          <div class="material-list" id="materialList" aria-live="polite"></div>
+        </section>
+      </div>
+    </section>
+
+    <section class="app-window room-window" id="roomWindow" aria-labelledby="roomTitle">
+      <header class="titlebar warm-titlebar">
+        <div class="titlebar-title" id="roomTitle"><span class="mini-app-icon room-mini">▦</span> 共读房间.exe <small class="titlebar-note">双击进入房间</small></div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化共读房间" title="最小化">—</button>
+          <button class="window-control" data-window-action="maximize" type="button" aria-label="最大化共读房间" title="最大化">□</button>
+          <button class="window-control close-control" data-window-action="close" type="button" aria-label="关闭共读房间" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="room-scene" id="roomScene">
+        <div class="room-canvas">
+          <img class="room-base-art" src="./assets/room-stage-0-v1.png?v=20260830-2" width="1672" height="941" alt="共读伙伴尚未积累太多记忆的房间" draggable="false">
+          <img class="room-prop room-prop-books" src="./assets/room-prop-books-v1.png?v=20260830-2" width="1254" height="1254" alt="" aria-hidden="true" draggable="false">
+          <img class="room-prop room-prop-notes" src="./assets/room-prop-hospital-notes-v1.png?v=20260830-2" width="1448" height="1086" alt="" aria-hidden="true" draggable="false">
+          <img class="room-prop room-prop-lantern" src="./assets/room-prop-memory-lantern-v1.png?v=20260830-2" width="1060" height="1484" alt="" aria-hidden="true" draggable="false">
+          <div class="wall-note" id="wallNote">还空着</div>
+          <span class="room-memory-beacon" id="shelfBook" aria-hidden="true"></span>
+          <div class="ai-character stage-zero" id="aiCharacter" aria-label="尚未完整理解世界的共读伙伴 00">
+            <img class="ai-character-art" src="./assets/ai-character-stage-0-v1.png?v=20260830-2" width="887" height="1774" alt="" draggable="false">
+          </div>
+          <div class="ai-dialogue" id="aiDialogue" aria-live="polite">
+            <span class="speaker">共读伙伴 00 / 尚未命名</span>
+            <p id="aiText">我可以把这些内容放在一起，但我还不知道应该先相信什么。</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="reading-tray">
+        <div class="tray-heading">
+          <div><span class="eyebrow">递给共读伙伴的材料</span><strong id="trayCount">0 / 2</strong></div>
+          <span class="drag-hint">拖进房间，或点击材料上的“递给伙伴”</span>
+        </div>
+        <div class="drop-zone" id="dropZone" tabindex="0">
+          <div class="empty-drop" id="emptyDrop"><span>＋</span><p>把一份材料拖进房间</p></div>
+          <div class="selected-materials" id="selectedMaterials"></div>
+        </div>
+        <button class="primary-action" id="synthesizeButton" type="button" disabled>请先选择并标注两份材料</button>
+      </div>
+    </section>
+
+    <aside class="app-window memory-window is-closed" id="memoryWindow" aria-labelledby="memoryTitle">
+      <header class="titlebar dark-titlebar">
+        <div class="titlebar-title" id="memoryTitle">共读札记.txt</div>
+        <div class="window-controls">
+          <button class="window-control" data-window-action="minimize" type="button" aria-label="最小化共读札记" title="最小化">—</button>
+          <button class="window-control" data-window-action="maximize" type="button" aria-label="最大化共读札记" title="最大化">□</button>
+          <button class="window-control close-control" data-window-action="close" type="button" aria-label="关闭共读札记" title="关闭">×</button>
+        </div>
+      </header>
+      <div class="memory-content">
+        <span class="eyebrow">可选查看 · 不显示人格数值</span>
+        <h3 id="growthTitle">这里会留下共同经历</h3>
+        <ul class="growth-list" id="growthList">
+          <li><span class="growth-dot empty"></span> 第一页还是空的</li>
+        </ul>
+        <div class="principle-card" id="principleCard">
+          <span>第一张空白页</span>
+          <p>还没有写下任何东西。</p>
+        </div>
+      </div>
+    </aside>
+
+    <button class="followup-notification" id="followupNotification" type="button" hidden>
+      <span class="notification-pixel">!</span>
+      <span><strong>收到一条回访</strong><small>来自：悠一</small></span>
+    </button>
+
+    <footer class="taskbar">
+      <button class="start-button" type="button"><span>▦</span> 共读</button>
+      <button class="task-button is-active" data-focus="browserWindow" data-window-task="browserWindow" type="button">知乎 · 调查材料</button>
+      <button class="task-button" data-focus="roomWindow" data-window-task="roomWindow" type="button">共读房间.exe</button>
+      <div class="progress-steps" id="progressSteps" aria-label="事件进度">
+        <span class="is-current">阅读</span><i></i><span>整理</span><i></i><span>回应</span><i></i><span>回访</span>
+      </div>
+      <div class="taskbar-time" id="taskbarTime">21:08</div>
+    </footer>
+  </main>
+
+  <section class="boot-overlay" id="bootOverlay" aria-labelledby="bootTitle">
+    <div class="boot-card">
+      <div class="boot-index">CO-READ EXPERIMENT / 00</div>
+      <div class="boot-emblem" aria-hidden="true"><span></span><i></i></div>
+      <p class="boot-kicker">知乎 AI 共读养成游戏 · 像素美术原型 v0.2</p>
+      <h1 id="bootTitle">有些问题，<br>不能只读一个答案。</h1>
+      <p class="boot-copy">你将和房间里尚未命名的 AI 共读伙伴，一起阅读悠一的问题。它不会读取真实账号或电脑文件；本章所有内容均为游戏模拟。</p>
+      <div class="boot-objective"><span>本章目标</span><p>从四份材料中深入两份，教它区分最新规则、个人经历与待核实信息。</p></div>
+      <button class="boot-button" id="startButton" type="button">恢复共读会话 <span>→</span></button>
+      <small>建议使用 1280×720 以上横屏体验</small>
+    </div>
+  </section>
+
+  <section class="modal-backdrop" id="materialModal" hidden>
+    <article class="material-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <header class="modal-header">
+        <div><span class="eyebrow" id="modalType">材料</span><h2 id="modalTitle"></h2></div>
+        <button class="close-modal" id="closeModal" type="button" aria-label="关闭">×</button>
+      </header>
+      <div class="source-ledger" id="modalLedger"></div>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-caution" id="modalCaution"></div>
+      <footer class="modal-actions">
+        <button class="secondary-action" id="modalCloseAction" type="button">返回材料列表</button>
+        <button class="primary-action compact" id="modalSendAction" type="button">递给共读伙伴</button>
+      </footer>
+    </article>
+  </section>
+
+  <section class="modal-backdrop" id="decisionModal" hidden>
+    <article class="decision-modal" role="dialog" aria-modal="true" aria-labelledby="decisionTitle">
+      <span class="eyebrow">共同整理 / 02</span>
+      <h2 id="decisionTitle">这两份材料能够说明什么？</h2>
+      <div class="ai-summary" id="aiSummary"></div>
+      <p class="decision-prompt"><strong>提问者 · 悠一</strong>正在等你们的回复。你希望共读伙伴怎么说？</p>
+      <div class="decision-options" id="decisionOptions"></div>
+    </article>
+  </section>
+
+  <section class="modal-backdrop" id="followupModal" hidden>
+    <article class="followup-modal" role="dialog" aria-modal="true" aria-labelledby="followupTitle">
+      <span class="eyebrow">延迟回响 / 次日 16:24</span>
+      <h2 id="followupTitle">昨天的问题，有了后续。</h2>
+      <div class="message-thread">
+        <div class="message-avatar">悠</div>
+        <div class="message-bubble"><strong>提问者 · 悠一</strong><p id="followupText"></p></div>
+      </div>
+      <div class="autonomy-event" id="autonomyEvent"></div>
+      <div class="permission-choice" id="permissionChoice">
+        <p id="permissionPrompt">“下次再碰到流程回答，我想先看看日期……可以吗？”</p>
+        <button class="primary-action compact" id="permissionAllow" data-permission="allow" type="button">可以，先看看日期</button>
+        <button class="secondary-action" id="permissionAsk" data-permission="ask" type="button">先叫我，我们一起看</button>
+      </div>
+    </article>
+  </section>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="./app.js?v=20260830-5"></script>
+</body>
+</html>
