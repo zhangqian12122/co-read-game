@@ -1287,3 +1287,27 @@ html, body {
 }
 .method-card.is-ai:not(:disabled) { box-shadow: 3px 3px 0 rgba(63, 111, 99, .5); }
 .method-card.is-ai small { color: #3f6f63; }
+
+/* —— 像素风滚动条（浏览器页 / 对话流 / 结算 / 札记） —— */
+.browser-page::-webkit-scrollbar,
+.chat-thread::-webkit-scrollbar,
+.settle-card::-webkit-scrollbar,
+.memory-content::-webkit-scrollbar,
+.ai-settings-content::-webkit-scrollbar,
+.material-modal::-webkit-scrollbar { width: 10px; }
+
+.browser-page::-webkit-scrollbar-track,
+.chat-thread::-webkit-scrollbar-track,
+.settle-card::-webkit-scrollbar-track,
+.memory-content::-webkit-scrollbar-track,
+.ai-settings-content::-webkit-scrollbar-track,
+.material-modal::-webkit-scrollbar-track { background: #e6e2d4; }
+
+.browser-page::-webkit-scrollbar-thumb,
+.chat-thread::-webkit-scrollbar-thumb,
+.settle-card::-webkit-scrollbar-thumb,
+.memory-content::-webkit-scrollbar-thumb,
+.ai-settings-content::-webkit-scrollbar-thumb,
+.material-modal::-webkit-scrollbar-thumb { background: var(--ink-soft); border: 2px solid #e6e2d4; }
+
+.browser-page, .chat-thread, .settle-card, .memory-content, .ai-settings-content, .material-modal { scrollbar-color: var(--ink-soft) #e6e2d4; scrollbar-width: thin; }
