@@ -22,6 +22,8 @@
   let lastSpot = null;
   let started = false;
   const saidLines = new Set();
+  let growthSet = new Set();
+
 
   const roamTargets = [
     { x: 68, depth: 16, scale: .84, interaction: "bed" },
@@ -260,5 +262,24 @@
     goToComputer() { stopWalk(); walkTo({ x: 58, depth: 9, scale: .95, interaction: "computer" }); }
   };
 
+  function showGrowthItem(type) {
+    if (growthSet.has(type)) return;
+    growthSet.add(type);
+    let layer = document.querySelector(".room-growth-layer");
+    if (!layer) {
+      layer = document.createElement("div");
+      layer.className = "room-growth-layer";
+      const canvas = document.querySelector("#roomScene .room-canvas");
+      if (canvas) canvas.append(layer);
+    }
+    const item = document.createElement("div");
+    item.className = "room-growth-item growth-" + type;
+    layer.append(item);
+    window.requestAnimationFrame(() => {
+      window.setTimeout(() => item.classList.add("is-visible"), 200);
+    });
+  }
+
+  window.CoReadCompanion.showGrowthItem = showGrowthItem;
   if (window.CoReadV2Shell) window.CoReadV2Shell.companion = window.CoReadCompanion;
 })();

@@ -33,6 +33,7 @@
       cards: S.cards,
       inspected: Array.from(S.inspected),
       chatLog: S.chatLog,
+      growthItems: Array.from(growthSetRef()),
       growth: S.growth,
       dlg: S.dlg ? {
         mood: S.dlg.mood, patience: S.dlg.patience, patienceMax: S.dlg.patienceMax,
@@ -489,6 +490,10 @@
     el("settleGains").innerHTML = "<p>" + letter.result + "</p><p><small>已记入共读札记：" + letter.memory + "</small></p>";
     $("#settleContinue").textContent = S.questionIndex < S.questionQueue.length - 1 ? "下一封求助 →" : "今晚的求助都回答完了";
     $("#settleContinue").onclick = () => nextQuestion();
+    if (window.CoReadCompanion && window.CoReadCompanion.showGrowthItem) {
+      const qid = shell().pack.question.id || "guahao";
+      window.CoReadCompanion.showGrowthItem(qid);
+    }
     shell().setStage(4);
     recordGrowth(letter);
     save();
@@ -570,12 +575,14 @@
   function restoreResearch(saved) {
     S.cards = saved.cards || {};
     S.inspected = new Set(saved.inspected || []);
+    if (saved.growthItems) { window.__coreadGrowthSet = new Set(saved.growthItems); (window.CoReadCompanion && window.CoReadCompanion.showGrowthItem) ? saved.growthItems.forEach((t) => window.CoReadCompanion.showGrowthItem(t)) : null; }
     onShellReady(true);
   }
 
   function restoreDialogue(saved) {
     S.cards = saved.cards || {};
     S.inspected = new Set(saved.inspected || []);
+    if (saved.growthItems) { window.__coreadGrowthSet = new Set(saved.growthItems); (window.CoReadCompanion && window.CoReadCompanion.showGrowthItem) ? saved.growthItems.forEach((t) => window.CoReadCompanion.showGrowthItem(t)) : null; }
     S.chatLog = saved.chatLog || [];
     S.growth = saved.growth || S.growth;
     const pack = shell().pack;
@@ -680,6 +687,7 @@
   window.setInterval(save, 1500);
   window.addEventListener("beforeunload", save);
 
+  function growthSetRef() { return window.__coreadGrowthSet || new Set(); }
   window.CoReadEngine = {
     onShellReady: () => onShellReady(false),
     resume,

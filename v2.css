@@ -1344,3 +1344,30 @@ html, body {
 .room-growth-item.growth-rent::after { content: "📦"; font-size: 9px; display: block; text-align: center; }
 
 /* —— 像素风滚动条（房间区域） —— */
+
+/* —— 新环境交互：书架/台灯/盆栽动画 —— */
+.ai-character.is-environment-interacting.interact-bookshelf .ai-character-sprite {
+  animation: companion-bookshelf 7s steps(7) 1 both;
+}
+@keyframes companion-bookshelf {
+  0%, 20% { transform: translateY(0) scaleY(1); }
+  30%, 50% { transform: translateY(-3px) scaleY(1.02); }
+  60%, 80% { transform: translateY(-1px) scaleY(.98); }
+  100% { transform: translateY(0) scaleY(1); }
+}
+.ai-character.is-environment-interacting.interact-lamp .ai-character-sprite {
+  animation: companion-lamp 4.8s steps(5) 1 both;
+}
+@keyframes companion-lamp {
+  0%, 30% { transform: translateY(0) rotate(0); }
+  40%, 70% { transform: translateY(-2px) rotate(-3deg); }
+  80%, 100% { transform: translateY(0) rotate(0); }
+}
+.ai-character.is-environment-interacting.interact-plant .ai-character-sprite {
+  animation: companion-plant 4.5s steps(5) 1 both;
+}
+@keyframes companion-plant {
+  0%, 25% { transform: translateY(0); }
+  35%, 60% { transform: translateY(-1px) translateX(2px); }
+  70%, 100% { transform: translateY(0) translateX(0); }
+}
