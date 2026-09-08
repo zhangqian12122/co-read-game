@@ -649,6 +649,7 @@
     if (!S.questionQueue.length) {
       S.questionQueue = [pack];
       if (window.CoReadV2PackTrain) S.questionQueue.push(window.CoReadV2PackTrain);
+      if (window.CoReadV2PackRent) S.questionQueue.push(window.CoReadV2PackRent);
     }
     shell().fillQuestion(pack.question);
     el("researchInstruction").textContent = "注意力只够细读两份。展开材料 → 挑最多 3 句做成素材卡 → 标对来源。";
