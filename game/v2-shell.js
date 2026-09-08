@@ -332,14 +332,28 @@
     window.setTimeout(() => tip.classList.remove("is-visible"), 6000);
   }
 
+  function refreshProgressLabel() {
+    const bootProgress = document.getElementById("bootProgress");
+    if (!bootProgress) return;
+    try {
+      const raw = window.localStorage.getItem("coread-v2-save");
+      if (!raw) { bootProgress.textContent = "CO-READ OS / V2"; return; }
+      const data = JSON.parse(raw);
+      const stageNames = { research: "共读中", dialogue: "对话中", settle: "结算", letter: "已回信" };
+      const label = stageNames[data.stage] || data.stage;
+      bootProgress.textContent = "CO-READ OS / V2 · " + label;
+    } catch (e) { bootProgress.textContent = "CO-READ OS / V2"; }
+  }
+
   function initialize() {
     buildTaskButtons();
     bindWindowChrome();
     bindBedroomToggle();
+    bindContinueButton();
+    refreshProgressLabel();
     bindAiSettings();
     refreshAiIndicator();
     elements.startButton.addEventListener("click", () => startShell(false));
-    bindContinueButton();
     const osStart = document.getElementById("osStartButton");
     if (osStart) osStart.addEventListener("click", () => toast("共读OS · 知乎黑客松2026 参赛作品 · 由人与 AI 结对开发"));
     setClock();
