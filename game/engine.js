@@ -513,6 +513,12 @@
       onShellReady(true);
       shell().focusWindow("browserWindow");
       shell().toast("收到一条新求助：" + shell().pack.question.askerShort);
+    } else if (window.CoReadAI && window.CoReadAI.isReady()) {
+      shell().toast("队列空了——试试「AI 换你出题」生成新档案？");
+      const btn = document.getElementById("osStartButton");
+      if (btn) { btn.click(); }
+      const launch = document.getElementById("customLaunch");
+      if (launch) launch.click();
     } else {
       shell().toast("今晚的求助都回答完了。");
     }
