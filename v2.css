@@ -52,6 +52,7 @@ html, body {
   grid-column: 1;
   grid-row: 1;
   overflow: hidden;
+  z-index: 1;
 }
 
 .wallpaper {
@@ -565,6 +566,9 @@ html, body {
 
 /* —— 壁纸：2026-09-08 用户指定改用原版 Bliss 图（覆盖手绘 SVG 版） —— */
 .wallpaper {
+  position: fixed !important;
+  inset: 0;
+  z-index: 0;
   background: url("./assets/wallpaper-bliss.jpg") center / cover no-repeat;
 }
 
