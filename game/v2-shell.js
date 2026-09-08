@@ -248,6 +248,14 @@
       return;
     }
     setAiText("你来了？电脑一会儿会亮，求助来了我叫你。");
+    // 新手教程（不阻塞游戏加载，盖在上面，关闭后直接玩）
+    const tut = document.getElementById("tutorialOverlay");
+    if (tut && !tut.dataset.shown) {
+      tut.dataset.shown = "1";
+      tut.hidden = false;
+      const dismiss = document.getElementById("tutorialDismiss");
+      if (dismiss) dismiss.addEventListener("click", () => { tut.hidden = true; });
+    }
     window.setTimeout(() => {
       if (window.CoReadEngine && typeof window.CoReadEngine.newGame === "function") {
         window.CoReadEngine.newGame();
