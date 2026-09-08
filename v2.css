@@ -1663,3 +1663,20 @@ html, body {
   padding: 12px;
   margin-top: 10px;
 }
+
+/* —— 全局安全网：hidden 元素彻底不可见不可点 —— */
+[hidden] {
+  display: none !important;
+  pointer-events: none !important;
+  visibility: hidden !important;
+}
+
+/* —— 确保浏览器窗口在最上层可交互 —— */
+.browser-window { z-index: 20; }
+.browser-window.is-front { z-index: 25; }
+
+/* —— 素材卡按钮必须可点 —— */
+.material-card .inspect-material,
+.material-card .send-action {
+  pointer-events: auto !important;
+}

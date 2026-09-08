@@ -253,5 +253,12 @@
   <script src="./game/custom-pack.js?v=20260908-2"></script>
   <script src="./game/custom-launcher.js?v=20260908-2"></script>
   <script src="./game/v2-shell.js?v=20260908-1"></script>
+<script>
+window.addEventListener("error", function(e) {
+  var msg = e.message || String(e);
+  var div = document.getElementById("errDisplay") || (function() { var d = document.createElement("div"); d.id = "errDisplay"; d.style.cssText = "position:fixed;bottom:50px;left:10px;right:10px;z-index:999;background:#ff4444;color:#fff;padding:10px;font:12px monospace;max-height:200px;overflow-y:auto;";document.body.append(d); return d;")();
+  div.textContent = "ERR: " + msg;
+});
+</script>
 </body>
 </html>
