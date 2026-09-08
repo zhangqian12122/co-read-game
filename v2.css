@@ -1641,3 +1641,25 @@ html, body {
   transition: transform .1s steps(2);
 }
 .tutorial-go:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 #173e6f; }
+
+/* —— 材料卡点击引导 —— */
+.material-card { cursor: pointer; }
+.material-card::after {
+  content: "👆 点「展开检查」";
+  display: block;
+  margin-top: 6px;
+  font: 700 9px/1 var(--mono-font);
+  color: var(--zhihu);
+  opacity: .6;
+  transition: opacity .2s;
+}
+.material-card:hover::after { opacity: 1; }
+.material-card .inspect-material { font-size: 12px; padding: 7px 12px; font-weight: 800; }
+
+/* —— 研究区提示底色 —— */
+.research-section {
+  background: rgba(247,245,239,.5);
+  border-radius: 4px;
+  padding: 12px;
+  margin-top: 10px;
+}

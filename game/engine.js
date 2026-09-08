@@ -676,6 +676,9 @@
     $$("#handCards .method-card").forEach((button) => button.addEventListener("click", () => playMethod(button.dataset.method)));
     shell().setStage(1);
     shell().focusWindow("browserWindow");
+    // 自动滚到材料区，确保玩家看到「展开检查」按钮
+    const researchSection = document.querySelector(".research-section");
+    if (researchSection) researchSection.scrollIntoView({ behavior: "smooth", block: "start" });
     if (!silent) {
       shell().toast("收到一条来自林一舟的求助");
     const computer = document.getElementById("roomComputer");
