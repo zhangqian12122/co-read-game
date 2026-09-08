@@ -15,7 +15,12 @@
     chatLog: [],
     dialogue: null,
     settle: null,
-    growth: { proficiency: {}, fans: 0, exp: 0 }
+    growth: { proficiency: {}, fans: 0, exp: 0 },
+    energy: 3,
+    energyMax: 3,
+    totalExp: 0,
+    questionQueue: [],
+    questionIndex: 0
   };
 
   const el = (name) => shell().elements[name] || document.getElementById(name);
@@ -482,11 +487,30 @@
     el("settleCards").innerHTML = "";
     el("settleLeave").innerHTML = "";
     el("settleGains").innerHTML = "<p>" + letter.result + "</p><p><small>已记入共读札记：" + letter.memory + "</small></p>";
-    $("#settleContinue").textContent = "再回答一题（刷新重开）";
-    $("#settleContinue").onclick = () => { clearSave(); window.location.reload(); };
+    $("#settleContinue").textContent = S.questionIndex < S.questionQueue.length - 1 ? "下一封求助 →" : "今晚的求助都回答完了";
+    $("#settleContinue").onclick = () => nextQuestion();
     shell().setStage(4);
     recordGrowth(letter);
     save();
+  }
+
+  function nextQuestion() {
+    S.questionIndex += 1;
+    S.energy -= 1;
+    if (S.questionIndex < S.questionQueue.length) {
+      window.CoReadV2Pack = S.questionQueue[S.questionIndex];
+      S.cards = {};
+      S.inspected = new Set();
+      S.chatLog = [];
+      S.dlg = null;
+      S.settle = null;
+      S.stage = "research";
+      onShellReady(true);
+      shell().focusWindow("browserWindow");
+      shell().toast("收到一条新求助：" + shell().pack.question.askerShort);
+    } else {
+      shell().toast("今晚的求助都回答完了。");
+    }
   }
 
   function recordGrowth(letter) {
@@ -622,6 +646,10 @@
     S.stage = "research";
     const pack = shell().pack;
     if (!pack) { shell().toast("文案包未加载"); return; }
+    if (!S.questionQueue.length) {
+      S.questionQueue = [pack];
+      if (window.CoReadV2PackTrain) S.questionQueue.push(window.CoReadV2PackTrain);
+    }
     shell().fillQuestion(pack.question);
     el("researchInstruction").textContent = "注意力只够细读两份。展开材料 → 挑最多 3 句做成素材卡 → 标对来源。";
     renderAttention();
@@ -662,6 +690,7 @@
     aiSuggest,
     readSaveJSON,
     reset,
+    nextQuestion,
     evalHit,
     calcQuality
   };
