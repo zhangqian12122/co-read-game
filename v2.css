@@ -38,7 +38,7 @@ html, body {
 .os-root {
   display: grid;
   grid-template-columns: minmax(0, 1fr) clamp(380px, 32vw, 560px);
-  grid-template-rows: minmax(0, 1fr) 46px;
+  grid-template-rows: minmax(0, 1fr);
   width: 100%;
   height: 100vh;
 }
@@ -1704,3 +1704,77 @@ html, body {
 #questionTitle { font-size: 17px; margin: 6px 0 4px; }
 .question-body { font-size: 12px; line-height: 1.5; margin-bottom: 4px; }
 .question-stats { padding-bottom: 6px; }
+
+/* —— 删除任务栏后布局调整 —— */
+.os-root { grid-template-rows: minmax(0, 1fr); }
+.os-root { grid-template-rows: minmax(0, 1fr); }
+
+/* —— 浮动状态角标（替代任务栏） —— */
+.os-badge {
+  position: fixed;
+  z-index: 45;
+  bottom: 8px;
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 2px solid var(--ink);
+  background: var(--paper-bright);
+  font: 700 10px/1 var(--mono-font);
+  color: var(--ink-soft);
+  box-shadow: 2px 2px 0 rgba(15,40,73,.3);
+}
+.os-badge-sep { width: 1px; height: 12px; background: var(--line); }
+
+/* —— 逐步教学气泡 —— */
+.tut-bubble {
+  position: absolute;
+  z-index: 80;
+  max-width: 260px;
+  padding: 10px 14px;
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  box-shadow: 4px 4px 0 rgba(15,40,73,.5);
+  font: 700 12px/1.6 var(--ui-font);
+  pointer-events: none;
+  transition: all .3s steps(4);
+}
+.tut-bubble::before {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 20px;
+  border: 5px solid transparent;
+  border-top-color: var(--ink);
+}
+.tut-bubble .tut-num {
+  display: inline-grid;
+  place-items: center;
+  width: 20px; height: 20px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--yellow);
+  font: 800 11px/1 var(--mono-font);
+  margin-right: 6px;
+  vertical-align: middle;
+}
+.tut-bubble .tut-dismiss {
+  display: block;
+  margin-top: 6px;
+  font: 600 9px/1 var(--mono-font);
+  color: var(--ink-soft);
+}
+
+/* —— 步骤高亮脉冲 —— */
+.tut-highlight {
+  outline: 3px solid var(--yellow) !important;
+  outline-offset: 4px;
+  animation: tut-pulse 1s ease infinite !important;
+  position: relative;
+  z-index: 6;
+}
+@keyframes tut-pulse {
+  0%, 100% { outline-color: var(--yellow); }
+  50% { outline-color: var(--zhihu); outline-offset: 6px; }
+}

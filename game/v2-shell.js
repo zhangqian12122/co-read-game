@@ -12,9 +12,8 @@
     expandBedroom: $("#expandBedroom"),
     bootOverlay: $("#bootOverlay"),
     startButton: $("#startButton"),
-    taskButtons: $("#taskButtons"),
-    progressSteps: $("#progressSteps"),
-    taskbarTime: $("#taskbarTime"),
+    osBadgeStage: $("#osBadgeStage"),
+    osBadgeTime: $("#osBadgeTime"),
     toast: $("#toast"),
     addressBar: $("#addressBar"),
     questionKicker: $("#questionKicker"),
@@ -54,17 +53,15 @@
   }
 
   function setStage(index) {
-    const steps = $$("span", elements.progressSteps);
-    steps.forEach((step, i) => {
-      step.classList.toggle("is-current", i === index);
-      step.classList.toggle("is-done", i < index);
-    });
+    if (elements.osBadgeStage) {
+      elements.osBadgeStage.textContent = stageNames[index] || stageNames[0];
+    }
   }
 
   function setClock() {
     const now = new Date();
     const pad = (v) => String(v).padStart(2, "0");
-    elements.taskbarTime.textContent = pad(now.getHours()) + ":" + pad(now.getMinutes());
+    if (elements.osBadgeTime) elements.osBadgeTime.textContent = pad(now.getHours()) + ":" + pad(now.getMinutes());
   }
 
   // —— 窗口管理 ——
@@ -80,7 +77,6 @@
     zTop += 1;
     win.style.zIndex = String(zTop);
     $$(".app-window").forEach((item) => item.classList.toggle("is-front", item.id === id));
-    syncTaskButtons();
   }
 
   function minimizeWindow(id) {
@@ -88,7 +84,6 @@
     if (!win) return;
     win.classList.add("is-minimized");
     win.classList.remove("is-front");
-    syncTaskButtons();
   }
 
   function toggleWindow(id) {
@@ -96,29 +91,6 @@
     if (!win) return;
     if (win.classList.contains("is-minimized") || !win.classList.contains("is-front")) focusWindow(id);
     else minimizeWindow(id);
-  }
-
-  function syncTaskButtons() {
-    $$("[data-task-button]", elements.taskButtons).forEach((button) => {
-      const win = getWindow(button.dataset.taskButton);
-      if (!win) return;
-      const active = win.classList.contains("is-front") && !win.classList.contains("is-minimized");
-      button.classList.toggle("is-active", active);
-    });
-  }
-
-  function buildTaskButtons() {
-    windowIds.forEach((id) => {
-      const win = getWindow(id);
-      if (!win) return;
-      const button = document.createElement("button");
-      button.className = "task-button";
-      button.dataset.taskButton = id;
-      button.type = "button";
-      button.textContent = win.dataset.task || id;
-      button.addEventListener("click", () => toggleWindow(id));
-      elements.taskButtons.append(button);
-    });
   }
 
   function bindWindowChrome() {
@@ -320,8 +292,10 @@
     continueButton.addEventListener("click", () => startShell(true));
   }
 
+  let tutStep = 0;
   function guide(key, text, targetSelector) {
-    if (window.CoReadGuide) window.CoReadGuide.showOnce(key, text, targetSelector);
+    tutStep++;
+    if (window.CoReadGuide) window.CoReadGuide.show(tutStep, text, targetSelector);
   }
 
   function refreshProgressLabel() {
@@ -338,7 +312,6 @@
   }
 
   function initialize() {
-    buildTaskButtons();
     bindWindowChrome();
     bindBedroomToggle();
     bindContinueButton();
