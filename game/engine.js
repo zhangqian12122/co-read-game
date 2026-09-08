@@ -94,7 +94,10 @@
         "<h3>" + material.title + "</h3><p>" + material.excerpt + "</p>" +
         '<div class="material-meta"><span>' + material.author + '</span><span>·</span><span>' + material.engagement + "</span></div>" +
         '<div class="material-actions"><button class="text-action inspect-material" type="button">' + (S.cards[material.id] ? "看素材卡" : inspected ? "再次展开" : "展开检查") + '</button><span class="pick-state">' + (S.cards[material.id] ? "已做成素材卡" : locked ? "注意力不够了" : "") + "</span></div>";
-      card.querySelector(".inspect-material").addEventListener("click", () => openMaterial(material));
+      card.addEventListener("click", (event) => {
+        if (event.target.closest(".select-material")) return;
+        openMaterial(material);
+      });
       list.append(card);
     });
   }

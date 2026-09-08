@@ -1680,3 +1680,27 @@ html, body {
 .material-card .send-action {
   pointer-events: auto !important;
 }
+
+/* —— 修：任务栏变薄 + 不遮挡 —— */
+.taskbar { height: 36px; padding: 0 8px; z-index: 50; }
+
+/* —— 修：材料卡片整体可点（不只按钮） —— */
+.material-card { cursor: pointer; user-select: none; }
+.material-card .material-actions { pointer-events: auto; }
+
+/* —— 修：浏览器窗口高度适配，确保材料区在任务栏上方可见 —— */
+.browser-window {
+  height: calc(100vh - 36px - 30px);
+  top: 10px;
+  left: 20px;
+  width: calc(100% - 60px);
+}
+
+/* —— 修：隐藏知乎导航条（占空间不必要） —— */
+.zhihu-nav { display: none !important; }
+
+/* —— 修：问题区缩小，给材料区让空间 —— */
+.question-panel { padding: 8px 0 6px; }
+#questionTitle { font-size: 17px; margin: 6px 0 4px; }
+.question-body { font-size: 12px; line-height: 1.5; margin-bottom: 4px; }
+.question-stats { padding-bottom: 6px; }
