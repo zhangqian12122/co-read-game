@@ -1501,3 +1501,103 @@ html, body {
 /* —— 素材卡弹窗微调 —— */
 .sentence-item { transition: all .12s steps(2); }
 .sentence-item.is-picked { font-weight: 700; }
+
+/* ===== 卧室面板视觉升级 ===== */
+
+/* 房间场景：用 object-fit 填满面板，伙伴放大居中 */
+.room-canvas { overflow: hidden; }
+.room-base-art {
+  object-fit: cover;
+  object-position: center 30%;
+  filter: brightness(.85) saturate(1.1);
+}
+
+/* 伙伴放大到面板宽度的 45%，更存在感 */
+.ai-character {
+  width: 45%;
+  bottom: 8%;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.ai-character-sprite {
+  image-rendering: pixelated;
+  filter: drop-shadow(0 4px 0 rgba(73,54,47,.3));
+}
+
+/* 伙伴对话气泡更突出 */
+.ai-dialogue {
+  background: rgba(255,253,246,.97);
+  border: 3px solid var(--ink);
+  box-shadow: 0 -2px 0 rgba(73,54,47,.2), 0 4px 12px rgba(0,0,0,.15);
+  z-index: 5;
+}
+.ai-dialogue p { font-size: 12.5px; line-height: 1.65; }
+
+/* 墙便签更有质感 */
+.wall-note {
+  background: #fff8e4;
+  border: 2px solid #b8a67e;
+  box-shadow: 2px 3px 6px rgba(73,54,47,.25);
+  padding: 10px 12px;
+}
+.wall-note::before { content: "📌 00"; font: 800 8px/1 var(--mono-font); color: #b8a67e; display: block; margin-bottom: 4px; }
+
+/* 素材卡桌更整洁 */
+.reading-tray { padding: 10px 14px 14px; gap: 10px; }
+.tray-heading strong { font-size: 13px; }
+.drop-zone { min-height: 80px; border-radius: 2px; }
+
+/* 卧室头部：更简洁 */
+.bedroom-head {
+  background: linear-gradient(180deg, #76523f, #5a3d2f);
+  border-bottom: 3px solid var(--ink);
+  padding: 8px 12px;
+}
+.bedroom-title { font-size: 13px; letter-spacing: .05em; }
+.bedroom-collapse { border-color: #c4a97e; color: #c4a97e; }
+
+/* ===== 浏览器窗口优化 ===== */
+.browser-window { width: min(680px, calc(100% - 80px)); height: min(82vh, 760px); }
+.browser-page { padding: 16px 18px 20px; }
+.question-panel { margin-bottom: 16px; }
+#questionTitle { font-size: 22px; margin: 10px 0 8px; }
+.question-body { font-size: 13.5px; line-height: 1.75; }
+
+/* 材料卡片更有层次 */
+.material-card {
+  transition: transform .12s steps(2), box-shadow .12s steps(2);
+}
+.material-card:hover { transform: translateY(-2px); box-shadow: 5px 6px 0 rgba(15,40,73,.35); }
+.material-card.is-selected { border-color: #2f6f4f; background: #f0f7f0; }
+.material-actions { gap: 8px; margin-top: 4px; }
+.text-action, .send-action { transition: all .1s steps(2); }
+.text-action:hover { background: #e8e4d5; }
+.send-action:not(:disabled):hover { background: #0f5ac4; }
+
+/* ===== 对话窗口优化 ===== */
+.chat-window { width: min(560px, calc(100% - 70px)); height: min(78vh, 700px); }
+.chat-status {
+  background: linear-gradient(180deg, #fdf6e8, #f5ead5);
+  border-bottom: 3px solid var(--ink);
+  padding: 9px 14px;
+}
+.mood-pip { transition: all .15s steps(2); font-size: 11px; padding: 4px 8px; }
+.mood-pip.is-current { transform: scale(1.05); }
+.chat-thread { gap: 12px; padding: 14px 16px; }
+.chat-bubble { line-height: 1.65; }
+.chat-bubble p { font-size: 13px; }
+.hand-cards { grid-template-columns: repeat(4, 1fr); gap: 8px; padding: 10px 14px 14px; }
+.method-card { padding: 10px 8px; }
+.method-card strong { font-size: 13px; }
+.method-card small { font-size: 9px; }
+
+/* ===== 结算页优化 ===== */
+.settle-card { padding: 24px 26px 26px; }
+.settle-card h2 { font-size: 26px; margin-bottom: 14px; }
+.settle-block { padding: 12px 14px; border-radius: 2px; }
+.settle-block > span { font-size: 9px; letter-spacing: .08em; }
+
+/* ===== 开机画面优化 ===== */
+.boot-card { box-shadow: 12px 12px 0 rgba(9,22,41,.6); }
+.boot-title-text, #bootTitle { font-size: 28px; line-height: 1.35; }
+.boot-objective { border-left: 4px solid var(--zhihu); padding-left: 12px; }
