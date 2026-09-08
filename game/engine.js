@@ -181,7 +181,7 @@
     refreshModal();
     document.getElementById("modalConfirm").textContent = existing ? "更新素材卡" : "做成素材卡";
     $("#materialModal").hidden = false;
-    shell().guide("modal", "伙伴划出了候选句：点句子挑进素材卡（最多 3 句），再给材料标来源，标错了会出废卡。");
+    shell().guide("modal", "伙伴划出了候选句：点句子挑进素材卡（最多 3 句），再给材料标来源，标错了会出废卡。", "#sentenceList");
   }
 
   function refreshModal() {
@@ -214,7 +214,7 @@
     if (count === 1) shell().setAiText(rl.firstMaterial.replace("{kind}", material.kindLabel));
     if (count >= S.attention) {
       shell().setAiText(rl.bothMaterials);
-      shell().guide("cards", "两张素材卡就绪：点素材卡桌下的「去找他聊聊」，开始回答。");
+      shell().guide("cards", "两张素材卡就绪：点素材卡桌下的「去找他聊聊」，开始回答。", "#synthesizeButton");
       shell().toast("两份素材卡就绪：打开「回答对话」开始回复");
     }
   }
@@ -563,7 +563,7 @@
     };
     chatMsg("asker", pack.question.askerShort, pack.question.opening);
     shell().setAiText("他开口了。先用共情接住他，或者追问问清细节——素材卡上的句子就是你的底气。");
-    shell().guide("dialogue", "打方式牌回他：共情接情绪，追问问细节，清单给步骤。素材卡选得好，牌才打得中。");
+    shell().guide("dialogue", "打方式牌回他：共情接情绪，追问问细节，清单给步骤。素材卡选得好，牌才打得中。", "#handCards");
     renderDialogueUI();
     bindEndButton();
     shell().focusWindow("chatWindow");
@@ -680,7 +680,7 @@
         shell().focusWindow("browserWindow");
       });
     }
-      shell().guide("research", "电脑收到求助了！点材料上的「展开检查」，看清作者和日期，再挑句子做成素材卡。");
+      shell().guide("research", "电脑收到求助了！点材料上的「展开检查」，看清作者和日期，再挑句子做成素材卡。", "#materialList");
     }
   }
 

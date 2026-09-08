@@ -1371,3 +1371,133 @@ html, body {
   35%, 60% { transform: translateY(-1px) translateX(2px); }
   70%, 100% { transform: translateY(0) translateX(0); }
 }
+
+/* —— 步骤引导条（常驻，当前步骤高亮） —— */
+.guide-banner {
+  position: fixed;
+  z-index: 55;
+  top: 54px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 18px;
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  color: var(--ink);
+  font: 800 13px/1.4 var(--ui-font);
+  box-shadow: 5px 5px 0 rgba(15,40,73,.55);
+  pointer-events: none;
+  transition: opacity .3s steps(4);
+}
+.guide-banner .guide-step {
+  display: inline-grid;
+  place-items: center;
+  width: 24px; height: 24px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--yellow);
+  font: 800 12px/1 var(--mono-font);
+  flex: none;
+}
+.guide-banner .guide-text { flex: 1; }
+.guide-banner .guide-arrow {
+  font: 800 18px/1 var(--ui-font);
+  animation: guide-bounce 1s steps(3) infinite;
+}
+@keyframes guide-bounce { 50% { transform: translateX(4px); } }
+
+/* —— 当前目标元素高亮脉冲 —— */
+.guide-highlight {
+  outline: 3px solid var(--yellow) !important;
+  outline-offset: 3px;
+  animation: guide-pulse 1.2s steps(4) infinite !important;
+  position: relative;
+  z-index: 5;
+}
+@keyframes guide-pulse {
+  0%, 100% { outline-color: var(--yellow); }
+  50% { outline-color: var(--zhihu); }
+}
+
+/* —— 素材卡桌上的素材卡（选中态更醒目） —— */
+.tray-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 7px 10px;
+  border: 2px solid var(--ink);
+  background: #fff8e4;
+  transition: transform .1s steps(2);
+}
+.tray-item:hover { transform: translateX(3px); }
+.tray-item strong { font: 800 10px/1 var(--mono-font); color: #8a6f4d; flex: none; min-width: 52px; }
+.tray-item span { font: 600 11px/1.4 var(--ui-font); }
+
+/* —— 引导系统升级 —— */
+.guide-banner {
+  position: fixed;
+  z-index: 200;
+  top: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  border: 3px solid var(--ink);
+  background: var(--yellow);
+  box-shadow: 5px 5px 0 rgba(15,40,73,.5);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s steps(4);
+  max-width: min(620px, calc(100vw - 40px));
+}
+.guide-banner .guide-step {
+  display: inline-grid;
+  place-items: center;
+  width: 26px; height: 26px;
+  border: 2px solid var(--ink);
+  background: var(--ink);
+  color: var(--yellow);
+  font: 800 13px/1 var(--mono-font);
+  flex: none;
+}
+.guide-banner .guide-text {
+  flex: 1;
+  font: 800 13px/1.5 var(--ui-font);
+}
+.guide-banner .guide-arrow {
+  font: 800 18px/1 var(--ui-font);
+  animation: guide-bounce .8s steps(3) infinite;
+}
+.guide-banner[style*="opacity: 0"] { pointer-events: none; }
+
+/* —— 目标元素脉冲高亮 —— */
+.guide-highlight {
+  outline: 3px solid var(--yellow) !important;
+  outline-offset: 3px;
+  animation: guide-pulse 1.2s ease infinite !important;
+}
+@keyframes guide-pulse {
+  0%, 100% { outline-color: var(--yellow); outline-offset: 3px; }
+  50% { outline-color: var(--zhihu); outline-offset: 6px; }
+}
+
+/* —— 卧室面板视觉优化 —— */
+.bedroom-panel {
+  background: linear-gradient(180deg, var(--warm-wall) 0%, #c9b890 60%, #b8a67e 100%);
+}
+.room-canvas { border-radius: 0; overflow: hidden; }
+.ai-dialogue {
+  background: rgba(255,253,246,.95);
+  border: 3px solid var(--ink);
+  backdrop-filter: blur(2px);
+}
+.ai-dialogue .speaker { font: 800 10px/1 var(--mono-font); color: var(--zhihu); letter-spacing: .1em; }
+.reading-tray { background: var(--paper); border-top: 4px solid var(--wood-dark); }
+
+/* —— 素材卡弹窗微调 —— */
+.sentence-item { transition: all .12s steps(2); }
+.sentence-item.is-picked { font-weight: 700; }

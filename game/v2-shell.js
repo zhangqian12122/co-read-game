@@ -312,24 +312,8 @@
     continueButton.addEventListener("click", () => startShell(true));
   }
 
-  function guide(key, text) {
-    let flags = {};
-    try {
-      flags = JSON.parse(window.localStorage.getItem("coread-v2-guide") || "{}");
-      if (flags[key]) return;
-      flags[key] = true;
-      window.localStorage.setItem("coread-v2-guide", JSON.stringify(flags));
-    } catch (e) { return; }
-    let tip = document.getElementById("guideTip");
-    if (!tip) {
-      tip = document.createElement("div");
-      tip.id = "guideTip";
-      tip.className = "guide-tip";
-      document.body.append(tip);
-    }
-    tip.textContent = "指引：" + text;
-    tip.classList.add("is-visible");
-    window.setTimeout(() => tip.classList.remove("is-visible"), 6000);
+  function guide(key, text, targetSelector) {
+    if (window.CoReadGuide) window.CoReadGuide.showOnce(key, text, targetSelector);
   }
 
   function refreshProgressLabel() {
