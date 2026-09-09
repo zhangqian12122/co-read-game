@@ -14,6 +14,11 @@ AI 时代的知识社区，缺的不是"能生成答案的模型"，而是**帮�
 - npm start —— http://127.0.0.1:4173
 - npm run desktop —— Electron 桌面版（需 npm i）
 
+## 在线试玩
+
+- v2 试玩入口：<https://zhangqian12122.github.io/co-read-game/v2.html>
+- 浏览器直接打开即可游玩，不需要安装 Node.js；AI 增强不是必需项，关闭或断网也能正常体验内置剧本。
+
 ## 三大系统
 
 ### 1. 检查点存档（save-system.js）

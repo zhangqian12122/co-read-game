@@ -25,13 +25,24 @@
     if (!window.CoReadEngine || !window.CoReadCustom) return;
     const trigger = document.getElementById("customLaunch");
     const modal = ensureModal();
+    let modalTrigger = null;
+    const closeModal = () => {
+      modal.hidden = true;
+      if (modalTrigger && typeof modalTrigger.focus === "function") modalTrigger.focus();
+      modalTrigger = null;
+    };
     if (trigger) {
       trigger.addEventListener("click", () => {
+        modalTrigger = document.activeElement;
         modal.hidden = false;
+        window.requestAnimationFrame(() => modal.querySelector("#customQuestionInput")?.focus());
       });
     }
     const closeBtn = modal.querySelector("#closeCustomModal");
-    if (closeBtn) closeBtn.addEventListener("click", () => { modal.hidden = true; });
+    if (closeBtn) closeBtn.addEventListener("click", closeModal);
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && !modal.hidden) closeModal();
+    });
     const generate = modal.querySelector("#customGenerate");
     const status = modal.querySelector("#customStatus");
     const input = modal.querySelector("#customQuestionInput");
@@ -44,10 +55,10 @@
       status.textContent = "AI 正在生成新档案（材料/候选句/回信）……约 20-40 秒";
       try {
         const pack = await window.CoReadCustom.generatePack(text);
-        const err = window.CoReadCustom.validate ? window.CoReadCustom.validate(pack) : null;
+        const err = window.CoReadCustom.validateCustomPack(pack);
         if (err) throw new Error(err);
         window.CoReadV2Pack = pack;
-        modal.hidden = true;
+        closeModal();
         const boot = document.getElementById("bootOverlay");
         if (boot) boot.hidden = true;
         window.CoReadEngine.reset();

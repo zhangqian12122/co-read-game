@@ -1,6 +1,8 @@
 import { JSDOM } from 'jsdom';
 
-const html = (await import('fs')).readFileSync(new URL('./v2.html', import.meta.url), 'utf8');
+const fs = await import('fs');
+const html = fs.readFileSync(new URL('./v2.html', import.meta.url), 'utf8');
+const css = fs.readFileSync(new URL('./v2.css', import.meta.url), 'utf8');
 const fileUrl = 'http://127.0.0.1:4173/v2.html';
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -27,6 +29,10 @@ const $$ = (sel) => Array.prototype.slice.call(w.document.querySelectorAll(sel))
 const S = () => w.CoReadEngine.state;
 
 check('v2 scripts booted (shell/engine/pack/companion)', Boolean(w.CoReadV2Shell && w.CoReadEngine && w.CoReadV2Pack && w.CoReadCompanion));
+check('AI custom pack validator connected', Boolean(w.CoReadCustom && typeof w.CoReadCustom.validateCustomPack === 'function'));
+check('材料弹窗绑定正文说明', $('#materialModal article').getAttribute('aria-describedby') === 'modalBodyText');
+check('移动端单列布局规则存在', css.includes('@media (max-width: 700px)') && css.includes('.bedroom-panel'));
+check('资源 HUD 节点存在', Boolean($('#resourceHud') && $('#hudAttention') && $('#hudPatience') && $('#hudMood')));
 check('boot overlay visible', !$('#bootOverlay').hidden);
 
 // —— AI 建议路径（mock LLM，注入于开机前使按钮可用）——
@@ -54,6 +60,17 @@ check('hand cards = 6 methods + ai suggest', $$('#handCards .method-card').lengt
 check('ai suggest button present and gated when AI off', Boolean($('#aiSuggestButton')) && $('#aiSuggestButton').disabled);
 check('mood pips = 4 stages', $$('#moodPips .mood-pip').length === 4);
 
+  // —— 真实用户点击回归：展开检查必须直接打开材料弹窗 ——
+  const firstInspectButton = $('#materialList .material-card .inspect-material');
+  firstInspectButton.click();
+  await sleep(30);
+  check('展开检查按钮打开材料弹窗', !$('#materialModal').hidden && $('#modalTitle').textContent.includes('市一院'));
+  check('做成素材按钮可点击并提示缺句', !$('#modalConfirm').disabled);
+  $('#modalConfirm').click();
+  check('缺少候选句时出现红色提示', !$('#modalFeedback').hidden && $('#modalFeedback').textContent.includes('至少选 1 句'));
+  check('候选句提供避废卡提示', $('#modalSelectionHint').textContent.includes('直接相关'));
+  $('#modalCancel').click();
+
 function openAndCard(materialId, sentenceIds, tag) {
   $$('#materialList .material-card').find((c) => c.dataset.materialId === materialId).querySelector('.inspect-material').click();
   sentenceIds.forEach((id) => {
@@ -76,6 +93,7 @@ $('#synthesizeButton').click();
 await sleep(200);
 check('dialogue started at panic', S().dlg && S().dlg.mood === 0);
 check('patience = base 6 + 2 细读 = 8', S().dlg.patience === 8);
+check('对话阶段显示资源 HUD 与证据提示', $('#hudPatience').textContent === '8 / 8' && !$('#evidenceNote').hidden);
 check('asker opening rendered', $('#chatThread').textContent.includes('第一次自己去'));
 check('story/tradeoff locked at start', $$('#handCards .method-card').filter((b) => b.classList.contains('is-locked')).length === 2);
 check('ai suggest enabled with mock AI', !$('#aiSuggestButton').disabled);
@@ -120,6 +138,40 @@ check('letter mentions 手续办好了', $('#settleHits').textContent.includes('
 const saveJson = w.localStorage.getItem('coread-v2-save');
 check('autosave exists after play', Boolean(saveJson));
 check('guide tip element created in first run', Boolean(w.document.getElementById('guideTip')));
+
+// —— 连续题目回归：切换题包后点击一次不能重复开局/重复绑定 ——
+$('#settleContinue').click();
+await sleep(150);
+check('下一封求助进入第二题', $('#questionTitle').textContent.includes('火车'));
+openAndCard('m3', ['m3-s1', 'm3-s2'], 'experience');
+openAndCard('m1', ['m1-s1', 'm1-s2'], 'official');
+$('#synthesizeButton').click();
+await sleep(120);
+check('第二题一次点击只生成一条开场消息', S().dlg && S().chatLog.length === 1 && S().dlg.patience === 8);
+
+// —— 多题存档回归：刷新后必须回到当前题包，而不是从第一题重新开始 ——
+const multiQuestionSave = w.localStorage.getItem('coread-v2-save');
+const domMulti = new JSDOM(html, {
+  url: fileUrl,
+  runScripts: 'dangerously',
+  resources: 'usable',
+  pretendToBeVisual: true,
+  beforeParse(windowMulti) {
+    windowMulti.matchMedia = () => ({ matches: true, media: 'screen', addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent() { return false; } });
+    windowMulti.HTMLElement.prototype.scrollIntoView = function () {};
+    windowMulti.localStorage.setItem('coread-v2-save', multiQuestionSave);
+  }
+});
+const wMulti = domMulti.window;
+for (let i = 0; i < 200; i += 1) {
+  if (wMulti.CoReadV2Shell && wMulti.CoReadEngine && wMulti.CoReadV2Pack) break;
+  await sleep(50);
+}
+wMulti.document.querySelector('#continueButton').click();
+await sleep(250);
+check('多题存档恢复当前题包', wMulti.CoReadEngine.state.questionIndex === 1 && wMulti.document.querySelector('#questionTitle').textContent.includes('火车'));
+check('多题存档恢复剩余精力', wMulti.CoReadEngine.state.energy === 2);
+wMulti.close();
 
 const dom2 = new JSDOM(html, {
   url: fileUrl,
@@ -183,6 +235,8 @@ await sleep(60);
 cardIt('m1', ['m1-s4', 'm1-s5'], 'official');
 await sleep(60);
 check('bad cards judged waste', S3().cards.m2.quality.key === 'waste' && S3().cards.m1.quality.key === 'waste');
+check('bad cards show red waste state', one3(w3, '#materialList .material-card[data-material-id="m2"]').classList.contains('is-waste-card') && one3(w3, '#selectedMaterials .tray-item.is-waste-card'));
+check('废卡显示具体错误原因', one3(w3, '#materialList .material-card[data-material-id="m2"] .pick-state').textContent.includes('废卡：'));
 one3(w3, '#synthesizeButton').click();
 await sleep(200);
 check('bad-run dialogue starts at panic', S3().dlg && S3().dlg.mood === 0);

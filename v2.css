@@ -270,6 +270,7 @@ html, body {
 .chat-bubble p { margin: 0; font: 400 13px/1.65 var(--ui-font); }
 .chat-msg.is-player .chat-bubble { background: #eaf2fc; }
 .turn-hint { padding: 6px 12px; border-top: 2px dashed var(--line); background: var(--paper); font: 700 10px/1 var(--mono-font); color: var(--ink-soft); }
+.evidence-note { padding: 5px 12px; border-top: 1px solid var(--line); background: #eef6ee; color: #3f6f63; font: 700 9px/1.4 var(--mono-font); }
 .hand-cards { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; padding: 9px 12px 12px; border-top: 3px solid var(--ink); background: var(--paper); }
 .method-card {
   display: grid;
@@ -415,6 +416,36 @@ html, body {
 }
 .ai-dialogue .speaker { display: block; margin-bottom: 4px; font: 800 9px/1 var(--mono-font); color: var(--zhihu); }
 .ai-dialogue p { margin: 0; font: 400 12px/1.6 var(--ui-font); }
+
+/* —— 饥荒式资源 HUD：当前阶段的关键状态始终可见 —— */
+.resource-hud {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px;
+  padding: 6px 8px;
+  border-bottom: 3px solid var(--ink);
+  background: #eadbb7;
+}
+.resource-chip {
+  display: grid;
+  grid-template-columns: 18px 1fr auto;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  padding: 4px 5px;
+  border: 2px solid var(--ink);
+  background: rgba(255,253,246,.8);
+  font: 700 9px/1 var(--mono-font);
+}
+.resource-icon { font: 800 13px/1 var(--display-font); text-align: center; }
+.resource-label { color: var(--ink-soft); white-space: nowrap; }
+.resource-chip strong { font: 800 10px/1 var(--mono-font); white-space: nowrap; }
+.resource-track { grid-column: 2 / -1; height: 5px; background: #d5d0c2; border: 1px solid var(--ink); overflow: hidden; }
+.resource-track i { display: block; width: 100%; height: 100%; background: var(--yellow); transition: width .2s steps(3); }
+.resource-patience .resource-icon { color: var(--coral); }
+.resource-patience .resource-track i { background: var(--coral); }
+.resource-mood .resource-icon { color: var(--mint); }
+.resource-cards .resource-icon { color: var(--zhihu); }
 
 .reading-tray { flex: none; border-top: 4px solid var(--ink); background: var(--paper); padding: 9px 12px 12px; display: grid; gap: 8px; }
 .tray-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -1185,6 +1216,7 @@ html, body {
   left: 21.5%;
   bottom: auto;
   width: 3%;
+}
 
 /* —— 素材卡弹窗 —— */
 .modal-backdrop { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; background: rgba(9, 22, 41, .68); padding: 20px; }
@@ -1208,6 +1240,7 @@ html, body {
 .sentence-item.is-picked { border-color: var(--zhihu); background: #eaf2fc; box-shadow: inset 3px 0 0 var(--zhihu); }
 .sentence-item.is-picked::after { content: " ✓ 已选"; font: 800 10px/1 var(--mono-font); color: var(--zhihu); }
 .sentence-hint { margin: 6px 0 0; font: 600 10px/1.5 var(--mono-font); color: var(--ink-soft); }
+.modal-selection-hint { margin: 6px 0 0; padding: 7px 9px; border-left: 4px solid var(--mint); background: #edf7f3; color: #3f6f63; font: 700 10px/1.5 var(--ui-font); }
 .source-tag-row { display: grid; gap: 6px; }
 .tag-options { display: flex; gap: 7px; flex-wrap: wrap; }
 .tag-option { padding: 6px 10px; border: 2px solid var(--line); background: var(--paper-bright); font: 700 11px/1 var(--ui-font); cursor: pointer; }
@@ -1216,6 +1249,12 @@ html, body {
 .secondary-action2 { padding: 9px 12px; border: 2px solid var(--ink); background: var(--paper-bright); font: 700 11px/1 var(--ui-font); cursor: pointer; }
 .primary-action.compact { padding: 9px 16px; }
 .pick-state { font: 700 10px/1 var(--mono-font); color: #2f6f4f; align-self: center; }
+.modal-feedback { margin: 0; padding: 8px 10px; border: 2px solid #b33b35; background: #fff0ee; color: #a3312c; font: 800 11px/1.5 var(--ui-font); }
+.material-card.is-selected.is-waste-card { border-color: #b33b35; background: #fff0ee; }
+.material-card.is-selected.is-waste-card::after { content: "⚠ 这张卡会判为废卡"; color: #a3312c; opacity: 1; }
+.material-card.is-selected.is-waste-card .pick-state { color: #a3312c; }
+.tray-item.is-waste-card { border-color: #b33b35; background: #fff0ee; }
+.tray-item.is-waste-card strong { color: #a3312c; }
 
 /* —— 结算 —— */
 .settle-overlay { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; background: rgba(9, 22, 41, .78); padding: 20px; }
@@ -1675,6 +1714,14 @@ html, body {
   visibility: hidden !important;
 }
 
+/* —— 键盘焦点：按钮、输入框和候选句始终有清晰的操作反馈 —— */
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
 /* —— 确保浏览器窗口在最上层可交互 —— */
 .browser-window { z-index: 20; }
 .browser-window.is-front { z-index: 25; }
@@ -1708,6 +1755,50 @@ html, body {
 #questionTitle { font-size: 17px; margin: 6px 0 4px; }
 .question-body { font-size: 12px; line-height: 1.5; margin-bottom: 4px; }
 .question-stats { padding-bottom: 6px; }
+
+/* —— 手机端：桌面改为单工作区，卧室变成可收起抽屉 —— */
+@media (max-width: 700px) {
+  .os-root { grid-template-columns: minmax(0, 1fr); }
+  .workspace { grid-column: 1; grid-row: 1; }
+  .bedroom-panel {
+    position: fixed;
+    z-index: 40;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: min(360px, 92vw);
+    height: 100vh;
+    border-left: 4px solid var(--ink);
+    box-shadow: -8px 0 0 rgba(9, 22, 41, .28);
+  }
+  .browser-window,
+  .chat-window,
+  .memory-window,
+  .settings-window {
+    left: 8px;
+    top: 8px;
+    width: calc(100% - 16px);
+    height: calc(100vh - 16px);
+  }
+  .browser-toolbar { gap: 5px; padding: 6px; }
+  .connection-label { display: none; }
+  .address-bar { min-width: 0; padding: 6px 7px; }
+  .browser-page { padding: 12px 11px 16px; }
+  #questionTitle { font-size: 18px; }
+  .section-heading { align-items: start; flex-direction: column; gap: 6px; }
+  .material-card { padding: 9px 10px; }
+  .hand-cards { grid-template-columns: repeat(2, 1fr); gap: 7px; padding: 8px; }
+  .method-card { min-height: 58px; }
+  .modal-backdrop,
+  .settle-overlay { padding: 8px; }
+  .material-modal,
+  .settle-card { width: calc(100vw - 16px); max-height: calc(100vh - 16px); padding: 14px 12px 14px; }
+  .modal-ledger,
+  .settle-grid { grid-template-columns: 1fr; }
+  .modal-actions { position: sticky; bottom: 0; background: var(--paper); padding-bottom: 2px; }
+  .guide-banner { top: 8px; max-width: calc(100vw - 16px); padding: 8px 10px; font-size: 11px; }
+  .os-badge { display: none; }
+}
 
 /* —— 删除任务栏后布局调整 —— */
 .os-root { grid-template-rows: minmax(0, 1fr); }

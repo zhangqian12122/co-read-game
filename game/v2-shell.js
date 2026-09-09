@@ -3,6 +3,12 @@
 (() => {
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.prototype.slice.call((root || document).querySelectorAll(sel));
+  const escapeHtml = (value) => String(value === undefined || value === null ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 
   const osRoot = $("#osRoot");
   const elements = {
@@ -141,13 +147,18 @@
   }
 
   function bindBedroomToggle() {
+    const setCollapsed = (collapsed) => {
+      osRoot.classList.toggle("is-bedroom-collapsed", collapsed);
+      elements.expandBedroom.hidden = !collapsed;
+      elements.collapseBedroom.setAttribute("aria-expanded", String(!collapsed));
+      elements.expandBedroom.setAttribute("aria-expanded", String(collapsed));
+    };
+    if (window.matchMedia && window.matchMedia("(max-width: 700px)").matches) setCollapsed(true);
     elements.collapseBedroom.addEventListener("click", () => {
-      osRoot.classList.add("is-bedroom-collapsed");
-      elements.expandBedroom.hidden = false;
+      setCollapsed(true);
     });
     elements.expandBedroom.addEventListener("click", () => {
-      osRoot.classList.remove("is-bedroom-collapsed");
-      elements.expandBedroom.hidden = true;
+      setCollapsed(false);
     });
   }
 
@@ -255,8 +266,8 @@
     elements.questionKicker.textContent = question.kicker || "生活经验";
     elements.questionTitle.textContent = question.title || "";
     elements.questionBody.textContent = question.body || "";
-    elements.questionStats.innerHTML = (question.stats || []).map((s) => "<span>" + s + "</span>").join("");
-    elements.addressBar.innerHTML = "<span class=\"lock-dot\"></span> " + (question.address || "zhihu.local/question");
+    elements.questionStats.innerHTML = (question.stats || []).map((s) => "<span>" + escapeHtml(s) + "</span>").join("");
+    elements.addressBar.innerHTML = "<span class=\"lock-dot\"></span> " + escapeHtml(question.address || "zhihu.local/question");
     elements.chatAskerName.textContent = question.askerShort || "求助者";
   }
 

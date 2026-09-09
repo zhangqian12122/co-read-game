@@ -88,6 +88,7 @@
           <div class="chat-msg is-asker"><span class="chat-avatar">?</span><div class="chat-bubble"><strong>求助者</strong><p>共读结束后，对话会在这里开始。</p></div></div>
         </div>
         <div class="turn-hint" id="turnHint">思路 1 · 每回合打出一张「回答方式」</div>
+        <div class="evidence-note" id="evidenceNote" hidden>素材卡就是你的证据：对话里能不能答中，取决于你选的句子。</div>
         <div class="hand-cards" id="handCards">
           <button class="method-card" data-method="empathy" type="button" disabled><strong>共情</strong><small>1 耐心 · 安抚情绪</small></button>
           <button class="method-card" data-method="probe" type="button" disabled><strong>追问</strong><small>1 耐心 · 问出情况</small></button>
@@ -146,6 +147,12 @@
         <span class="bedroom-title"><span class="mini-app-icon room-mini">▦</span> 共读房间</span>
         <button class="bedroom-collapse" id="collapseBedroom" type="button" aria-label="折叠卧室面板">»</button>
       </header>
+      <div class="resource-hud" id="resourceHud" aria-label="本局状态" aria-live="polite">
+        <div class="resource-chip resource-attention"><span class="resource-icon">◈</span><span class="resource-label">注意力</span><strong id="hudAttention">2 / 2</strong><span class="resource-track"><i id="hudAttentionFill"></i></span></div>
+        <div class="resource-chip resource-patience"><span class="resource-icon">♥</span><span class="resource-label">耐心</span><strong id="hudPatience">—</strong><span class="resource-track"><i id="hudPatienceFill"></i></span></div>
+        <div class="resource-chip resource-mood"><span class="resource-icon">●</span><span class="resource-label">状态</span><strong id="hudMood">未开始</strong></div>
+        <div class="resource-chip resource-cards"><span class="resource-icon">▣</span><span class="resource-label">卡槽</span><strong id="hudCards">0 / 2</strong></div>
+      </div>
       <div class="room-scene" id="roomScene">
         <div class="room-canvas">
           <img class="room-base-art" src="./assets/room-stage-0-v1.png" alt="夜晚的共读房间" draggable="false">
@@ -160,7 +167,7 @@
         </div>
       </div>
       <div class="reading-tray">
-        <div class="tray-heading"><div><span class="eyebrow">素材卡桌</span><strong id="trayCount">0 / 3 句</strong></div><span class="tray-note">从材料里挑出的句子会摆在这里</span></div>
+        <div class="tray-heading"><div><span class="eyebrow">素材卡桌</span><strong id="trayCount">0 / 2 份材料</strong></div><span class="tray-note">对话时会作为证据，影响回答命中</span></div>
         <div class="drop-zone" id="dropZone" aria-label="素材卡桌"><div class="empty-drop" id="emptyDrop"><p>桌上还没有素材卡</p><small>在材料里点选句子，最多挑三句</small></div><div class="selected-materials" id="selectedMaterials"></div></div>
         <button class="primary-action" id="synthesizeButton" type="button" disabled>挑好句子，去找他聊聊</button>
       </div>
@@ -209,16 +216,18 @@
   </section>
 
   <section class="modal-backdrop" id="materialModal" hidden>
-    <article class="material-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <article class="material-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" aria-describedby="modalBodyText">
       <header class="modal-header"><div><span class="eyebrow" id="modalKind">材料</span><h2 id="modalTitle"></h2></div><button class="close-modal" id="closeMaterialModal" type="button" aria-label="关闭">×</button></header>
       <div class="modal-ledger" id="modalLedger"></div>
       <div class="modal-bodytext" id="modalBodyText"></div>
       <div class="sentence-pick">
         <div class="sentence-pick-head"><span class="eyebrow">伙伴划出的候选句 · 最多挑 3 句</span><strong id="sentenceCount">0 / 3</strong></div>
         <div class="sentence-list" id="sentenceList"></div>
-        <p class="sentence-hint">选的时候不告诉你对错——是不是好句子，结算回见分晓。</p>
+        <p class="sentence-hint">小窍门：带“关注 / 私信 / APP”多半是广告；旧日期的建议先谨慎；来源标签要和材料身份一致。</p>
+        <p class="modal-selection-hint" id="modalSelectionHint" aria-live="polite">先选和问题步骤直接相关的句子。</p>
       </div>
       <div class="source-tag-row"><span class="eyebrow">给这份材料标来源：</span><div class="tag-options" id="tagOptions"></div></div>
+      <p class="modal-feedback" id="modalFeedback" role="alert" aria-live="assertive" hidden></p>
       <footer class="modal-actions"><button class="secondary-action2" id="modalCancel" type="button">返回列表</button><button class="primary-action compact" id="modalConfirm" type="button" disabled>做成素材卡</button></footer>
     </article>
   </section>
@@ -252,7 +261,7 @@
 <script>
 window.addEventListener("error", function(e) {
   var msg = e.message || String(e);
-  var div = document.getElementById("errDisplay") || (function() { var d = document.createElement("div"); d.id = "errDisplay"; d.style.cssText = "position:fixed;bottom:50px;left:10px;right:10px;z-index:999;background:#ff4444;color:#fff;padding:10px;font:12px monospace;max-height:200px;overflow-y:auto;";document.body.append(d); return d;")();
+  var div = document.getElementById("errDisplay") || (function() { var d = document.createElement("div"); d.id = "errDisplay"; d.style.cssText = "position:fixed;bottom:50px;left:10px;right:10px;z-index:999;background:#ff4444;color:#fff;padding:10px;font:12px monospace;max-height:200px;overflow-y:auto;"; document.body.append(d); return d; })();
   div.textContent = "ERR: " + msg;
 });
 </script>
