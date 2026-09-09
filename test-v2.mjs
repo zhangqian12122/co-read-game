@@ -29,24 +29,12 @@ const $$ = (sel) => Array.prototype.slice.call(w.document.querySelectorAll(sel))
 const S = () => w.CoReadEngine.state;
 
 check('v2 scripts booted (shell/engine/pack/companion)', Boolean(w.CoReadV2Shell && w.CoReadEngine && w.CoReadV2Pack && w.CoReadCompanion));
-check('AI custom pack validator connected', Boolean(w.CoReadCustom && typeof w.CoReadCustom.validateCustomPack === 'function'));
+check('离线运行：不加载真实 API 客户端', !html.includes('ai-client.js') && !html.includes('custom-launcher.js'));
 check('材料弹窗绑定正文说明', $('#materialModal article').getAttribute('aria-describedby') === 'modalBodyText');
 check('移动端单列布局规则存在', css.includes('@media (max-width: 700px)') && css.includes('.bedroom-panel'));
 check('资源 HUD 节点存在', Boolean($('#resourceHud') && $('#hudAttention') && $('#hudPatience') && $('#hudMood')));
+check('匿名答主席位存在且不设个人身份', Boolean($('#playerPresence') && $('#playerPresence').textContent.includes('答主 · 你') && $('#playerPresence').getAttribute('aria-label').includes('匿名')));
 check('boot overlay visible', !$('#bootOverlay').hidden);
-
-// —— AI 建议路径（mock LLM，注入于开机前使按钮可用）——
-w.CoReadAI = {
-  isReady: () => true,
-  get: () => ({}),
-  update: () => {},
-  chat: async () => '连接成功',
-  chatJson: async (messages) => {
-    const c = messages[1].content;
-    if (c.includes('availableMethods')) return { method: 'probe', reason: '先问清医保手续' };
-    return { text: '稳住，按流程来。' };
-  }
-};
 
 $('#startButton').click();
 await sleep(2100);
@@ -54,10 +42,11 @@ await sleep(2100);
 check('boot overlay hidden after start', $('#bootOverlay').hidden);
 check('question filled from pack', $('#questionTitle').textContent.includes('挂号'));
 check('stage advanced to research', S().stage === 'research');
+check('共读阶段显示答主状态', $('#playerPresenceState').textContent === '共读中' && $('#playerPresence').classList.contains('is-reading'));
 check('materials rendered', $$('#materialList .material-card').length === 4);
 check('companion is manual-only (no auto walk)', !$('#aiCharacter').classList.contains('is-walking'));
 check('hand cards = 6 methods + ai suggest', $$('#handCards .method-card').length === 7);
-check('ai suggest button present and gated when AI off', Boolean($('#aiSuggestButton')) && $('#aiSuggestButton').disabled);
+check('本地建议按钮存在', Boolean($('#aiSuggestButton')) && $('#aiSuggestButton').disabled);
 check('mood pips = 4 stages', $$('#moodPips .mood-pip').length === 4);
 
   // —— 真实用户点击回归：展开检查必须直接打开材料弹窗 ——
@@ -84,6 +73,7 @@ function openAndCard(materialId, sentenceIds, tag) {
 openAndCard('m3', ['m3-s1', 'm3-s2'], 'experience');
 await sleep(80);
 check('first card created (experience)', Boolean(S().cards.m3) && S().cards.m3.quality.key === 'premium');
+check('素材卡显示推荐用法', $('#selectedMaterials').textContent.includes('推荐：共情 / 案例'));
 openAndCard('m1', ['m1-s1', 'm1-s2'], 'official');
 await sleep(80);
 check('second card created (official)', Boolean(S().cards.m1) && Object.keys(S().cards).length === 2);
@@ -92,26 +82,31 @@ check('synthesize enabled after two cards', !$('#synthesizeButton').disabled);
 $('#synthesizeButton').click();
 await sleep(200);
 check('dialogue started at panic', S().dlg && S().dlg.mood === 0);
+check('回答阶段显示答主状态', $('#playerPresenceState').textContent === '回答中' && $('#playerPresence').classList.contains('is-answering'));
+check('引导气泡提供手动收起按钮', Boolean($('.tut-bubble .tut-dismiss')));
+$('.tut-bubble .tut-dismiss').click();
+check('手动收起引导后不再高亮目标', $('.tut-bubble').style.opacity === '0' && !$('#handCards').classList.contains('tut-highlight'));
 check('patience = base 6 + 2 细读 = 8', S().dlg.patience === 8);
 check('对话阶段显示资源 HUD 与证据提示', $('#hudPatience').textContent === '8 / 8' && !$('#evidenceNote').hidden);
 check('asker opening rendered', $('#chatThread').textContent.includes('第一次自己去'));
 check('story/tradeoff locked at start', $$('#handCards .method-card').filter((b) => b.classList.contains('is-locked')).length === 2);
-check('ai suggest enabled with mock AI', !$('#aiSuggestButton').disabled);
+check('本地建议可用', !$('#aiSuggestButton').disabled);
 $('#aiSuggestButton').click();
 await sleep(400);
-check('ai suggest companion bubble', $('#chatThread').textContent.includes('我建议打「追问」'));
+check('本地建议伙伴气泡', $('#chatThread').textContent.includes('我建议打「共情」'));
 check('ai suggest marked used', $('#aiSuggestButton').disabled);
 check('room computer glows new message', $('#roomComputer').classList.contains('has-new-message'));
 check('end dialogue button gated before first card', ($('#endDialogueButton') || { disabled: true }).disabled === true);
 
 w.CoReadEngine.playMethod('empathy');
 await sleep(80);
-check('empathy hit via m3-s1 → mood dazed', S().dlg.mood === 1 && S().dlg.hits.includes('empathy'));
+check('精华卡增强共情推进', S().dlg.mood === 2 && S().dlg.lastQuality === 'premium' && S().dlg.hits.includes('empathy'));
 check('empathy hit refunds patience (8)', S().dlg.patience === 8);
+check('已有回复后结束对话按钮可用', $('#endDialogueButton').disabled === false);
 
 w.CoReadEngine.playMethod('probe');
 await sleep(80);
-check('combo 共情→追问 forces probe hit → getting', S().dlg.mood === 2 && S().dlg.hits.includes('probe'));
+check('组合共情→追问生效并推进到了解', S().dlg.mood === 3 && S().dlg.lastCombo === '共情→追问' && S().dlg.hits.includes('probe'));
 
 w.CoReadEngine.playMethod('advice');
 await sleep(80);
@@ -143,6 +138,7 @@ check('guide tip element created in first run', Boolean(w.document.getElementByI
 $('#settleContinue').click();
 await sleep(150);
 check('下一封求助进入第二题', $('#questionTitle').textContent.includes('火车'));
+check('进入下一题后回信遮罩已关闭', $('#settleOverlay').hidden === true);
 openAndCard('m3', ['m3-s1', 'm3-s2'], 'experience');
 openAndCard('m1', ['m1-s1', 'm1-s2'], 'official');
 $('#synthesizeButton').click();

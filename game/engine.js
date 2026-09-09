@@ -48,7 +48,8 @@
       growth: S.growth,
       dlg: S.dlg ? {
         mood: S.dlg.mood, patience: S.dlg.patience, patienceMax: S.dlg.patienceMax,
-        used: S.dlg.used, last: S.dlg.last, hits: S.dlg.hits, done: S.dlg.done,
+        used: S.dlg.used, last: S.dlg.last, lastQuality: S.dlg.lastQuality, lastCombo: S.dlg.lastCombo,
+        hits: S.dlg.hits, done: S.dlg.done,
         unlocked: S.dlg.unlocked
       } : null,
       settle: S.settle ? { stale: S.settle.stale, hitsCount: S.settle.hitsCount, leaveText: S.settle.leave.text } : null
@@ -166,7 +167,10 @@
       const cardInfo = S.cards[id];
       const item = document.createElement("article");
       item.className = "tray-item" + (cardInfo.quality && cardInfo.quality.key === "waste" ? " is-waste-card" : "");
-      const useHint = cardInfo.quality && cardInfo.quality.key === "waste" ? " · 废卡：" + escapeHtml(cardInfo.quality.why) : " · 对话可引用";
+      const methodHint = methodHintForCard(material, cardInfo);
+      const useHint = cardInfo.quality && cardInfo.quality.key === "waste"
+        ? " · 废卡：" + escapeHtml(cardInfo.quality.why)
+        : " · 推荐：" + escapeHtml(methodHint || "先根据对方状态选择");
       item.innerHTML = "<strong>" + escapeHtml(material.kindLabel) + "</strong><span>" + escapeHtml(material.title) + "（" + cardInfo.sentenceIds.length + " 句 · 来源标「" + escapeHtml(tagLabel(cardInfo.tag)) + "」）" + useHint + "</span>";
       tray.append(item);
     });
@@ -277,6 +281,18 @@
   function refreshModal() {
     el("sentenceCount").textContent = pickedIds.length + " / 3";
     $("#modalConfirm").disabled = false;
+    if (!pickedIds.length) {
+      modalSelectionHint("先选和问题步骤直接相关的句子。");
+      return;
+    }
+    if (!pickedTag) {
+      modalSelectionHint("句子已选好，再标对来源，才能判断这张卡能不能用。");
+      return;
+    }
+    const preview = calcQuality(modalMaterial, { sentenceIds: pickedIds, tag: pickedTag });
+    if (preview.key === "premium") modalSelectionHint("当前组合：精华卡，适合用来推进对话。");
+    else if (preview.key === "waste") modalSelectionHint("当前组合有风险：" + preview.why + "。可以取消带风险的句子再确认。");
+    else modalSelectionHint("当前组合：普通卡，可以使用，但效果不会额外增强。");
   }
 
   function calcQuality(material, card) {
@@ -286,6 +302,21 @@
     if (card.tag !== material.kind) return { key: "waste", why: "来源标错了（其实是「" + material.kindLabel + "」）" };
     if (sents.every((s) => s.type === "dry")) return { key: "premium", why: "句句对题" };
     return { key: "normal", why: "干货里带了一两句闲话" };
+  }
+
+  function methodHintForCard(material, card) {
+    const checks = shell().pack.checks || {};
+    const labels = shell().pack.methods || {};
+    const picked = new Set(card.sentenceIds || []);
+    return Object.keys(checks).filter((methodId) => {
+      const check = checks[methodId] || {};
+      if (check.needSentence) return picked.has(check.needSentence);
+      if (Array.isArray(check.anySentenceOf)) {
+        const count = check.anySentenceOf.filter((id) => picked.has(id)).length;
+        return count >= (check.minCount || 1);
+      }
+      return false;
+    }).map((methodId) => labels[methodId] && labels[methodId].label).filter(Boolean).slice(0, 3).join(" / ");
   }
 
   function confirmCard() {
@@ -321,67 +352,27 @@
   }
 
   function aiReady() {
-    return Boolean(window.CoReadAI && window.CoReadAI.isReady());
+    // 伙伴建议使用本地规则，不连接外部服务。
+    return true;
   }
 
-  let aiBusy = false;
-  async function aiReact(hit) {
-    if (!aiReady() || aiBusy) return;
-    aiBusy = true;
-    try {
-      const D = S.dlg;
-      const payload = {
-        moment: hit ? "玩家刚打出一张命中提问者的牌" : "玩家刚打出的牌没有答中",
-        askerMood: D.pack.moodLabels[D.moodOrder[D.mood]],
-        askerPatience: D.patience,
-        question: D.pack.question.title,
-        cardSummary: Object.keys(S.cards).map((id) => {
-          const m = D.pack.materials.find((x) => x.id === id);
-          return m.kindLabel + "(" + S.cards[id].sentenceIds.length + "句)";
-        }).join("、")
-      };
-      const result = await window.CoReadAI.chatJson([
-        { role: "system", content: "你是共读伙伴00，正在旁观主人和一位知乎提问者对话。只输出JSON：{text:一句话点评(20字内,口语,不看镜头不说教)}" },
-        { role: "user", content: JSON.stringify(payload) }
-      ], { timeoutMs: 10000, maxTokens: 80, temperature: 0.9 });
-      if (result && typeof result.text === "string" && result.text.trim()) {
-        shell().setAiText(result.text.trim().slice(0, 40));
-      }
-    } catch (e) { /* 静默回退随机池 */ }
-    aiBusy = false;
-  }
-
-  async function aiSuggest() {
+  function aiSuggest() {
     const D = S.dlg;
     if (!D || D.done || D.suggested) return;
-    if (!aiReady()) { shell().toast("先在系统设置里开启 AI 增强，00 才能给建议。"); return; }
     D.suggested = true;
-    renderDialogueUI();
-    const payload = {
-      question: D.pack.question.title,
-      askerMood: D.pack.moodLabels[D.moodOrder[D.mood]],
-      patienceLeft: D.patience,
-      playedCards: D.hits.concat(Object.keys(D.used).filter((id) => !D.hits.includes(id))).join("、"),
-      availableMethods: D.unlocked,
-      cardSummary: Object.keys(S.cards).map((id) => {
-        const m = D.pack.materials.find((x) => x.id === id);
-        const sents = m.sentences.filter((s) => S.cards[id].sentenceIds.includes(s.id)).map((s) => s.text).join("；");
-        return m.kindLabel + "：" + sents;
-      })
-    };
-    shell().setAiText("我想想……");
-    try {
-      const result = await window.CoReadAI.chatJson([
-        { role: "system", content: "你是共读伙伴00。根据素材卡内容和提问者当前状态，建议主人下一步该打哪种回答方式。availableMethods 里选一个。只输出JSON：{method:方式id, reason:一句话理由(20字内,口语)}。不代主人打牌，只建议。" },
-        { role: "user", content: JSON.stringify(payload) }
-      ], { timeoutMs: 15000, maxTokens: 120, temperature: 0.7 });
-      if (!result || !D.unlocked.includes(result.method)) throw new Error("bad");
-      const label = D.pack.methods[result.method] ? D.pack.methods[result.method].label : result.method;
-      chatMsg("companion", "共读伙伴 00", "我建议打「" + label + "」——" + String(result.reason || "").slice(0, 30));
-      shell().setAiText("只是建议，最后还是你来定。");
-    } catch (e) {
-      D.suggested = false;
-      shell().setAiText("……我一时也没想好，你再打一张试试。");
+    const preferred = D.mood === 0 ? ["empathy", "probe"] : D.mood === 1 ? ["probe", "empathy", "advice"] : ["advice", "checklist", "story", "tradeoff"];
+    const methodId = preferred.concat(D.unlocked).find((id) => {
+      const conf = D.pack.methods[id];
+      return conf && D.unlocked.includes(id) && (D.used[id] || 0) < conf.maxPerQuestion && D.patience >= conf.cost;
+    });
+    if (!methodId) {
+      shell().setAiText("耐心快用完了，先收尾比较好。");
+      chatMsg("companion", "共读伙伴 00", "耐心快用完了，先收尾比较好。");
+    } else {
+      const label = D.pack.methods[methodId].label;
+      const reason = methodId === "empathy" ? "先接住他的情绪" : methodId === "probe" ? "先问清楚具体情况" : "可以给一个可执行方向";
+      chatMsg("companion", "共读伙伴 00", "我建议打「" + label + "」——" + reason + "。你来决定。 ");
+      shell().setAiText("这是本地提示，最后还是你来定。");
     }
     renderDialogueUI();
     save();
@@ -476,11 +467,15 @@
       else if (usedOut) small.textContent = "本题已用完";
       else small.textContent = conf.cost + " 耐心 · " + conf.label;
     });
+    const endButton = $("#endDialogueButton");
+    if (endButton) endButton.disabled = Boolean(D.done || !D.last);
     el("turnHint").textContent = D.done
       ? "对话结束 → 结算"
       : D.mood === D.moodOrder.length - 1
         ? "他踏实了。可以就此收尾 → 点击「结束对话」"
         : "思路 1 · 已打 " + Object.keys(D.used).length + " 张牌 · 耐心 " + D.patience + " / " + D.patienceMax;
+    if (!D.done && D.lastQuality === "waste") el("turnHint").textContent += " · 上张证据被废卡拖弱";
+    if (!D.done && D.lastCombo) el("turnHint").textContent += " · 已触发「" + D.lastCombo + "」";
     const evidenceNote = el("evidenceNote");
     if (evidenceNote) evidenceNote.hidden = Boolean(D.done);
     renderResourceHud();
@@ -490,11 +485,35 @@
     return Object.values(S.cards).some((card) => card.sentenceIds.includes(id));
   }
 
+  function comboFor(D, methodId) {
+    if (!D.last) return null;
+    return (D.pack.combos || []).find((combo) => Array.isArray(combo.seq) && combo.seq[0] === D.last && combo.seq[1] === methodId) || null;
+  }
+
+  function qualityForMethod(D, methodId) {
+    const check = (D.pack.checks || {})[methodId] || {};
+    const targetIds = check.needSentence ? [check.needSentence] : Array.isArray(check.anySentenceOf) ? check.anySentenceOf : [];
+    if (!targetIds.length) return "normal";
+    const relevantCards = Object.values(S.cards).filter((card) => card.sentenceIds.some((id) => targetIds.includes(id)));
+    if (!relevantCards.length) return "normal";
+    if (relevantCards.some((card) => card.quality && card.quality.key === "waste")) return "waste";
+    if (relevantCards.some((card) => card.quality && card.quality.key === "premium")) return "premium";
+    return "normal";
+  }
+
+  function comboMoodGain(combo, methodId) {
+    if (!combo) return 1;
+    if (combo.effect === "advice-up") return 2;
+    if (combo.effect === "soothe-up" && methodId === "story") return 2;
+    if ((combo.effect === "checklist-trust" || combo.effect === "checklist-personal") && methodId === "checklist") return 2;
+    return 1;
+  }
+
   function evalHit(methodId, forceHit) {
-    if (methodId === "probe") return forceHit || hasSentence("m4-s1");
-    if (methodId === "empathy") return hasSentence("m3-s1");
-    if (methodId === "advice") return ["m1-s1", "m1-s2", "m4-s1"].some(hasSentence);
-    if (methodId === "checklist") return ["m1-s1", "m1-s2", "m1-s3"].filter(hasSentence).length >= 2;
+    if (forceHit) return true;
+    const check = (S.dlg && S.dlg.pack.checks ? S.dlg.pack.checks[methodId] : null) || {};
+    if (check.needSentence) return hasSentence(check.needSentence);
+    if (Array.isArray(check.anySentenceOf)) return check.anySentenceOf.filter(hasSentence).length >= (check.minCount || 1);
     return false;
   }
 
@@ -512,26 +531,35 @@
     const conf = D.pack.methods[methodId];
     if (!conf) return;
     if ((D.used[methodId] || 0) >= conf.maxPerQuestion || D.patience < conf.cost) return;
-    const combo = D.last === "empathy" && methodId === "probe" ? "probe-hit" : D.last === "probe" && methodId === "advice" ? "advice-up" : null;
-    const hit = evalHit(methodId, combo === "probe-hit");
+    const combo = comboFor(D, methodId);
+    const hit = evalHit(methodId, combo && combo.effect === "probe-hit");
+    const evidenceQuality = hit ? qualityForMethod(D, methodId) : "normal";
+    const baseMoodGain = hit ? comboMoodGain(combo, methodId) : 0;
+    const moodGain = evidenceQuality === "premium"
+      ? Math.max(1, Math.ceil(baseMoodGain * 1.5))
+      : evidenceQuality === "waste"
+        ? Math.floor(baseMoodGain * 0.5)
+        : baseMoodGain;
     D.patience -= conf.cost;
-    if (hit && (methodId === "empathy" || methodId === "probe")) D.patience = Math.min(D.patienceMax, D.patience + 1);
+    if (hit && evidenceQuality !== "waste" && (methodId === "empathy" || methodId === "probe")) D.patience = Math.min(D.patienceMax, D.patience + 1);
     D.used[methodId] = (D.used[methodId] || 0) + 1;
     D.growth.proficiency[methodId] = (D.growth.proficiency[methodId] || 0) + 1;
-    if (hit) {
-      D.mood = Math.min(D.moodOrder.length - 1, D.mood + (combo === "advice-up" ? 2 : 1));
+    if (hit && moodGain > 0) {
+      D.mood = Math.min(D.moodOrder.length - 1, D.mood + moodGain);
       D.hits.push(methodId);
     }
+    D.lastQuality = evidenceQuality;
+    D.lastCombo = combo ? combo.label : "";
     const moodKey = D.moodOrder[D.mood];
     chatMsg("player", "共读答主 · 你", playerLines[methodId], quoteFor(methodId));
     chatMsg("asker", D.pack.question.askerShort, D.pack.matrix[methodId][moodKey][hit ? "hit" : "miss"]);
     const reactions = shell().pack.companion && shell().pack.companion[hit ? "reactionHit" : "reactionMiss"];
     const pool = reactions && reactions.length ? reactions : [hit ? "问中了！" : "……没接住，换张牌试试。" ];
     shell().setAiText(pool[Math.floor(Math.random() * pool.length)]);
-    aiReact(hit);
     D.last = methodId;
-    const endButton = $("#endDialogueButton");
-    if (endButton) endButton.disabled = false;
+    if (combo) shell().toast("组合生效：" + combo.label);
+    if (hit && evidenceQuality === "premium") shell().toast("精华卡增幅：这次回应更容易让他踏实。");
+    if (hit && evidenceQuality === "waste") shell().toast("方向虽然对了，但废卡让这次回应效果减半。");
     save();
     renderDialogueUI();
     if (D.patience <= 0) window.setTimeout(() => endDialogue("patience"), 600);
@@ -606,6 +634,8 @@
   }
 
   function nextQuestion() {
+    const settleOverlay = el("settleOverlay");
+    if (settleOverlay) settleOverlay.hidden = true;
     S.questionIndex += 1;
     S.energy -= 1;
     if (S.questionIndex < S.questionQueue.length) {
@@ -619,12 +649,6 @@
       onShellReady(true);
       shell().focusWindow("browserWindow");
       shell().toast("收到一条新求助：" + shell().pack.question.askerShort);
-    } else if (window.CoReadAI && window.CoReadAI.isReady()) {
-      shell().toast("队列空了——试试「AI 换你出题」生成新档案？");
-      const btn = document.getElementById("osStartButton");
-      if (btn) { btn.click(); }
-      const launch = document.getElementById("customLaunch");
-      if (launch) launch.click();
     } else {
       shell().toast("今晚的求助都回答完了。");
     }
@@ -652,6 +676,7 @@
       el("turnHint").after(endButton);
     }
     endButton.hidden = false;
+    endButton.disabled = Boolean(!S.dlg || S.dlg.done || !S.dlg.last);
   }
 
   function startDialogue() {
@@ -668,6 +693,8 @@
       used: {},
       suggested: false,
       last: null,
+      lastQuality: "",
+      lastCombo: "",
       hits: [],
       done: false,
       growth: S.growth,
@@ -707,6 +734,8 @@
       patience: saved.dlg.patience,
       used: saved.dlg.used || {},
       last: saved.dlg.last,
+      lastQuality: saved.dlg.lastQuality || "",
+      lastCombo: saved.dlg.lastCombo || "",
       hits: saved.dlg.hits || [],
       done: saved.dlg.done,
       growth: S.growth,

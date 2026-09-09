@@ -10,7 +10,8 @@
     if (bubble) return bubble;
     bubble = document.createElement("div");
     bubble.className = "tut-bubble";
-    bubble.innerHTML = '<span class="tut-num">1</span><span class="tut-text"></span><span class="tut-dismiss">完成后自动消失</span>';
+    bubble.innerHTML = '<span class="tut-num">1</span><span class="tut-text"></span><button class="tut-dismiss" type="button" aria-label="关闭当前引导">× 收起</button>';
+    bubble.querySelector(".tut-dismiss").addEventListener("click", hide);
     document.body.append(bubble);
     return bubble;
   }

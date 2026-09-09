@@ -1857,9 +1857,15 @@ textarea:focus-visible {
 .tut-bubble .tut-dismiss {
   display: block;
   margin-top: 6px;
-  font: 600 9px/1 var(--mono-font);
+  padding: 3px 6px;
+  border: 1px solid var(--ink-soft);
+  background: var(--paper-bright);
   color: var(--ink-soft);
+  font: 700 9px/1 var(--mono-font);
+  cursor: pointer;
+  pointer-events: auto;
 }
+.tut-bubble .tut-dismiss:hover { background: var(--paper); color: var(--ink); }
 
 /* —— 步骤高亮脉冲 —— */
 .tut-highlight {
@@ -1872,4 +1878,104 @@ textarea:focus-visible {
 @keyframes tut-pulse {
   0%, 100% { outline-color: var(--yellow); }
   50% { outline-color: var(--zhihu); outline-offset: 6px; }
+}
+
+/* —— 文档约束：主角只有账号，不设姓名和性别；用匿名答主席位保留玩家在场感 —— */
+.player-presence {
+  --presence-accent: #4f9b83;
+  position: absolute;
+  z-index: 2;
+  right: 2.5%;
+  bottom: 6%;
+  width: 23%;
+  min-width: 72px;
+  height: 48%;
+  opacity: .84;
+  pointer-events: none;
+  transition: opacity .2s steps(3), filter .2s steps(3), transform .2s steps(3);
+}
+.player-presence.is-reading { --presence-accent: #b47b3e; }
+.player-presence.is-answering {
+  --presence-accent: var(--zhihu);
+  opacity: 1;
+  transform: translateY(-2px);
+}
+.player-presence-glow {
+  position: absolute;
+  inset: 7% -28% 17%;
+  background: radial-gradient(ellipse, rgba(79, 155, 131, .28), transparent 68%);
+  opacity: .6;
+}
+.player-presence.is-reading .player-presence-glow { background: radial-gradient(ellipse, rgba(180, 123, 62, .3), transparent 68%); }
+.player-presence.is-answering .player-presence-glow { background: radial-gradient(ellipse, rgba(23, 105, 210, .34), transparent 68%); }
+.player-silhouette {
+  position: absolute;
+  right: 9%;
+  bottom: 0;
+  width: 76%;
+  height: 91%;
+  filter: drop-shadow(3px 5px 0 rgba(31, 24, 27, .42));
+}
+.player-head {
+  position: absolute;
+  z-index: 2;
+  top: 3%;
+  left: 28%;
+  width: 34%;
+  aspect-ratio: 1;
+  border: 2px solid #f1d685;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #284e76, #102a4a);
+  box-shadow: inset -3px -3px 0 rgba(10, 25, 48, .45);
+}
+.player-body {
+  position: absolute;
+  left: 4%;
+  top: 24%;
+  width: 88%;
+  height: 58%;
+  border: 2px solid #f1d685;
+  border-radius: 44% 44% 12% 12%;
+  background: linear-gradient(135deg, #17375f 0%, #284e76 58%, #102a4a 100%);
+}
+.player-body::after {
+  content: "";
+  position: absolute;
+  left: 46%;
+  top: 16%;
+  width: 8%;
+  height: 66%;
+  background: rgba(241, 214, 133, .55);
+}
+.player-hands {
+  position: absolute;
+  z-index: 3;
+  left: 22%;
+  bottom: 10%;
+  width: 56%;
+  height: 13%;
+  border: 2px solid #f1d685;
+  background: #cfe0f2;
+  box-shadow: 8px 3px 0 rgba(23, 55, 95, .65);
+  transform: skewX(-10deg);
+}
+.player-presence-tag {
+  position: absolute;
+  z-index: 4;
+  top: -7%;
+  right: -16%;
+  display: grid;
+  gap: 3px;
+  min-width: 76px;
+  padding: 5px 7px;
+  border: 2px solid var(--ink);
+  background: rgba(255, 253, 246, .93);
+  box-shadow: 2px 2px 0 rgba(15, 40, 73, .35);
+  color: var(--ink);
+}
+.player-presence-tag strong { font: 800 9px/1 var(--ui-font); white-space: nowrap; }
+.player-presence-tag small { color: var(--presence-accent); font: 700 8px/1 var(--mono-font); }
+@media (max-width: 700px) {
+  .player-presence { right: 1%; width: 25%; min-width: 64px; height: 43%; }
+  .player-presence-tag { right: -4%; transform: scale(.9); transform-origin: right top; }
 }

@@ -1,4 +1,4 @@
-// v2-shell.js - 回答主游戏 v2 外壳：窗口管理 / 开机流 / 设置 / 任务栏
+// v2-shell.js - 回答主游戏 v2 外壳：窗口管理 / 开机流 / 任务栏
 // 玩法逻辑在 game/engine.js；本文件只负责"这台电脑"本身。
 (() => {
   const $ = (sel, root) => (root || document).querySelector(sel);
@@ -45,6 +45,7 @@
     aiSpeaker: $("#aiSpeaker"),
     aiText: $("#aiText"),
     wallNote: $("#wallNote"),
+    playerPresenceState: $("#playerPresenceState"),
     materialModal: null
   };
 
@@ -62,6 +63,16 @@
     if (elements.osBadgeStage) {
       elements.osBadgeStage.textContent = stageNames[index] || stageNames[0];
     }
+    const playerStates = ["准备中", "共读中", "回答中", "看结果", "等回信"];
+    if (elements.playerPresenceState) {
+      elements.playerPresenceState.textContent = playerStates[index] || playerStates[0];
+    }
+    const presence = document.getElementById("playerPresence");
+    if (presence) {
+      presence.dataset.stage = stageNames[index] || stageNames[0];
+      presence.classList.toggle("is-answering", index === 2);
+      presence.classList.toggle("is-reading", index === 1);
+    }
   }
 
   function setClock() {
@@ -71,7 +82,7 @@
   }
 
   // —— 窗口管理 ——
-  const windowIds = ["browserWindow", "chatWindow", "memoryWindow", "settingsWindow"];
+  const windowIds = ["browserWindow", "chatWindow", "memoryWindow"];
   let zTop = 10;
 
   function getWindow(id) { return document.getElementById(id); }
@@ -162,7 +173,7 @@
     });
   }
 
-  // —— AI 设置绑定（独立实现，与 ai-client.js 对接） ——
+  // 旧版 AI 设置逻辑保留在历史代码中，但本页面不再挂载设置窗口或调用它。
   function aiPresetValues(name) {
     if (name === "zhipu") return { baseUrl: "https://open.bigmodel.cn/api/paas/v4", model: "glm-4-flash" };
     if (name === "deepseek") return { baseUrl: "https://api.deepseek.com/v1", model: "deepseek-chat" };
@@ -327,8 +338,6 @@
     bindBedroomToggle();
     bindContinueButton();
     refreshProgressLabel();
-    bindAiSettings();
-    refreshAiIndicator();
     elements.startButton.addEventListener("click", () => startShell(false));
     const osStart = document.getElementById("osStartButton");
     if (osStart) osStart.addEventListener("click", () => toast("共读OS · 知乎黑客松2026 参赛作品 · 由人与 AI 结对开发"));

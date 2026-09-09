@@ -29,9 +29,6 @@
         <button class="dock-icon" data-open="memoryWindow" type="button">
           <img class="dock-img" src="./assets/icon-notes.svg" alt=""><span class="dock-label">共读札记</span>
         </button>
-        <button class="dock-icon" data-open="settingsWindow" type="button">
-          <img class="dock-img" src="./assets/icon-settings.svg" alt=""><span class="dock-label">系统设置</span>
-        </button>
       </nav>
       <section class="app-window browser-window is-front" id="browserWindow" data-task="知乎浏览器" aria-label="知乎浏览器窗口">
         <header class="titlebar blue-titlebar">
@@ -114,33 +111,6 @@
           <div class="principle-card" id="principleCard"><span>第一张空白页</span><p>还没有写下任何东西。</p></div>
         </div>
       </aside>
-      <aside class="app-window settings-window is-closed" id="settingsWindow" data-task="系统设置" aria-label="系统设置窗口">
-        <header class="titlebar dark-titlebar">
-          <div class="titlebar-title">系统设置.exe · AI 增强</div>
-          <div class="window-controls">
-            <button class="window-control" data-win="minimize" type="button" aria-label="最小化系统设置">—</button>
-            <button class="window-control close-control" data-win="close" type="button" aria-label="关闭系统设置">×</button>
-          </div>
-        </header>
-        <div class="ai-settings-content">
-          <span class="eyebrow">AI 增强 / 实验功能</span>
-          <h3>给共读伙伴接上真实的大模型</h3>
-          <p class="ai-settings-note">关闭或未配置时，伙伴使用内置脚本，游戏流程完整可玩。所有配置只保存在本机浏览器。</p>
-          <label class="ai-field ai-toggle-field"><input type="checkbox" id="aiEnabledToggle"><span>启用 AI 增强模式</span></label>
-          <label class="ai-field"><span>接口地址（OpenAI 兼容）</span><input id="aiBaseUrl" type="text" placeholder="https://open.bigmodel.cn/api/paas/v4" autocomplete="off"></label>
-          <label class="ai-field"><span>API Key</span><input id="aiApiKey" type="password" placeholder="粘贴服务商提供的密钥" autocomplete="off"></label>
-          <label class="ai-field"><span>模型名</span><input id="aiModel" type="text" placeholder="glm-4-flash" autocomplete="off"></label>
-          <div class="ai-settings-actions">
-            <button class="secondary-action" id="aiTestButton" type="button">测试连接</button>
-            <span id="aiTestResult" aria-live="polite"></span>
-          </div>
-          <div class="ai-preset-row">
-            <span>快速填入：</span>
-            <button class="text-action" data-ai-preset="zhipu" type="button">智谱 GLM</button>
-            <button class="text-action" data-ai-preset="deepseek" type="button">DeepSeek</button>
-          </div>
-        </div>
-      </aside>
     </section>
     <aside class="bedroom-panel" id="bedroomPanel" aria-label="共读房间">
       <header class="bedroom-head">
@@ -157,7 +127,12 @@
         <div class="room-canvas">
           <img class="room-base-art" src="./assets/room-stage-0-v1.png" alt="夜晚的共读房间" draggable="false">
           <img class="room-prop room-prop-books" src="./assets/room-prop-books-v1.png" alt="" aria-hidden="true" draggable="false">          <img class="room-prop room-prop-notes" src="./assets/room-prop-hospital-notes-v1.png" alt="" aria-hidden="true" draggable="false">          <img class="room-prop room-prop-lantern" src="./assets/room-prop-memory-lantern-v1.png" alt="" aria-hidden="true" draggable="false">          <button class="room-computer" id="roomComputer" type="button" aria-label="房间里的电脑，点这里伙伴会过去用">            <span id="roomComputerScreen" aria-hidden="true"></span>          </button>          <div class="room-environment-responses" aria-hidden="true">            <span class="environment-window-light"></span>            <span class="environment-board-note"><i></i></span>            <span class="environment-bed-dent"></span>          </div>          <div class="wall-note is-empty" aria-live="polite" aria-label="伙伴留在墙上的便签"><span id="wallNote"></span></div>
-          <div class="ai-character stage-zero" id="aiCharacter" role="button" tabindex="0" aria-label="共读伙伴 00">
+           <div class="player-presence" id="playerPresence" role="img" aria-label="匿名共读答主，你，坐在书桌前">
+             <span class="player-presence-glow" aria-hidden="true"></span>
+             <span class="player-silhouette" aria-hidden="true"><i class="player-head"></i><i class="player-body"></i><i class="player-hands"></i></span>
+             <span class="player-presence-tag"><strong>答主 · 你</strong><small id="playerPresenceState">准备中</small></span>
+           </div>
+           <div class="ai-character stage-zero" id="aiCharacter" role="button" tabindex="0" aria-label="共读伙伴 00">
             <span class="ai-character-art ai-character-sprite" aria-hidden="true"></span>
           </div>
         </div>
@@ -191,7 +166,6 @@
           <span><i>3</i><b>回信</b><small>几天后见分晓</small></span>
         </div>
         <button class="boot-button" id="startButton" type="button">开始今晚的回答 <span>→</span></button>
-        <button class="boot-button boot-continue" id="customLaunch" type="button">AI 换你出题 · 再来一局 <span>→</span></button>
         <button class="boot-button boot-continue" id="continueButton" type="button" hidden>继续上次共读 <span>→</span></button>
         <small>回答署名：共读答主 · 你 × 共读伙伴 00</small>
       </div>
@@ -248,15 +222,12 @@
 
   <div class="guide-tip" id="guideTip" role="status"></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="./ai-client.js?v=20260908-1"></script>
   <script src="./game/question-pack.js?v=20260908-1"></script>
   <script src="./game/question-pack2.js?v=20260908-1"></script>
   <script src="./game/question-pack3.js?v=20260908-1"></script>
   <script src="./game/engine.js?v=20260908-1"></script>
   <script src="./game/companion.js?v=20260908-1"></script>
-  <script src="./game/guide-system.js?v=20260908-1"></script>
-  <script src="./game/custom-pack.js?v=20260908-2"></script>
-  <script src="./game/custom-launcher.js?v=20260908-2"></script>
+  <script src="./game/guide-system.js?v=20260909-1"></script>
   <script src="./game/v2-shell.js?v=20260908-1"></script>
 <script>
 window.addEventListener("error", function(e) {
