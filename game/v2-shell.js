@@ -75,7 +75,13 @@
     }
   }
 
-  function setClock() {
+  let storyClock = "";
+  function setClock(value) {
+    if (typeof value === "string" && value) storyClock = value;
+    if (storyClock) {
+      if (elements.osBadgeTime) elements.osBadgeTime.textContent = storyClock;
+      return;
+    }
     const now = new Date();
     const pad = (v) => String(v).padStart(2, "0");
     if (elements.osBadgeTime) elements.osBadgeTime.textContent = pad(now.getHours()) + ":" + pad(now.getMinutes());
@@ -118,7 +124,7 @@
       titlebar.addEventListener("pointerdown", (event) => {
         if (event.button !== 0 || event.target.closest(".window-controls")) return;
         const rect = win.getBoundingClientRect();
-        const hostRect = elements.workspace.getBoundingClientRect();
+        const hostRect = osRoot.getBoundingClientRect();
         drag = {
           offsetX: event.clientX - rect.left,
           offsetY: event.clientY - rect.top,
@@ -131,8 +137,8 @@
       });
       titlebar.addEventListener("pointermove", (event) => {
         if (!drag) return;
-        const maxLeft = elements.workspace.clientWidth - 120;
-        const maxTop = elements.workspace.clientHeight - 60;
+        const maxLeft = osRoot.clientWidth - Math.min(win.offsetWidth, osRoot.clientWidth);
+        const maxTop = osRoot.clientHeight - Math.min(win.offsetHeight, osRoot.clientHeight);
         const left = Math.min(Math.max(0, event.clientX - drag.offsetX - drag.hostLeft), Math.max(0, maxLeft));
         const top = Math.min(Math.max(0, event.clientY - drag.offsetY - drag.hostTop), Math.max(0, maxTop));
         win.style.left = left + "px";
@@ -233,6 +239,23 @@
   }
 
   // —— 开机流 ——
+  function startEngineFlow(attempt) {
+    const engine = window.CoReadEngine;
+    if (engine && typeof engine.newGame === "function") {
+      engine.newGame();
+      return;
+    }
+    if (engine && typeof engine.onShellReady === "function") {
+      engine.onShellReady();
+      return;
+    }
+    if (attempt >= 100) {
+      demoArrival();
+      return;
+    }
+    window.setTimeout(() => startEngineFlow(attempt + 1), 50);
+  }
+
   function startShell(resumeMode) {
     elements.bootOverlay.hidden = true;
     setStage(0);
@@ -249,16 +272,10 @@
       tut.hidden = false;
       const dismiss = document.getElementById("tutorialDismiss");
       if (dismiss) dismiss.addEventListener("click", () => { tut.hidden = true; });
+      window.requestAnimationFrame(() => { if (dismiss && typeof dismiss.focus === "function") dismiss.focus(); });
     }
-    window.setTimeout(() => {
-      if (window.CoReadEngine && typeof window.CoReadEngine.newGame === "function") {
-        window.CoReadEngine.newGame();
-      } else if (window.CoReadEngine && typeof window.CoReadEngine.onShellReady === "function") {
-        window.CoReadEngine.onShellReady();
-      } else {
-        demoArrival();
-      }
-    }, 1200);
+    // 首次加载时脚本可能比开机动画慢；等待引擎就绪，避免只填了问题却没有材料交互。
+    window.setTimeout(() => startEngineFlow(0), 1200);
   }
 
   function demoArrival() {
@@ -300,6 +317,7 @@
     setStage,
     guide,
     setAiText,
+    setClock,
     fillQuestion,
     focusWindow,
     minimizeWindow,

@@ -93,7 +93,7 @@
           <button class="method-card" data-method="story" type="button" disabled><strong>案例</strong><small>2 耐心 · 亲历故事</small></button>
           <button class="method-card" data-method="checklist" type="button" disabled><strong>清单</strong><small>2 耐心 · 可执行步骤</small></button>
           <button class="method-card" data-method="tradeoff" type="button" disabled><strong>利弊摊开</strong><small>3 耐心 · 两边摆开</small></button>
-          <button class="method-card is-ai" id="aiSuggestButton" type="button" disabled><strong>00 的建议</strong><small>Lv6 · 每题 1 次</small></button>
+          <button class="method-card is-ai" id="aiSuggestButton" type="button" disabled><strong>00 的建议</strong><small>本地提示 · 每题 1 次</small></button>
         </div>
       </section>
       <aside class="app-window memory-window is-closed" id="memoryWindow" data-task="共读札记" aria-label="共读札记窗口">
@@ -107,8 +107,14 @@
         <div class="memory-content">
           <span class="eyebrow">共读札记 / 成长记录</span>
           <h3 id="growthTitle">你们一起做过的事会留在这里</h3>
+          <div class="growth-meter" aria-label="伙伴默契经验进度"><div class="growth-meter-head"><span>伙伴默契经验</span><strong id="growthProgressText">0 / 8</strong></div><div class="growth-meter-track"><i id="growthProgressFill"></i></div></div>
           <ul class="growth-list" id="growthList"><li><span class="growth-dot empty"></span> 第一页还是空的</li></ul>
           <div class="principle-card" id="principleCard"><span>第一张空白页</span><p>还没有写下任何东西。</p></div>
+          <section class="library-section" aria-labelledby="libraryTitle">
+            <span class="eyebrow">共读素材库</span>
+            <h4 id="libraryTitle">还没有留下可复用的卡</h4>
+            <ul class="library-list" id="libraryList"><li class="library-empty">完成一题后，精华卡和普通卡会留在这里。</li></ul>
+          </section>
         </div>
       </aside>
     </section>
@@ -117,12 +123,6 @@
         <span class="bedroom-title"><span class="mini-app-icon room-mini">▦</span> 共读房间</span>
         <button class="bedroom-collapse" id="collapseBedroom" type="button" aria-label="折叠卧室面板">»</button>
       </header>
-      <div class="resource-hud" id="resourceHud" aria-label="本局状态" aria-live="polite">
-        <div class="resource-chip resource-attention"><span class="resource-icon">◈</span><span class="resource-label">注意力</span><strong id="hudAttention">2 / 2</strong><span class="resource-track"><i id="hudAttentionFill"></i></span></div>
-        <div class="resource-chip resource-patience"><span class="resource-icon">♥</span><span class="resource-label">耐心</span><strong id="hudPatience">—</strong><span class="resource-track"><i id="hudPatienceFill"></i></span></div>
-        <div class="resource-chip resource-mood"><span class="resource-icon">●</span><span class="resource-label">状态</span><strong id="hudMood">未开始</strong></div>
-        <div class="resource-chip resource-cards"><span class="resource-icon">▣</span><span class="resource-label">卡槽</span><strong id="hudCards">0 / 2</strong></div>
-      </div>
       <div class="room-scene" id="roomScene">
         <div class="room-canvas">
           <img class="room-base-art" src="./assets/room-stage-0-v1.png" alt="夜晚的共读房间" draggable="false">
@@ -142,7 +142,7 @@
         </div>
       </div>
       <div class="reading-tray">
-        <div class="tray-heading"><div><span class="eyebrow">素材卡桌</span><strong id="trayCount">0 / 2 份材料</strong></div><span class="tray-note">对话时会作为证据，影响回答命中</span></div>
+        <div class="tray-heading"><div><span class="eyebrow">素材卡桌</span><strong id="trayCount">新卡 0 / 2 · 桌面 0 张</strong></div><span class="tray-note">新卡消耗注意力；旧卡只作跨题参考</span></div>
         <div class="drop-zone" id="dropZone" aria-label="素材卡桌"><div class="empty-drop" id="emptyDrop"><p>桌上还没有素材卡</p><small>在材料里点选句子，最多挑三句</small></div><div class="selected-materials" id="selectedMaterials"></div></div>
         <button class="primary-action" id="synthesizeButton" type="button" disabled>挑好句子，去找他聊聊</button>
       </div>
@@ -151,6 +151,17 @@
 
       <div class="os-badge" id="osBadge"><span id="osBadgeStage">接题</span><span class="os-badge-sep"></span><span id="osBadgeTime">22:40</span></div>
 </main>
+
+  <aside class="resource-hud" id="resourceHud" aria-label="本局状态" aria-live="polite" data-phase="boot">
+    <div class="resource-hud-head"><span class="hud-sigil" aria-hidden="true">✦</span><span><b id="hudNight">第 1 晚</b><small id="hudPhase">准备开始</small></span></div>
+    <div class="resource-chip resource-attention" data-resource="attention"><span class="resource-icon">◈</span><span class="resource-copy"><span class="resource-label">注意力</span><strong id="hudAttention">2 / 2</strong><span class="resource-track"><i id="hudAttentionFill"></i></span></span></div>
+    <div class="resource-chip resource-patience" data-resource="patience"><span class="resource-icon">♥</span><span class="resource-copy"><span class="resource-label">耐心</span><strong id="hudPatience">—</strong><span class="resource-track"><i id="hudPatienceFill"></i></span></span></div>
+    <div class="resource-chip resource-mood" data-resource="mood"><span class="resource-icon">●</span><span class="resource-copy"><span class="resource-label">状态</span><strong id="hudMood">未开始</strong></span></div>
+    <div class="resource-chip resource-cards" data-resource="cards"><span class="resource-icon">▣</span><span class="resource-copy"><span class="resource-label">新卡槽</span><strong id="hudCards">0 / 2</strong></span></div>
+    <div class="resource-chip resource-season" data-resource="season"><span class="resource-icon">☾</span><span class="resource-copy"><span class="resource-label">夜晚</span><strong id="hudSeason">第 1 晚 / 12</strong></span></div>
+    <div class="resource-chip resource-exp" data-resource="exp"><span class="resource-icon">✧</span><span class="resource-copy"><span class="resource-label">经验</span><strong id="hudExp">0</strong></span></div>
+    <div class="resource-chip resource-fans" data-resource="fans"><span class="resource-icon">☼</span><span class="resource-copy"><span class="resource-label">粉丝</span><strong id="hudFans">0</strong></span></div>
+  </aside>
 
   <section class="boot-overlay" id="bootOverlay" aria-labelledby="bootTitle">
     <div class="boot-card">
@@ -181,6 +192,7 @@
   <section class="tutorial-overlay" id="tutorialOverlay" hidden>
     <div class="tutorial-card">
       <h2>怎么玩 · 四步学会</h2>
+      <p class="tutorial-blocking-note">这张说明会暂时挡住桌面操作；点下方按钮收起后，就可以点材料里的「展开检查」了。</p>
       <div class="tutorial-step"><span class="tutorial-num">1</span><p><strong>看求助</strong>：电脑收到一封求助，点开材料「展开检查」，看清是谁写的、什么时候写的。</p></div>
       <div class="tutorial-step"><span class="tutorial-num">2</span><p><strong>挑句子</strong>：伙伴划出了候选句，点你觉得<strong>真正有用</strong>的（最多 3 句），做成素材卡。注意混着广告和过时内容，别选那些。</p></div>
       <div class="tutorial-step"><span class="tutorial-num">3</span><p><strong>标来源</strong>：给每份材料标上来源类型（官方/老攻略/经历帖/提问者补充）。标错了会出<strong>废卡</strong>。</p></div>
@@ -197,7 +209,7 @@
       <div class="sentence-pick">
         <div class="sentence-pick-head"><span class="eyebrow">伙伴划出的候选句 · 最多挑 3 句</span><strong id="sentenceCount">0 / 3</strong></div>
         <div class="sentence-list" id="sentenceList"></div>
-        <p class="sentence-hint">小窍门：带“关注 / 私信 / APP”多半是广告；旧日期的建议先谨慎；来源标签要和材料身份一致。</p>
+        <p class="sentence-hint">小窍门：红色候选句是广告或过时风险，建议不要选；带“关注 / 私信 / APP”多半是广告；来源标签要和材料身份一致。</p>
         <p class="modal-selection-hint" id="modalSelectionHint" aria-live="polite">先选和问题步骤直接相关的句子。</p>
       </div>
       <div class="source-tag-row"><span class="eyebrow">给这份材料标来源：</span><div class="tag-options" id="tagOptions"></div></div>
@@ -208,15 +220,35 @@
 
   <section class="settle-overlay" id="settleOverlay" hidden>
     <article class="settle-card">
-      <span class="eyebrow">本局结算 · 挂号题</span>
+      <span class="eyebrow" id="settleEyebrow">本局结算 · 今晚</span>
       <h2 id="settleTitle"></h2>
+      <div class="night-timeline" id="nightTimeline" data-phase="settle" aria-label="夜晚时间线">
+        <div class="timeline-node is-current" id="timelineTonight"><i>1</i><span>本晚</span></div>
+        <span class="timeline-line" aria-hidden="true"></span>
+        <div class="timeline-node" id="timelineLetter"><i>2</i><span>回信</span></div>
+        <span class="timeline-line" aria-hidden="true"></span>
+        <div class="timeline-node" id="timelineNext"><i>3</i><span id="timelineNextLabel">明晚</span></div>
+      </div>
       <div class="settle-grid">
         <div class="settle-block"><span>答中清单</span><div id="settleHits"></div></div>
         <div class="settle-block"><span>素材卡开卡</span><div id="settleCards"></div></div>
         <div class="settle-block"><span>他的离开方式</span><div id="settleLeave"></div></div>
         <div class="settle-block"><span>入账</span><div id="settleGains"></div></div>
       </div>
+      <div class="time-jump" id="timeJump" hidden>
+        <span class="time-jump-icon" aria-hidden="true">☾</span>
+        <div><strong id="timeJumpTitle">时间点 · 明天晚上 22:40</strong><small id="timeJumpCopy">按下后关灯，下一封求助会在下一晚来到桌面。</small></div>
+      </div>
       <button class="boot-button" id="settleContinue" type="button">等他的回信 <span>→</span></button>
+    </article>
+  </section>
+
+  <section class="growth-overlay" id="growthOverlay" hidden>
+    <article class="growth-choice-card" role="dialog" aria-modal="true" aria-labelledby="growthChoiceTitle">
+      <span class="eyebrow">伙伴成长 · 新默契</span>
+      <h2 id="growthChoiceTitle">这一局之后，你想把什么练得更好？</h2>
+      <p class="growth-choice-copy" id="growthChoiceCopy">选一张成长卡。它会留在后面的共读里。</p>
+      <div class="growth-choices" id="growthChoices"></div>
     </article>
   </section>
 
@@ -225,6 +257,7 @@
   <script src="./game/question-pack.js?v=20260908-1"></script>
   <script src="./game/question-pack2.js?v=20260908-1"></script>
   <script src="./game/question-pack3.js?v=20260908-1"></script>
+  <script src="./game/question-pack-season.js?v=20260909-1"></script>
   <script src="./game/engine.js?v=20260908-1"></script>
   <script src="./game/companion.js?v=20260908-1"></script>
   <script src="./game/guide-system.js?v=20260909-1"></script>
