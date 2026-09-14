@@ -499,7 +499,7 @@ if (!v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "四张卡已
 if (v1Html.includes('class="browser-toolbar"') || !v1Css.includes(".browser-toolbar { display: none; }")) {
   throw new Error("v1 知乎窗口仍保留地址栏工具行");
 }
-if (v1Html.includes('class="boot-overlay"') || v1Html.includes('id="bootOverlay"') || v1Html.includes('id="startButton"') || v1Js.includes("bootOverlay") || v1Js.includes("startButton") || !v1Js.includes("bindEvents();\n  startGame();")) {
+if (v1Html.includes('class="boot-overlay"') || v1Html.includes('id="bootOverlay"') || v1Html.includes('id="startButton"') || v1Js.includes("bootOverlay") || v1Js.includes("startButton") || !/bindEvents\(\);\r?\n\s+startGame\(\);/.test(v1Js)) {
   throw new Error("v1 仍保留开场封面，或没有在初始化时直接进入主界面");
 }
 
