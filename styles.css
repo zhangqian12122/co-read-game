@@ -1102,6 +1102,80 @@ button:focus-visible,
   font-weight: 800;
 }
 
+.tray-card-count {
+  color: #9a8b7a;
+  font-size: 9px;
+  font-weight: 800;
+}
+
+.material-fragments {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.material-fragment-card {
+  width: 100%;
+  min-height: 58px;
+  padding: 7px;
+  border: 2px solid #b7aa98;
+  background: #fffaf0;
+  box-shadow: 2px 2px 0 rgba(82, 67, 51, .12);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: transform .1s steps(2), box-shadow .1s steps(2), border-color .1s linear;
+}
+
+.material-fragment-card:hover,
+.material-fragment-card:focus-visible {
+  border-color: var(--zhihu);
+  box-shadow: 3px 3px 0 rgba(23, 105, 210, .22);
+  outline: 0;
+  transform: translate(-1px, -1px);
+}
+
+.material-fragment-card.fragment-source {
+  border-color: #c7bfae;
+  background: #f5f0e6;
+}
+
+.material-fragment-card > span {
+  display: block;
+  margin-bottom: 5px;
+  color: #8e7c69;
+  font: 800 8px/1 var(--mono-font);
+  letter-spacing: .08em;
+}
+
+.material-fragment-card > span i {
+  display: inline-grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  margin-right: 4px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 9px;
+}
+
+.material-fragment-card > strong {
+  display: block;
+  color: #50473f;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.material-fragment-card > small {
+  display: block;
+  margin-top: 6px;
+  color: #8d9aa2;
+  font: 8px/1.2 var(--mono-font);
+}
+
 .selected-item.has-source-friction .tag-button.is-selected {
   border-color: #b65e43;
   background: #fff1dc;

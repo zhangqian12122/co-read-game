@@ -16,10 +16,10 @@ const contentTypes = {
 
 const server = http.createServer((request, response) => {
   const rawPath = request.url.split("?")[0];
-  const requestPath = rawPath === "/" || rawPath === "/v1.html"
+  const requestPath = rawPath === "/" || rawPath === "/v1.html" || rawPath === "/v2.html"
     ? "/v1.html"
     : rawPath === "/art-v0.2.html" ? "/index.html" : rawPath;
-  const prototypeBuild = rawPath === "/" || rawPath === "/v1.html" ? "v1" : "art-v0.2";
+  const prototypeBuild = rawPath === "/v2.html" ? "v1-dual-window" : rawPath === "/" || rawPath === "/v1.html" ? "v1" : "art-v0.2";
   const filePath = path.resolve(root, `.${requestPath}`);
   if (!filePath.startsWith(root)) {
     response.writeHead(403).end("Forbidden");

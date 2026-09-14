@@ -52,6 +52,32 @@ const hospitalMaterials = [
     ],
     quote: "同学们说法不一样，我不知道该听谁的。",
     caution: "校内医保手续尚未得到学校或医院确认。"
+  },
+  {
+    id: "avoid", kind: "experience", kindLabel: "避坑经验", date: "2025-11-09",
+    title: "第一次挂号最容易卡在哪几步？过来人把坑说清楚",
+    excerpt: "有人把自己的流程写得很细，但其中一部分只适用于当时的医院和窗口。",
+    author: "门诊打工人", source: "个人经验", engagement: "1,204 赞同 · 86 评论",
+    validUses: ["experience"], tendencies: { empathy: 1, caution: 2 },
+    body: [
+      "作者记录了自己第一次挂号时遇到的几个卡点：没有先确认院区、到了窗口才发现需要重新取号，以及不知道该向谁问医保手续。",
+      "这些经历可以用来提醒第一次去医院的人，但作者也说明，具体窗口和材料仍要看目标医院当天的通知。"
+    ],
+    quote: "不确定的时候，先问窗口，不要拿别人的流程硬套。",
+    caution: "这是个人经历，不能替代目标医院当天的安排。"
+  },
+  {
+    id: "softAd", kind: "old", kindLabel: "经验分享", date: "2024-06-12",
+    title: "第一次看病照着这份万能流程走，省时省心不踩坑",
+    excerpt: "标题很完整，步骤也写得很顺，但正文把一个咨询服务的联系方式放在了最关键的位置。",
+    author: "健康生活研究所", source: "个人账号", engagement: "9,874 赞同 · 412 评论",
+    validUses: ["uncertain"], tendencies: { expression: 1, caution: 2 },
+    body: [
+      "这篇回答把挂号、缴费、候诊和取报告整理成了一张流程图，看起来适合第一次去医院的人。",
+      "继续往下看会发现，作者把具体医院和当天规则全部省略，并把“快速代办”的联系方式放在了流程的关键步骤旁边。"
+    ],
+    quote: "不想排队的话，可以联系文末的顾问帮你处理。",
+    caution: "文章没有提供可核对的医院和更新时间，文末存在付费服务引导。"
   }
 ];
 
@@ -106,10 +132,11 @@ const chapterDefinitions = {
   hospital: {
     id: "hospital", archive: "档案 00 · 第一次独自去医院", address: "zhihu.local/question/first-hospital-visit",
     kicker: "生活经验 · 校园生活", title: "大学生第一次自己去医院，挂号前需要准备什么？",
-    body: "一个人在外地上大学，最近需要去医院看看，但从来没独自挂过号。网上流程很多，我不知道哪些现在还适用，也有点紧张，主要担心东西没带齐，或者到了医院才发现挂错科。",
+    body: "一个人在外地上大学，最近想去医院看看，但从来没独自挂过号。\n\n网上看到的流程很多，有的说先网上预约，有的说直接去窗口。我不知道哪些现在还适用，也有点紧张，主要担心证件、医保、科室这些东西没带齐。\n\n第一次自己去医院，挂号前到底应该先准备什么？",
+    postAuthor: { name: "悠一", avatarKey: "yuyi", meta: "刚来知乎 · 生活经验", bio: "一个人第一次在外地处理自己的事" },
     asker: "",
     stats: ["18 个回答", "96 人关注", "最后编辑于今天"], eyebrow: "共读调查 / 01",
-    researchTitle: "先看哪两份材料？", instruction: "先打开材料，看看作者、日期和来源，再选两份递给伙伴。没看过的材料不能选。",
+    researchTitle: "看看问题下面的回答", instruction: "先点开第一条，看看作者、日期、数据和正文，再决定要不要递给伙伴。",
     tagPrompt: "这份材料在你看来是：", materials: hospitalMaterials,
     tagOptions: [
       { id: "official", label: "最新官方信息" }, { id: "experience", label: "个人经历" },
@@ -119,10 +146,11 @@ const chapterDefinitions = {
   career: {
     id: "career", archive: "档案 01 · 一条没有官方答案的路", address: "zhihu.local/question/quit-and-change-career",
     kicker: "职业选择 · 个人成长", title: "工作三年、只有三个月存款，该不该裸辞转行？",
-    body: "在现在的行业做了三年，我越来越确定自己不想干了，可每天下班以后累得什么都不想做，根本没精神准备转行。我手里的钱只够撑三个月，直接辞又不敢，可一直这么拖，我怕一年以后还在干现在这份工作。",
+    body: "在现在的行业做了三年，我越来越确定自己不想干了。\n\n可每天下班以后累得什么都不想做，根本没精神准备转行。我手里的钱只够撑三个月，直接辞又不敢，可一直这么拖，我怕一年以后还在干现在这份工作。\n\n如果是你，会先留下来准备，还是先辞职再找方向？",
+    postAuthor: { name: "林岸", avatarKey: "young-experience", meta: "刚来知乎 · 职业选择", bio: "想换一条路，但还没准备好离开" },
     asker: "",
     stats: ["27 个回答", "183 人关注", "最后编辑于今天"], eyebrow: "共读调查 / 03",
-    researchTitle: "这两份材料，你们准备怎么用？", instruction: "先打开材料，再从四份里选两份。这里没有标准答案，重点是分清它能帮你们看岗位、找办法、提醒风险，还是补齐林岸自己的情况。",
+    researchTitle: "先把能帮到林岸的素材带回来", instruction: "先打开材料，再从四份里选两份。现在只需要把看过、愿意带回房间的素材卡贴上桌，后面整理回复时再判断哪些句子值得留下。",
     tagPrompt: "你打算怎样使用这份材料：", materials: careerMaterials,
     tagOptions: [
       { id: "market", label: "作为市场参照" }, { id: "method", label: "借鉴其中做法" },
@@ -130,6 +158,96 @@ const chapterDefinitions = {
     ]
   }
 };
+
+const materialFeedMetrics = Object.freeze({
+  official: { votes: "549", comments: "130", saves: "89", likes: "27" },
+  oldGuide: { votes: "2,568", comments: "75", saves: "128", likes: "340" },
+  experience: { votes: "5,796", comments: "318", saves: "983", likes: "729" },
+  context: { votes: "271", comments: "10", saves: "31", likes: "6" },
+  avoid: { votes: "1,204", comments: "86", saves: "214", likes: "76" },
+  softAd: { votes: "9,874", comments: "412", saves: "1,103", likes: "688" }
+});
+
+function getMaterialFeedMetrics(material) {
+  return materialFeedMetrics[material.id] || { votes: "—", comments: "—", saves: "—", likes: "—" };
+}
+
+function getAvatarClass(key = "yuyi") {
+  return key === "lotus-elder" ? "avatar-lotus-elder" : `avatar-sprite avatar-${key}`;
+}
+
+function getMaterialAvatarClass(material) {
+  const avatarByMaterial = {
+    official: "medical",
+    oldGuide: "mature",
+    experience: "young-experience",
+    context: "yuyi",
+    avoid: "fact-checker",
+    softAd: "promo"
+  };
+  return getAvatarClass(avatarByMaterial[material.id] || "yuyi");
+}
+
+const materialCardProfiles = Object.freeze({
+  hospital: Object.freeze({
+    official: Object.freeze({ type: "对策卡", icon: "✦", note: "适合把已经确认的医院流程写进回复，但学校医保仍要单独确认。" }),
+    oldGuide: Object.freeze({ type: "流程卡", icon: "↗", note: "可以用来认路，不能把旧日期的流程当成今天的医院规定。" }),
+    experience: Object.freeze({ type: "共情卡", icon: "♡", note: "适合先接住第一次独自就医的紧张，不替医院说明具体规则。" }),
+    context: Object.freeze({ type: "追问卡", icon: "?", note: "适合补问学校、城市和目标医院，不能单独代替一份流程。" })
+  }),
+  career: Object.freeze({
+    market: Object.freeze({ type: "参照卡", icon: "▥", note: "适合对照目标岗位，不代表林岸所在城市一定有同样机会。" }),
+    success: Object.freeze({ type: "方法卡", icon: "✦", note: "适合拆出可借鉴的准备方法，不能忽略她已有的作品和生活缓冲。" }),
+    failure: Object.freeze({ type: "风险卡", icon: "!", note: "适合提醒裸辞成本，不直接替林岸决定要不要离开。" }),
+    context: Object.freeze({ type: "处境卡", icon: "♡", note: "适合把林岸自己的存款、房租和作品情况放回回答里。" })
+  })
+});
+
+function getCardDetail(materialId, fragmentKind = "quote") {
+  const material = getMaterial(materialId);
+  if (!material) return null;
+  const profile = materialCardProfiles[state.chapterId]?.[material.id] || { type: "素材卡", icon: "✦", note: "先看清这张卡片能证明什么。" };
+  const isSourceCard = fragmentKind === "source";
+  return {
+    materialId,
+    fragmentKind,
+    type: isSourceCard ? "来源卡" : profile.type,
+    icon: isSourceCard ? "◎" : profile.icon,
+    title: isSourceCard ? `${material.title} · 来源与边界` : material.title,
+    meta: `${material.author} · ${material.date} · ${material.source}`,
+    body: isSourceCard
+      ? `${material.author} 发布于 ${material.date}。\n\n${material.caution}`
+      : `${material.body.join("\n\n")}\n\n摘录：“${material.quote}”`,
+    boundary: isSourceCard ? "这张卡用来提醒来源和使用边界，不代替正文。" : profile.note,
+    commentText: isSourceCard
+      ? `来源：${material.author}（${material.date}）。${material.caution}`
+      : `${material.quote}\n\n${material.body[0]}`
+  };
+}
+
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[character]));
+}
+
+function getCardTypeClass(type = "素材卡") {
+  const names = { "对策卡": "counter", "流程卡": "process", "共情卡": "empathy", "追问卡": "question", "来源卡": "source", "参照卡": "reference", "方法卡": "method", "风险卡": "risk", "处境卡": "context" };
+  return `card-type-${names[type] || "material"}`;
+}
+
+function getCardKey(ref) {
+  return `${ref.materialId}::${ref.fragmentKind}`;
+}
+
+function getCardFaceMarkup(detail, { compact = false, actionLabel = "" } = {}) {
+  const body = detail.commentText || detail.body;
+  return `<span class="collectible-card-face ${compact ? "is-compact" : ""}">
+    <span class="collectible-card-ribbon"><i>${escapeHtml(detail.icon)}</i><b>${escapeHtml(detail.type)}</b><em>CO-READ</em></span>
+    <span class="collectible-card-title">${escapeHtml(detail.title)}</span>
+    <span class="collectible-card-body">${escapeHtml(body).replace(/\n/g, "<br>")}</span>
+    <span class="collectible-card-footer"><small>${escapeHtml(detail.meta)}</small><strong>${escapeHtml(detail.type)}</strong></span>
+    ${actionLabel ? `<span class="collectible-card-action">${escapeHtml(actionLabel)}</span>` : ""}
+  </span>`;
+}
 
 const hospitalDecisions = [
   { id: "checklist", title: "先说去医院前要准备什么", detail: "证件带什么、医院要求什么、学校医保该问谁，一项项跟他说清楚。", requiresAny: ["official", "oldGuide"], tendencies: { truth: 2, expression: 1, caution: 1 } },
@@ -223,10 +341,9 @@ const careerDraftApproaches = {
 };
 
 const hospitalFollowupReplyChoices = {
-  confirm: { title: "只说现在能确定的", detail: "先回答今晚能准备什么，没确认的那一项留出来。", tendencies: { truth: 2, expression: 1 } },
-  ask: { title: "再问一个具体条件", detail: "让悠一把学校或医院的回复贴出来，再一起往下看。", tendencies: { empathy: 1, caution: 2 } },
-  stay: { title: "先陪他把最慌的地方理顺", detail: "先接住情绪，再给一个不会出错的小动作。", tendencies: { empathy: 2, expression: 1 } },
-  assume: { title: "按常见情况直接替他定下来", detail: "不再等学校回复，先告诉他照一般流程去办。", tendencies: { expression: 1, truth: -2, caution: -2 } }
+  ask: { icon: "✉", title: "追问一下", detail: "把学校、医院和院区的具体情况再问清楚，别拿猜的补答案。", tendencies: { empathy: 1, caution: 2 } },
+  stay: { icon: "♡", title: "安抚他一下", detail: "先接住他现在的紧张，再给一个到现场能做的小动作。", tendencies: { empathy: 2, expression: 1 } },
+  confirm: { icon: "⌕", title: "出去看一下", detail: "去查医院当天的页面和现场提示，把不确定的地方核对清楚。", tendencies: { truth: 2, expression: 1 } }
 };
 
 const decisionConsequences = {
@@ -863,15 +980,15 @@ const hiddenTraitEventCatalog = Object.freeze({
 });
 
 const state = {
-  started: false, chapterId: "hospital", step: "research", attention: 2, selected: [], tags: {}, tagHistory: {}, inspected: new Set(),
-  currentMaterial: null, decision: null, permission: null, companionName: "", tendencies: { truth: 0, empathy: 0, expression: 0, caution: 0 },
+  started: false, chapterId: "hospital", step: "research", attention: 2, patience: 6, maxPatience: 6, questionCooldown: 0, thinking: 0, feedVisibleCount: 1, selected: [], materialsSubmitted: false, tags: {}, tagHistory: {}, inspected: new Set(),
+  currentMaterial: null, currentCard: null, currentCardOrigin: null, commentDraft: null, postComments: [], usedCards: [], decision: null, permission: null, companionName: "", tendencies: { truth: 0, empathy: 0, expression: 0, caution: 0 },
   currentTendencies: { truth: 0, empathy: 0, expression: 0, caution: 0 }, chapterOneSnapshot: null, chapterTwoSnapshot: null,
   outcome: null, locked: false, toastTimer: null, introTimer: null, followupTimer: null, interactionRevision: 0,
   notificationMode: null, pendingChapterAction: null, chapterTwoPermissionResolved: false, autoFlaggedMaterialId: null, autoFlagCopy: "", route: null,
   accountabilityChoice: null, accountabilityAftermathChoice: null, accountabilityResolution: null, careerAccountabilityChoice: null, careerAccountabilityResolution: null, finalChoice: null,
-  draftChoice: null, draftEvaluation: null, hospitalFollowupReplyChoice: null, hospitalFollowupClosingChoice: null, hospitalConversationResolution: null,
+  draftChoice: null, draftEvaluation: null, playerReplyText: "", immediateAskerReply: "", speakerTimer: null, hospitalFollowupReplyChoice: null, hospitalFollowupClosingChoice: null, hospitalConversationResolution: null,
   memoryRecords: [], traitEvents: [],
-  onboardingDismissed: false, computerMessageReady: false, browserUnlocked: false,
+  onboardingDismissed: false, computerMessageReady: false, browserUnlocked: false, helpPostOpened: false, researchUnlocked: false,
   companionEmotion: null, emotionTimer: null, doubtTextTimer: null, facilityTimer: null, transitAlertTimer: null, dialogueTimer: null, roomAftermathTimer: null, privateCompanionTimer: null, publicExchangeTimer: null, publicExchangeRevision: 0,
   roamTimer: null, walkTimer: null, environmentTimer: null, currentEnvironmentInteraction: null, ambientSpeechHistory: new Set(),
   roamIndex: 0, companionPosition: { x: 47.5, depth: 5.2, scale: 1 }
@@ -883,14 +1000,16 @@ const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selec
 const elements = {
   desktop: $("#desktop"), bootOverlay: $("#bootOverlay"), startButton: $("#startButton"), chapterName: $("#chapterName"), addressBar: $("#addressBar"), systemClock: $("#systemClock"), taskbarTime: $("#taskbarTime"),
   onboardingGuide: $("#onboardingGuide"), onboardingStep: $("#onboardingStep"), onboardingTitle: $("#onboardingTitle"), onboardingText: $("#onboardingText"), onboardingAction: $("#onboardingAction"), onboardingDismiss: $("#onboardingDismiss"),
-  questionKicker: $("#questionKicker"), questionTitle: $("#questionTitle"), questionBody: $("#questionBody"), askerNote: $("#askerNote"), questionStats: $("#questionStats"),
-  researchEyebrow: $("#researchEyebrow"), researchTitle: $("#researchTitle"), researchInstruction: $("#researchInstruction"), trayEyebrow: $("#trayEyebrow"),
-  materialList: $("#materialList"), attentionPips: $("#attentionPips"), attentionText: $("#attentionText"), selectedMaterials: $("#selectedMaterials"),
-  dropZone: $("#dropZone"), emptyDrop: $("#emptyDrop"), trayCount: $("#trayCount"), synthesizeButton: $("#synthesizeButton"), roomScene: $("#roomScene"),
+  homeFeed: $("#homeFeed"), gameResourceHud: $("#gameResourceHud"), patienceResource: $("#patienceResource"), patienceValue: $("#patienceValue"), questionCooldownResource: $("#questionCooldownResource"), questionCooldownValue: $("#questionCooldownValue"), thinkingResource: $("#thinkingResource"), thinkingValue: $("#thinkingValue"), questionPanel: $("#questionPanel"), postAuthorAvatar: $("#postAuthorAvatar"), postAuthorName: $("#postAuthorName"), postAuthorMeta: $("#postAuthorMeta"), postAuthorBio: $("#postAuthorBio"), followAskerButton: $("#followAskerButton"), postVoteButton: $("#postVoteButton"), postCommentButton: $("#postCommentButton"), postLikeButton: $("#postLikeButton"), postShareButton: $("#postShareButton"), postMoreButton: $("#postMoreButton"), questionKicker: $("#questionKicker"), questionTitle: $("#questionTitle"), questionBody: $("#questionBody"), askerNote: $("#askerNote"), questionStats: $("#questionStats"),
+  researchEyebrow: $("#researchEyebrow"), researchTitle: $("#researchTitle"), researchInstruction: $("#researchInstruction"), trayEyebrow: $("#trayEyebrow"), trayNote: $("#trayNote"),
+  materialList: $("#materialList"), feedCount: $("#feedCount"), attentionPips: $("#attentionPips"), attentionText: $("#attentionText"), selectedMaterials: $("#selectedMaterials"),
+  dropZone: $("#dropZone"), emptyDrop: $("#emptyDrop"), trayCount: $("#trayCount"), trayCardCount: $("#trayCardCount"), synthesizeButton: $("#synthesizeButton"), roomScene: $("#roomScene"),
   aiCharacter: $("#aiCharacter"), aiDialogue: $("#aiDialogue"), aiSpeaker: $("#aiSpeaker"), aiText: $("#aiText"), wallNote: $("#wallNote"), shelfBook: $("#shelfBook"), materialModal: $("#materialModal"),
   modalType: $("#modalType"), modalTitle: $("#modalTitle"), modalLedger: $("#modalLedger"), modalBody: $("#modalBody"), modalCaution: $("#modalCaution"), modalSendAction: $("#modalSendAction"),
+  cardDetailModal: $("#cardDetailModal"), cardDetailIcon: $("#cardDetailIcon"), cardDetailType: $("#cardDetailType"), cardDetailTitle: $("#cardDetailTitle"), cardDetailMeta: $("#cardDetailMeta"), cardDetailBody: $("#cardDetailBody"), cardDetailBoundary: $("#cardDetailBoundary"), sendCardToComment: $("#sendCardToComment"),
+  postCommentCount: $("#postCommentCount"), postCommentsEmptyCopy: $("#postCommentsEmptyCopy"), postedComments: $("#postedComments"), commentComposer: $("#commentComposer"), commentDraftCardType: $("#commentDraftCardType"), commentDraftSource: $("#commentDraftSource"), commentDraftCard: $("#commentDraftCard"), commentComposerInput: $("#commentComposerInput"), sendCommentButton: $("#sendCommentButton"),
   responsePanel: $("#responsePanel"), decisionEyebrow: $("#decisionEyebrow"), decisionTitle: $("#decisionTitle"), decisionPrompt: $("#decisionPrompt"), aiSummary: $("#aiSummary"), decisionOptions: $("#decisionOptions"),
-  draftWorkshop: $("#draftWorkshop"), draftWorkshopStatus: $("#draftWorkshopStatus"), draftWorkshopTitle: $("#draftWorkshopTitle"), draftThread: $("#draftThread"), draftOptions: $("#draftOptions"), draftPreview: $("#draftPreview"), draftPreviewText: $("#draftPreviewText"), sendDraftAction: $("#sendDraftAction"),
+  draftWorkshop: $("#draftWorkshop"), draftWorkshopStatus: $("#draftWorkshopStatus"), draftWorkshopTitle: $("#draftWorkshopTitle"), draftThread: $("#draftThread"), draftOptions: $("#draftOptions"), replyComposer: $("#replyComposer"), replyComposerInput: $("#replyComposerInput"), draftPreview: $("#draftPreview"), draftPreviewText: $("#draftPreviewText"), sendDraftAction: $("#sendDraftAction"),
   followupNotification: $("#followupNotification"), notificationPixel: $("#notificationPixel"), notificationTitle: $("#notificationTitle"), notificationDetail: $("#notificationDetail"),
   followupPanel: $("#followupPanel"), followupEyebrow: $("#followupEyebrow"), followupTitle: $("#followupTitle"), followupResult: $("#followupResult"), followupAvatar: $("#followupAvatar"), followupAuthor: $("#followupAuthor"), followupText: $("#followupText"), followupContinue: $("#followupContinue"),
   publicDiscussion: $("#publicDiscussion"), publicCommentCount: $("#publicCommentCount"), publicComments: $("#publicComments"), privateCompanionNote: $("#privateCompanionNote"), privateCompanionText: $("#privateCompanionText"), publicExchangeStatus: $("#publicExchangeStatus"),
@@ -923,6 +1042,103 @@ function showToast(message) {
   state.toastTimer = window.setTimeout(() => elements.toast.classList.remove("is-visible"), 2600);
 }
 
+function renderResourceHud() {
+  const patience = Math.max(0, Number(state.patience) || 0);
+  const cooldown = Math.max(0, Number(state.questionCooldown) || 0);
+  const thinking = Math.max(0, Number(state.thinking) || 0);
+  if (elements.patienceValue) elements.patienceValue.textContent = String(patience);
+  if (elements.questionCooldownValue) elements.questionCooldownValue.textContent = String(cooldown);
+  if (elements.thinkingValue) elements.thinkingValue.textContent = String(thinking);
+  if (elements.patienceResource) {
+    elements.patienceResource.title = `求助者耐心值 ${patience}`;
+    elements.patienceResource.setAttribute("aria-label", `求助者耐心值 ${patience}`);
+  }
+  if (elements.questionCooldownResource) {
+    elements.questionCooldownResource.title = `追问冷却 ${cooldown}`;
+    elements.questionCooldownResource.setAttribute("aria-label", `追问冷却 ${cooldown}`);
+  }
+  if (elements.thinkingResource) {
+    elements.thinkingResource.title = `你的思考记录 ${thinking}`;
+    elements.thinkingResource.setAttribute("aria-label", `你的思考记录 ${thinking}`);
+  }
+}
+
+function addThinkingRecord(amount = 1) {
+  state.thinking = Math.max(0, state.thinking + amount);
+  renderResourceHud();
+}
+
+function settlePatience(evaluation) {
+  const before = state.patience;
+  state.patience = Math.max(0, before - 1);
+  if (evaluation?.grade === "accurate") state.patience = Math.min(state.maxPatience, state.patience + 2);
+  if (evaluation?.grade === "misleading") state.patience = Math.max(0, state.patience - 1);
+  renderResourceHud();
+  return { before, after: state.patience };
+}
+
+function openHelpPost() {
+  if (!state.started || !location.pathname.endsWith("/v2.html") || state.helpPostOpened) return;
+  markPlayerInteraction();
+  state.helpPostOpened = true;
+  elements.homeFeed.hidden = true;
+  elements.questionPanel.hidden = false;
+  document.body.classList.add("post-detail");
+  elements.addressBar.innerHTML = '<span class="lock-dot"></span> zhihu.local/question/first-hospital-visit';
+  setAiText("我看到了。刚才我已经收集到一些可能解决这个问题的帖子了，你点我一下，我们一起挑素材。" );
+  setCompanionEmotion("inspect", 1500);
+  elements.questionPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function openCommentGate() {
+  if (!state.started || !state.helpPostOpened) return;
+  markPlayerInteraction();
+  if (!state.researchUnlocked) {
+    elements.postCommentButton?.classList.add("is-blocked");
+    focusWindow("roomWindow");
+    setCompanionEmotion("inspect", 1800);
+    setAiText("先别急着评论。我们还没有先看素材，先点我一下，我把收集到的帖子打开，我们看完再回来。" );
+    showToast("先看素材，再回来评论");
+    return;
+  }
+  focusWindow("browserWindow");
+  if (!state.commentDraft && !state.postComments.length) {
+    if (state.selected.length === state.attention && !state.materialsSubmitted) {
+      focusWindow("roomWindow");
+      setAiText("两份素材已经左右放到整理桌了。先点“递给伙伴并提交”，处理完成后四张卡就会直接出现在桌上。" );
+      showToast("先提交两份素材，伙伴才会制成卡牌");
+      return;
+    }
+    if (state.materialsSubmitted) {
+      focusWindow("roomWindow");
+      setAiText("四张卡已经呈现在整理桌上了。先点一张看正文，再把它带回评论区。" );
+      showToast("先在整理桌选择一张卡");
+      return;
+    }
+    setAiText("伙伴还没有把两份素材整理好。先把看过的素材递给他。" );
+    showToast("先让伙伴整理两份素材");
+    return;
+  }
+  renderCommentComposer();
+  elements.commentComposer?.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function unlockResearchFeed() {
+  if (!state.started || !location.pathname.endsWith("/v2.html") || !state.helpPostOpened || state.researchUnlocked) return;
+  markPlayerInteraction();
+  state.researchUnlocked = true;
+  state.feedVisibleCount = currentMaterials().length;
+  elements.homeFeed.hidden = true;
+  elements.questionPanel.hidden = true;
+  document.body.classList.remove("intake-stage", "post-detail");
+  document.body.classList.add("feed-open");
+  elements.addressBar.innerHTML = '<span class="lock-dot"></span> zhihu.local/question/first-hospital-visit/answers';
+  renderMaterials();
+  setAiText("这是我收集到的六条帖子。你先看看作者、日期、数据和正文，再挑真正能帮到他的问题素材。" );
+  setCompanionEmotion("receive", 1200);
+  window.setTimeout(() => elements.materialList?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+}
+
 function setOnboardingTarget(target = null) {
   elements.desktop.classList.remove("guide-research", "guide-room", "guide-synthesize");
   if (target) elements.desktop.classList.add(`guide-${target}`);
@@ -936,7 +1152,6 @@ function updateOnboardingGuide() {
     return;
   }
 
-  const allTagged = state.selected.length === state.attention && state.selected.every((id) => Boolean(state.tags[id]));
   let guide;
   if (state.selected.length === 0 && state.inspected.size === 0) {
     guide = { step: "第一次共读 · 1 / 3", title: "先打开一份材料", text: "别急着选，先看清是谁写的、哪天写的，以及它能不能回答悠一的问题。", action: "research", label: "去看材料" };
@@ -944,10 +1159,10 @@ function updateOnboardingGuide() {
     guide = { step: "第一次共读 · 1 / 3", title: "看过以后，再决定要不要递给伙伴", text: "材料展开页右下角有“递给共读伙伴”，不合适的话也可以回来换一份。", action: "research", label: "继续选材料" };
   } else if (state.selected.length === 1) {
     guide = { step: "第一次共读 · 1 / 3", title: "桌上有一份了，还要再选一份", text: "第二份不必和第一份说同一种话，来源不同，能帮到悠一的地方也可能不同。", action: "research", label: "再看一份" };
-  } else if (!allTagged) {
-    guide = { step: "第一次共读 · 2 / 3", title: "去共读房间，告诉伙伴这两份材料怎么用", text: "两张纸已经在桌上了，给它们分别贴上“官方信息”“个人经历”等标签。", action: "room", label: "去共读桌面" };
+  } else if (!state.materialsSubmitted) {
+    guide = { step: "第一次共读 · 2 / 3", title: "两份素材已经放到整理桌", text: "现在还拿不到卡牌。点击“递给伙伴并提交”，伙伴处理完成后才会生成四张卡。", action: "synthesize", label: "递给伙伴并提交" };
   } else {
-    guide = { step: "第一次共读 · 3 / 3", title: "材料理清了，现在一起写回答", text: "接下来要决定先回应悠一哪件事，伙伴会和你一起改第一段草稿。", action: "synthesize", label: "整理回复" };
+    guide = { step: "第一次共读 · 2 / 3", title: "四张卡已经摆在整理桌上", text: "左右两份素材各拆成两张卡。点一张查看正文，再把它带回知乎评论区。", action: "synthesize", label: "选择一张卡" };
   }
 
   elements.onboardingStep.textContent = guide.step;
@@ -1011,7 +1226,7 @@ function handleOnboardingAction() {
     setAiText("两张材料都在桌上了，先告诉我它们各自能说明什么吧");
     return;
   }
-  if (action === "synthesize") openDecision();
+  if (action === "synthesize") handleTrayAction();
 }
 
 function setClock(value) {
@@ -1410,7 +1625,8 @@ function animateMaterialTransit(material, origin) {
 }
 
 function renderRoomMaterialStack() {
-  elements.roomMaterialStack.innerHTML = state.selected.map((materialId, index) => {
+  const slips = state.selected.flatMap((materialId) => [materialId, materialId]);
+  elements.roomMaterialStack.innerHTML = slips.map((materialId, index) => {
     const material = getMaterial(materialId);
     return `<i class="room-material-slip kind-${material.kind}" style="--slip-index:${index}" title="${material.kindLabel} · ${material.date}"></i>`;
   }).join("");
@@ -1525,10 +1741,19 @@ function bindWindowManager() {
     });
     titlebar.addEventListener("pointermove", (event) => {
       if (!dragState) return;
-      const maxLeft = Math.max(94, window.innerWidth - dragState.width - 8);
-      const maxTop = Math.max(38, window.innerHeight - dragState.height - 48);
-      windowElement.style.left = `${Math.min(Math.max(94, event.clientX - dragState.offsetX), maxLeft)}px`;
-      windowElement.style.top = `${Math.min(Math.max(38, event.clientY - dragState.offsetY), maxTop)}px`;
+      const isZhihuWindow = windowElement.id === "browserWindow";
+      const visibleTitlebarWidth = Math.min(160, dragState.width);
+      const visibleTitlebarHeight = Math.min(36, dragState.height);
+      const minLeft = isZhihuWindow ? -(dragState.width - visibleTitlebarWidth) : 94;
+      const minTop = isZhihuWindow ? 0 : 38;
+      const maxLeft = isZhihuWindow
+        ? window.innerWidth - visibleTitlebarWidth
+        : Math.max(minLeft, window.innerWidth - dragState.width - 8);
+      const maxTop = isZhihuWindow
+        ? window.innerHeight - visibleTitlebarHeight - 48
+        : Math.max(minTop, window.innerHeight - dragState.height - 48);
+      windowElement.style.left = `${Math.min(Math.max(minLeft, event.clientX - dragState.offsetX), maxLeft)}px`;
+      windowElement.style.top = `${Math.min(Math.max(minTop, event.clientY - dragState.offsetY), maxTop)}px`;
       windowElement.style.right = "auto";
     });
     const endDrag = (event) => {
@@ -1552,6 +1777,12 @@ function renderChapterCopy() {
   const chapter = currentChapter();
   elements.chapterName.textContent = chapter.archive;
   elements.addressBar.innerHTML = `<span class="lock-dot"></span> ${chapter.address}`;
+  const postAuthor = chapter.postAuthor || { name: "匿名用户", avatarKey: "yuyi", meta: "刚来知乎", bio: "正在等待更多信息" };
+  elements.postAuthorAvatar.className = `post-author-avatar ${getAvatarClass(postAuthor.avatarKey || "yuyi")}`;
+  elements.postAuthorAvatar.textContent = "";
+  elements.postAuthorName.textContent = postAuthor.name;
+  elements.postAuthorMeta.textContent = postAuthor.meta;
+  elements.postAuthorBio.textContent = postAuthor.bio;
   elements.questionKicker.textContent = chapter.kicker;
   elements.questionTitle.textContent = chapter.title;
   elements.questionBody.textContent = chapter.body;
@@ -1561,36 +1792,41 @@ function renderChapterCopy() {
   elements.researchEyebrow.textContent = chapter.eyebrow;
   elements.researchTitle.textContent = chapter.researchTitle;
   elements.researchInstruction.textContent = chapter.instruction;
-  elements.trayEyebrow.textContent = "伙伴的共读桌面";
+  elements.trayEyebrow.textContent = "伙伴的整理桌";
 }
 
 function renderMaterials() {
-  elements.materialList.innerHTML = currentMaterials().map((material) => {
+  const materials = currentMaterials();
+  const visibleMaterials = materials.slice(0, Math.max(1, state.feedVisibleCount));
+  elements.materialList.innerHTML = visibleMaterials.map((material, index) => {
     const selected = state.selected.includes(material.id);
     const inspected = state.inspected.has(material.id);
     const attentionLocked = state.selected.length >= state.attention && !selected;
-    const unavailable = state.locked || selected || attentionLocked || !inspected;
+    const actionLocked = state.locked || selected || attentionLocked;
+    const canDrag = !actionLocked && inspected;
     const autoFlagged = state.autoFlaggedMaterialId === material.id;
+    const metrics = getMaterialFeedMetrics(material);
+    const tutorialTarget = index === 0 && state.inspected.size === 0 && state.selected.length === 0;
     let actionText = "递给伙伴";
     if (state.locked) actionText = "本章已提交";
     else if (selected) actionText = "已在房间";
-    else if (!inspected) actionText = "先打开看看";
+    else if (!inspected) actionText = "展开检查";
     else if (attentionLocked) actionText = "只能选两份";
     return `
-      <article class="material-card${selected ? " is-selected" : ""}${attentionLocked ? " is-locked" : ""}${autoFlagged ? " is-auto-flagged" : ""}"${autoFlagged ? ` data-auto-flag-copy="${state.autoFlagCopy}"` : ""}
-        draggable="${unavailable ? "false" : "true"}" data-material-id="${material.id}">
-        <div class="material-topline"><span class="source-kind ${material.kind}">${material.kindLabel}</span><span class="material-date">${material.date}</span></div>
-        <h3>${material.title}</h3><p>${material.excerpt}</p>
-        <div class="material-meta"><span>${material.author}</span><span>·</span><span>${material.engagement}</span></div>
+      <article class="material-card zhihu-feed-card${selected ? " is-selected" : ""}${attentionLocked ? " is-locked" : ""}${autoFlagged ? " is-auto-flagged" : ""}${tutorialTarget ? " is-tutorial-target" : ""}"${autoFlagged ? ` data-auto-flag-copy="${state.autoFlagCopy}"` : ""}
+        draggable="${canDrag ? "true" : "false"}" data-material-id="${material.id}" data-feed-index="${index + 1}">
+        <div class="feed-author-line"><span class="feed-author-avatar ${getMaterialAvatarClass(material)}" aria-hidden="true"></span><span class="feed-author-copy"><strong>${material.author}</strong><small>${material.date} · ${material.source}</small></span></div>
+        <h3>${material.title}</h3>
+        <p class="feed-excerpt">${material.excerpt} <button class="feed-read-link inspect-material" data-material-id="${material.id}" type="button" ${state.locked ? "disabled" : ""}>阅读全文 <span aria-hidden="true">⌄</span></button></p>
+        <div class="feed-social-row" aria-label="回答互动数据"><button class="feed-vote-button" type="button" aria-label="赞同 ${metrics.votes}">▲ 赞同 ${metrics.votes}</button><button class="feed-vote-menu" type="button" aria-label="更多投票选项">▼</button><span>● ${metrics.comments} 条评论</span><span>★ ${metrics.saves}</span><span>♥ ${metrics.likes}</span><span>↗ 分享</span><span>···</span></div>
         <div class="material-actions">
-          <button class="text-action inspect-material" data-material-id="${material.id}" type="button" ${state.locked ? "disabled" : ""}>${inspected ? "再次查看" : "展开检查"}</button>
-          <button class="send-action select-material" data-material-id="${material.id}" type="button" ${unavailable ? "disabled" : ""}>${actionText}</button>
+          <button class="send-action select-material${!inspected && !actionLocked ? " is-inspect-action" : ""}" data-material-id="${material.id}" type="button" ${actionLocked ? "disabled" : ""}>${actionText}</button>
         </div>
       </article>`;
   }).join("");
 
   $$(".inspect-material", elements.materialList).forEach((button) => button.addEventListener("click", () => openMaterial(button.dataset.materialId)));
-  $$(".select-material", elements.materialList).forEach((button) => button.addEventListener("click", () => selectMaterial(button.dataset.materialId, button.closest(".material-card"))));
+  $$(".select-material", elements.materialList).forEach((button) => button.addEventListener("click", () => handleMaterialAction(button.dataset.materialId, button.closest(".material-card"))));
   $$(".material-card", elements.materialList).forEach((card) => {
     card.addEventListener("dragstart", (event) => {
       if (card.getAttribute("draggable") !== "true") { event.preventDefault(); return; }
@@ -1598,6 +1834,7 @@ function renderMaterials() {
       event.dataTransfer.effectAllowed = "copy";
     });
   });
+  if (elements.feedCount) elements.feedCount.textContent = `${visibleMaterials.length} / ${materials.length} 条回答`;
   renderAttention();
 }
 
@@ -1734,8 +1971,10 @@ function openMaterial(materialId) {
 function performOpenMaterial(materialId) {
   const material = getMaterial(materialId);
   if (!material) return;
+  const firstInspection = !state.inspected.has(materialId);
   state.currentMaterial = materialId;
   state.inspected.add(materialId);
+  if (firstInspection) addThinkingRecord(1);
   elements.modalType.textContent = material.kindLabel;
   elements.modalTitle.textContent = material.title;
   elements.modalLedger.innerHTML = `<div class="ledger-item"><span>作者 / 来源</span><strong>${material.author}</strong></div><div class="ledger-item"><span>发布时间</span><strong>${material.date}</strong></div><div class="ledger-item"><span>内容性质</span><strong>${material.source}</strong></div>`;
@@ -1751,10 +1990,135 @@ function performOpenMaterial(materialId) {
   if (state.companionEmotion !== "doubt" && state.companionEmotion !== "permission-wait") setCompanionEmotion("inspect", 1300);
 }
 
+function revealNextFeedItem(materialId) {
+  if (state.step !== "research") return;
+  const currentIndex = currentMaterials().findIndex((material) => material.id === materialId);
+  if (currentIndex < 0 || currentIndex + 1 >= currentMaterials().length) return;
+  if (state.feedVisibleCount <= currentIndex + 1) {
+    state.feedVisibleCount = currentIndex + 2;
+    renderMaterials();
+  }
+}
+
 function closeMaterialModal() {
+  const closingMaterialId = state.currentMaterial;
   elements.materialModal.hidden = true;
+  if (closingMaterialId) revealNextFeedItem(closingMaterialId);
   state.currentMaterial = null;
   updateOnboardingGuide();
+}
+
+function openCardDetail(materialId, fragmentKind = "quote", origin = "table") {
+  if (!state.selected.includes(materialId)) {
+    showToast("先把这份素材递到共读房间");
+    return;
+  }
+  const cardKey = getCardKey({ materialId, fragmentKind });
+  if (!state.materialsSubmitted) {
+    showToast("先提交两份素材，卡牌才会出现");
+    return;
+  }
+  if (state.usedCards.includes(cardKey)) {
+    showToast("这张卡已经发到评论区了");
+    return;
+  }
+  const detail = getCardDetail(materialId, fragmentKind);
+  if (!detail) return;
+  markPlayerInteraction();
+  state.currentCard = { materialId, fragmentKind };
+  state.currentCardOrigin = origin;
+  elements.cardDetailIcon.textContent = detail.icon;
+  elements.cardDetailType.textContent = detail.type;
+  elements.cardDetailTitle.textContent = detail.title;
+  elements.cardDetailMeta.textContent = detail.meta;
+  elements.cardDetailBody.textContent = detail.body;
+  elements.cardDetailBoundary.textContent = detail.boundary;
+  const canSend = !state.locked && origin === "table";
+  elements.sendCardToComment.disabled = !canSend;
+  elements.sendCardToComment.textContent = state.locked ? "本章已提交" : canSend ? "把这张卡带到评论区 →" : "请先提交素材";
+  elements.cardDetailModal.hidden = false;
+  setCompanionEmotion("inspect", 1300);
+}
+
+function closeCardDetail() {
+  elements.cardDetailModal.hidden = true;
+  state.currentCard = null;
+  state.currentCardOrigin = null;
+}
+
+function renderPostComments() {
+  const comments = state.postComments || [];
+  elements.postCommentCount.textContent = `${comments.length} 条评论`;
+  elements.postCommentsEmptyCopy.hidden = comments.length > 0;
+  elements.postedComments.hidden = comments.length === 0;
+  elements.postedComments.innerHTML = comments.map((comment) => `
+    <article class="posted-comment">
+      <div class="posted-comment-heading"><span class="posted-comment-avatar avatar-sprite avatar-yuyi" aria-hidden="true"></span><strong>共读答主 · 你</strong><small>${escapeHtml(comment.type)} · 刚刚</small></div>
+      ${comment.card ? `<div class="posted-comment-card ${getCardTypeClass(comment.card.type)}">${getCardFaceMarkup(comment.card, { compact: true })}</div>` : ""}
+      <p>${escapeHtml(comment.text).replace(/\n/g, "<br>")}</p>
+    </article>`).join("");
+  elements.postCommentButton.innerHTML = `● 评论 <strong>${comments.length}</strong>`;
+}
+
+function renderCommentComposer() {
+  const draft = state.commentDraft;
+  elements.commentComposer.hidden = !draft;
+  if (!draft) {
+    elements.commentComposerInput.value = "";
+    elements.commentDraftCard.hidden = true;
+    elements.commentDraftCard.innerHTML = "";
+    return;
+  }
+  elements.commentDraftCardType.textContent = draft.type;
+  elements.commentDraftSource.textContent = `来自：${draft.title}`;
+  elements.commentDraftCard.className = `comment-card-preview ${getCardTypeClass(draft.type)}`;
+  elements.commentDraftCard.innerHTML = getCardFaceMarkup(draft, { compact: true });
+  elements.commentDraftCard.hidden = false;
+  elements.commentComposerInput.value = draft.commentText;
+  elements.commentComposerInput.disabled = state.locked;
+  elements.sendCommentButton.disabled = state.locked;
+}
+
+function sendActiveCardToComment() {
+  if (!state.currentCard || state.locked) return;
+  if (state.currentCardOrigin !== "table" || !state.materialsSubmitted) {
+    closeCardDetail();
+    showToast("请从整理桌选择已经生成的卡牌");
+    return;
+  }
+  const detail = getCardDetail(state.currentCard.materialId, state.currentCard.fragmentKind);
+  if (!detail) return;
+  state.commentDraft = detail;
+  closeCardDetail();
+  elements.questionPanel.hidden = false;
+  document.body.classList.add("post-detail");
+  elements.addressBar.innerHTML = '<span class="lock-dot"></span> zhihu.local/question/first-hospital-visit';
+  renderCommentComposer();
+  renderTray();
+  focusWindow("browserWindow");
+  elements.commentComposer.scrollIntoView({ behavior: "smooth", block: "center" });
+  setAiText(`这张${detail.type}的正文已经放进评论区草稿了。你看一眼，确认后就能发出去。`);
+  showToast("正文已放入评论区草稿");
+}
+
+function sendCommentToPost() {
+  if (!state.commentDraft) return;
+  const text = elements.commentComposerInput.value.trim();
+  if (!text) {
+    showToast("评论正文还没有内容");
+    return;
+  }
+  const cardKey = state.commentDraft.materialId && state.commentDraft.fragmentKind
+    ? getCardKey(state.commentDraft)
+    : null;
+  if (cardKey && !state.usedCards.includes(cardKey)) state.usedCards.push(cardKey);
+  state.postComments.push({ type: state.commentDraft.type, title: state.commentDraft.title, text, card: { ...state.commentDraft, commentText: text } });
+  state.commentDraft = null;
+  renderCommentComposer();
+  renderPostComments();
+  renderTray();
+  setAiText("这张卡已经出现在评论区了。还可以回整理桌选下一张，或者继续整理最终回复。" );
+  showToast("正文已发到评论区");
 }
 
 function selectMaterial(materialId, sourceElement = null, sourcePoint = null) {
@@ -1766,6 +2130,14 @@ function selectMaterial(materialId, sourceElement = null, sourcePoint = null) {
   commitMaterialSelection(materialId, transitOrigin);
 }
 
+function handleMaterialAction(materialId, sourceElement = null) {
+  if (!state.inspected.has(materialId)) {
+    openMaterial(materialId);
+    return;
+  }
+  selectMaterial(materialId, sourceElement);
+}
+
 function commitMaterialSelection(materialId, transitOrigin = null) {
   if (state.selected.includes(materialId)) { showToast("这份材料已经在共读房间里了。"); return; }
   if (state.selected.length >= state.attention) { showToast("只能选两份，先拿回桌上的一份再选。"); return; }
@@ -1773,6 +2145,7 @@ function commitMaterialSelection(materialId, transitOrigin = null) {
   if (!material) return;
   state.selected.push(materialId);
   state.tagHistory[materialId] ||= [];
+  elements.aiCharacter.classList.remove("uses-stage-asset");
   closeMaterialModal();
   renderMaterials();
   renderTray();
@@ -1783,24 +2156,41 @@ function commitMaterialSelection(materialId, transitOrigin = null) {
     elements.aiCharacter.classList.remove("stage-zero");
     elements.aiCharacter.classList.add("stage-one");
     setAiText(state.chapterId === "hospital"
-      ? `这张是“${material.kindLabel}”。那我们把它当规定、当经验，还是先打个问号？`
-      : `这张是“${material.kindLabel}”。这回要拿它看市场、找办法，还是补林岸的情况？`);
+      ? "这份素材先放到整理桌上了。再选一份，提交以后我才会把卡牌递给你。"
+      : "这份素材先放到整理桌上了。再选一份，提交以后我才会把卡牌递给你。");
   } else {
     setAiText(state.chapterId === "hospital"
-      ? "两张纸都在这儿了。你觉得它们各自能说明什么？"
-      : "两张纸都到了，先一张张看吧，别急着合在一起。");
+      ? "两份素材已经放到整理桌了。点击“递给伙伴并提交”，处理完成后才会生成四张卡。"
+      : "两份素材已经放到整理桌了。点击“递给伙伴并提交”，处理完成后才会生成四张卡。");
   }
 }
 
 function removeMaterial(materialId) {
-  if (state.locked || state.step !== "research") { showToast("回复已经发出，那天的选择不能再更改。"); return; }
+  if (state.locked || state.step !== "research" || state.materialsSubmitted) { showToast(state.materialsSubmitted ? "素材已经提交给伙伴，不能再更改。" : "回复已经发出，那天的选择不能再更改。"); return; }
   markPlayerInteraction();
   state.selected = state.selected.filter((id) => id !== materialId);
+  state.usedCards = state.usedCards.filter((key) => !key.startsWith(`${materialId}::`));
   delete state.tags[materialId];
   delete state.tagHistory[materialId];
   renderMaterials();
   renderTray();
-  setAiText("好，这张先拿回去。刚才贴的标签也不算了。");
+  setAiText("好，这份素材先收回来，它拆出的两张卡片也一起收回。");
+}
+
+function submitMaterialsToCompanion() {
+  const inspectedSelected = state.selected.length === state.attention && state.selected.every((id) => state.inspected.has(id));
+  if (state.locked || state.step !== "research" || state.materialsSubmitted || !inspectedSelected) {
+    if (!state.materialsSubmitted && state.selected.length < state.attention) showToast(`还要选 ${Math.max(0, state.attention - state.selected.length)} 份素材`);
+    return;
+  }
+  markPlayerInteraction();
+  state.materialsSubmitted = true;
+  elements.roomReadingSeat.classList.add("is-companion-checking");
+  window.setTimeout(() => elements.roomReadingSeat.classList.remove("is-companion-checking"), 760);
+  setCompanionEmotion("receive", 1800);
+  renderTray();
+  setAiText("我已经把两份素材各拆成两张卡牌，左右都摆在整理桌上了。点一张看正文，再带回知乎评论区。" );
+  showToast("伙伴已提交素材，四张卡牌已摆上整理桌");
 }
 
 function isTagConflict(material, tagId) {
@@ -1843,25 +2233,38 @@ function setMaterialTag(materialId, tagId) {
 }
 
 function renderTray() {
-  const chapter = currentChapter();
   elements.emptyDrop.hidden = state.selected.length > 0;
   elements.selectedMaterials.classList.toggle("is-frozen", state.locked);
-  const allTagged = state.selected.length === state.attention && state.selected.every((id) => Boolean(state.tags[id]));
+  elements.selectedMaterials.classList.toggle("cards-revealed", state.materialsSubmitted);
   elements.selectedMaterials.innerHTML = state.selected.map((materialId) => {
     const material = getMaterial(materialId);
-    const hasFriction = Boolean(state.tags[materialId]) && isTagConflict(material, state.tags[materialId]);
-    return `<article class="selected-item${hasFriction ? " has-source-friction" : ""}">
-      <div class="selected-item-header"><span class="source-kind ${material.kind}">${material.kindLabel}</span><strong>${material.title}</strong><button class="remove-material" data-material-id="${materialId}" type="button" aria-label="移除材料" ${state.locked ? "disabled" : ""}>×</button></div>
-      <p class="tag-prompt">${chapter.tagPrompt}</p><div class="tag-options">
-        ${chapter.tagOptions.map((tag) => `<button class="tag-button${state.tags[materialId] === tag.id ? " is-selected" : ""}" data-material-id="${materialId}" data-tag-id="${tag.id}" type="button" ${state.locked ? "disabled" : ""}>${tag.label}</button>`).join("")}
-      </div>${hasFriction ? `<p class="source-murmur">伙伴把标签翻过来，又核对了一次来源栏。</p>` : ""}</article>`;
+    const profile = materialCardProfiles[state.chapterId]?.[material.id] || { type: "素材卡", icon: "✦" };
+    const quoteKey = getCardKey({ materialId, fragmentKind: "quote" });
+    const sourceKey = getCardKey({ materialId, fragmentKind: "source" });
+    const cardsMarkup = state.materialsSubmitted ? `
+      <div class="material-fragments" aria-label="${material.title} 拆出的两张素材卡">
+        <button class="material-fragment-card fragment-quote${state.usedCards.includes(quoteKey) ? " is-used" : ""}" data-material-id="${materialId}" data-fragment-kind="quote" type="button" aria-label="打开${profile.type}详情" ${state.usedCards.includes(quoteKey) ? "disabled" : ""}><span><i>${profile.icon}</i>${profile.type}</span><strong>“${material.quote}”</strong><small>${state.usedCards.includes(quoteKey) ? "已发到评论区" : "点击查看正文"}</small></button>
+        <button class="material-fragment-card fragment-source${state.usedCards.includes(sourceKey) ? " is-used" : ""}" data-material-id="${materialId}" data-fragment-kind="source" type="button" aria-label="打开来源卡详情" ${state.usedCards.includes(sourceKey) ? "disabled" : ""}><span><i>◎</i>来源卡</span><strong>${material.caution}</strong><small>${state.usedCards.includes(sourceKey) ? "已发到评论区" : "点击查看来源边界"}</small></button>
+      </div>` : `
+      <div class="material-waiting" aria-label="等待伙伴整理卡牌"><span>素材已放入</span><small>提交后显示这份素材拆出的两张卡牌</small></div>`;
+    return `<article class="selected-item">
+      <div class="selected-item-header"><span class="source-kind ${material.kind}">${material.kindLabel}</span><strong>${material.title}</strong><span class="material-card-count">${state.materialsSubmitted ? "2 张卡牌已呈现" : "等待提交"}</span><button class="remove-material" data-material-id="${materialId}" type="button" aria-label="移除材料" ${state.locked || state.materialsSubmitted ? "disabled" : ""}>×</button></div>
+      ${cardsMarkup}
+    </article>`;
   }).join("");
   $$(".remove-material", elements.selectedMaterials).forEach((button) => button.addEventListener("click", () => removeMaterial(button.dataset.materialId)));
-  $$(".tag-button", elements.selectedMaterials).forEach((button) => button.addEventListener("click", () => setMaterialTag(button.dataset.materialId, button.dataset.tagId)));
+  $$(".material-fragment-card", elements.selectedMaterials).forEach((button) => button.addEventListener("click", () => openCardDetail(button.dataset.materialId, button.dataset.fragmentKind, "table")));
   const inspectedSelected = state.selected.every((id) => state.inspected.has(id));
-  const ready = !state.locked && state.step === "research" && allTagged && inspectedSelected;
-  elements.synthesizeButton.disabled = !ready;
-  elements.synthesizeButton.textContent = state.locked ? "回复已经发出" : ready ? "回到知乎整理回复" : "看完并标注两份材料后继续";
+  const ready = !state.locked && state.step === "research" && state.selected.length === state.attention && inspectedSelected;
+  elements.synthesizeButton.disabled = !ready || (state.materialsSubmitted && !state.postComments.length);
+  elements.synthesizeButton.hidden = state.materialsSubmitted && !state.postComments.length;
+  elements.synthesizeButton.textContent = state.locked ? "回复已经发出" : ready
+    ? !state.materialsSubmitted ? "递给伙伴并提交，生成四张卡" : "评论已发出，继续写回复"
+    : `还要选 ${Math.max(0, state.attention - state.selected.length)} 份素材`;
+  if (elements.trayCardCount) elements.trayCardCount.textContent = `${state.materialsSubmitted ? state.selected.length * 2 : 0} 张卡片`;
+  if (elements.trayNote) elements.trayNote.textContent = state.materialsSubmitted
+    ? "四张卡已经左右呈现在整理桌上，点卡查看正文"
+    : "两份素材并排放好，提交后才会显示四张卡牌";
   renderRoomMaterialStack();
   renderAttention();
   updateOnboardingGuide();
@@ -2017,6 +2420,16 @@ function getAvailableDecisions() {
 
 function openDecision() {
   if (elements.synthesizeButton.disabled) return;
+  if (!state.materialsSubmitted) {
+    submitMaterialsToCompanion();
+    return;
+  }
+  if (!state.postComments.length) {
+    focusWindow("roomWindow");
+    setAiText("四张卡已经呈现在整理桌上了。先点一张带回评论区，评论发出后我们再写最终回复。" );
+    showToast(state.commentDraft ? "先把评论发出去" : "先在整理桌选择一张卡");
+    return;
+  }
   markPlayerInteraction();
   state.step = "synthesis";
   updateOnboardingGuide();
@@ -2034,8 +2447,21 @@ function openDecision() {
   elements.responsePanel.classList.remove("is-sent");
   revealBrowserPanel(elements.responsePanel);
   updateProgress(1);
-  const review = getTagReview();
-  setAiText(review.conflicts.length ? "这张标签还是对不上。真要带着这个问号回他吗？" : "两张纸我都看完了。那我们先帮他做哪件事？" );
+  setAiText("两份素材卡我都看完了。那我们先帮他做哪件事？" );
+}
+
+function handleTrayAction() {
+  if (!state.materialsSubmitted) {
+    submitMaterialsToCompanion();
+    return;
+  }
+  if (!state.postComments.length) {
+    focusWindow("roomWindow");
+    setAiText("卡牌已经摆在整理桌上了，点一张卡查看正文。" );
+    showToast("先选择一张整理桌上的卡牌");
+    return;
+  }
+  openDecision();
 }
 
 function deriveMisjudgmentHistory(chapterId, selected, tags, tagHistory) {
@@ -2059,10 +2485,11 @@ function evaluateChapterChoice(chapterId, decisionId, selected, tags, tagHistory
   let sendTrace = "伙伴先看了署名和日期，才开始写";
 
   if (chapterId === "hospital") {
-    const falseAuthority = materials.find((material) => material.id !== "official" && tags[material.id] === "official");
-    const officialDismissed = selected.includes("official") && tags.official !== "official";
+    const hasPlayerAnnotations = Object.keys(tags || {}).length > 0;
+    const falseAuthority = hasPlayerAnnotations ? materials.find((material) => material.id !== "official" && tags[material.id] === "official") : null;
+    const officialDismissed = hasPlayerAnnotations && selected.includes("official") && tags.official !== "official";
     const outdatedMadeCurrent = decisionId === "direct" && selected.includes("oldGuide");
-    const hasCurrentAuthority = selected.includes("official") && tags.official === "official";
+    const hasCurrentAuthority = selected.includes("official") && (!hasPlayerAnnotations || tags.official === "official");
     if (falseAuthority) {
       grade = "misleading"; cause = "label-over-source";
       habit = "那天，伙伴先信了标签，后看署名。";
@@ -2116,7 +2543,8 @@ function freezeChapterSnapshot(decisionId, route = null, evaluation = null) {
   return Object.freeze({
     chapterId: state.chapterId, selected, tags, tagHistory,
     misjudgments: deriveMisjudgmentHistory(state.chapterId, selected, tags, tagHistory),
-    decision: decisionId, route, draftChoice: state.draftChoice,
+    decision: decisionId, route, draftChoice: state.draftChoice, responseText: state.playerReplyText,
+    patienceAfterReply: state.patience,
     consequence: decisionConsequence ? Object.freeze({ ...decisionConsequence }) : null,
     evaluation: frozenEvaluation,
     tendencies: Object.freeze({ ...state.tendencies })
@@ -2159,6 +2587,7 @@ function openResponseDraft(decision, evaluation) {
   state.decision = decision.id;
   state.draftChoice = null;
   state.draftEvaluation = evaluation;
+  state.playerReplyText = "";
   state.step = "drafting";
   state.locked = true;
   $$(".decision-option", elements.decisionOptions).forEach((button) => {
@@ -2176,6 +2605,8 @@ function openResponseDraft(decision, evaluation) {
       <strong>${approach.title}</strong><small>${approach.detail}</small>
     </button>`).join("");
   $$('[data-draft-choice]', elements.draftOptions).forEach((button) => button.addEventListener("click", () => chooseResponseDraft(button.dataset.draftChoice)));
+  elements.replyComposerInput.value = "";
+  elements.replyComposer.hidden = false;
   elements.draftPreview.hidden = true;
   elements.sendDraftAction.hidden = true;
   elements.draftWorkshop.hidden = false;
@@ -2196,9 +2627,10 @@ function chooseResponseDraft(choiceId) {
     button.disabled = true;
     button.classList.toggle("is-selected", button.dataset.draftChoice === choiceId);
   });
-  appendDraftLine("共读答主 · 你", line, true);
   appendDraftLine(getCompanionDisplayName(), approach.partner);
   elements.draftWorkshopStatus.textContent = "第一句已经落在草稿里";
+  state.playerReplyText = line;
+  elements.replyComposerInput.value = line;
   elements.draftPreviewText.textContent = line;
   elements.draftPreview.hidden = false;
   elements.sendDraftAction.hidden = false;
@@ -2206,7 +2638,71 @@ function chooseResponseDraft(choiceId) {
   setAiText(approach.partner);
 }
 
+function handleReplyComposerInput() {
+  const text = elements.replyComposerInput.value.trim();
+  state.playerReplyText = text;
+  elements.draftPreviewText.textContent = text;
+  elements.draftPreview.hidden = !text;
+  elements.sendDraftAction.hidden = !text;
+  if (text) {
+    elements.draftWorkshopStatus.textContent = state.draftChoice ? "正文已修改，可以发送" : "正文已写好，可以发送";
+  } else {
+    elements.draftWorkshopStatus.textContent = "先写一句，再发给求助者";
+  }
+}
+
+function getImmediateAskerReply(decision, evaluation) {
+  const replies = state.chapterId === "hospital" ? {
+    checklist: "好，我先把证件、院区和挂号入口确认好。学校那项还没回，我先不把它当成已经办完了。",
+    clarify: "我去问清楚学校医保和医院当天的说明，再回来补这一格。原来不是把所有流程都写满就行。",
+    support: "我还是有点慌，但至少知道到了窗口先问什么。亲历那篇我会当成开口参考，不当医院规定。",
+    direct: "我刚发现那张流程图可能已经旧了。明天我先看医院当天提示，不直接照旧图走。"
+  } : {
+    verify: "我先把账和岗位要求列出来，不急着今晚就决定要不要辞。",
+    listen: "我现在确实有点撑不住了。先让我缓一下，再一起看下一步，不用马上把以后想完。",
+    move: "我先投三份试试，把真实反馈拿回来，再决定要不要换方向。"
+  };
+  if (evaluation?.grade === "misleading") {
+    return state.chapterId === "hospital"
+      ? "等一下，这句话和原帖的作者、日期对不上。我不敢照着做，得重新查一遍。"
+      : "这句话听起来很确定，可我没有这些条件。先别替我把结论定死。";
+  }
+  if (evaluation?.grade === "overcautious") {
+    return state.chapterId === "hospital"
+      ? "我知道你们是在提醒我核对，可现在连刚更新的说明都没告诉我怎么准备，我还是有点没底。"
+      : "我知道不能乱下结论，可如果什么都不敢用，我还是不知道下一步先做什么。";
+  }
+  return replies[decision?.id] || (state.chapterId === "hospital"
+    ? "我先照着能确定的部分做，没确定的地方我再问清楚。"
+    : "好，我先做这一小步，再根据实际反馈往下看。");
+}
+
+function showAskerReply(text, companionMessage) {
+  state.immediateAskerReply = text;
+  window.clearTimeout(state.speakerTimer);
+  elements.aiSpeaker.textContent = state.chapterId === "hospital" ? "提问者 · 悠一" : "提问者 · 林岸";
+  elements.aiDialogue.classList.add("is-asker-reply");
+  setAiText("正在输入…");
+  const typingDelay = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 900;
+  state.speakerTimer = window.setTimeout(() => {
+    setAiText(text);
+    state.speakerTimer = window.setTimeout(() => {
+      elements.aiDialogue.classList.remove("is-asker-reply");
+      elements.aiSpeaker.textContent = getCompanionDisplayName();
+      setAiText(companionMessage);
+      state.speakerTimer = null;
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 3000);
+  }, typingDelay);
+}
+
 function commitDecision(decision, evaluation) {
+  const replyText = state.playerReplyText.trim();
+  if (!replyText) {
+    elements.replyComposerInput.focus();
+    showToast("先写下要发给求助者的话");
+    return;
+  }
+  state.playerReplyText = replyText;
   Object.entries(state.currentTendencies).forEach(([key, value]) => addTendency(state.tendencies, key, value));
   Object.entries(decision.tendencies || {}).forEach(([key, value]) => addTendency(state.tendencies, key, value));
   Object.entries(evaluation.tendencyDeltas).forEach(([key, value]) => addTendency(state.tendencies, key, value));
@@ -2215,6 +2711,7 @@ function commitDecision(decision, evaluation) {
   state.decision = decision.id;
   state.step = "responded";
   state.locked = true;
+  settlePatience(evaluation);
   const snapshot = freezeChapterSnapshot(decision.id, decision.route || null, evaluation);
   if (state.chapterId === "hospital") state.chapterOneSnapshot = snapshot;
   else state.chapterTwoSnapshot = snapshot;
@@ -2225,11 +2722,13 @@ function commitDecision(decision, evaluation) {
   elements.responsePanel.classList.remove("is-drafting");
   elements.responsePanel.classList.add("is-sent");
   elements.draftWorkshop.hidden = true;
+  elements.replyComposer.hidden = true;
   elements.decisionPrompt.innerHTML = `<strong>共读回答已发出。</strong>署名：共读答主 · 你 × ${getCompanionDisplayName()}。回答已经锁定，材料和标签不能再改。`;
   renderMaterials();
   renderTray();
   updateProgress(2);
-  updateRoomAfterDecision(decision, snapshot);
+  const companionMessage = updateRoomAfterDecision(decision, snapshot);
+  showAskerReply(getImmediateAskerReply(decision, evaluation), companionMessage);
   setCompanionEmotion("resolve", 760);
   if (state.chapterId === "hospital") {
     window.clearTimeout(state.followupTimer);
@@ -2238,7 +2737,7 @@ function commitDecision(decision, evaluation) {
       const harmful = snapshot.evaluation.grade === "misleading";
       setNotification("followup", "!", harmful ? "悠一又发来一条消息" : "收到一条回访", harmful ? "语气似乎不太对" : "来自：悠一");
       updateProgress(3);
-    }, 1200);
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 5200);
   } else {
     state.step = "career-followup-pending";
     window.clearTimeout(state.followupTimer);
@@ -2246,12 +2745,12 @@ function commitDecision(decision, evaluation) {
       setClock("09:32");
       setNotification("career-followup", "信", "几周后来信", "来自：林岸");
       updateProgress(3);
-    }, 1200);
+    }, window.matchMedia("(prefers-reduced-motion: reduce)").matches ? 0 : 5200);
   }
 }
 
 function sendResponseDraft() {
-  if (state.step !== "draft-ready" || !state.draftChoice || !state.draftEvaluation) return;
+  if (!(["drafting", "draft-ready"].includes(state.step)) || !state.draftEvaluation) return;
   const decision = getAvailableDecisions().find((item) => item.id === state.decision);
   if (!decision) return;
   commitDecision(decision, state.draftEvaluation);
@@ -2300,6 +2799,7 @@ function updateRoomAfterDecision(decision, snapshot) {
   const consequence = decisionConsequences[state.chapterId]?.[decision.id];
   const draftMemory = snapshot.draftChoice ? getDraftApproaches(snapshot.chapterId)[snapshot.draftChoice]?.memory : "";
   elements.growthList.innerHTML = `<li><span class="growth-dot"></span> ${labels[dominant]}</li><li><span class="growth-dot"></span> ${snapshot.evaluation.sendTrace}</li>${draftMemory ? `<li><span class="growth-dot"></span> ${draftMemory}</li>` : ""}<li><span class="growth-dot"></span> ${consequence.roomEcho}</li>`;
+  return message;
 }
 
 function getDecisionOutcomeEcho(snapshot) {
@@ -3040,8 +3540,10 @@ function showHospitalFollowupReplyChoices() {
   elements.accountabilityStatus.textContent = "悠一又追问了一句";
   elements.accountabilityTitle.textContent = "你准备怎么接着回？";
   elements.accountabilityOptions.innerHTML = Object.entries(hospitalFollowupReplyChoices).map(([id, choice]) => `
-    <button class="accountability-choice" data-hospital-reply-id="${id}" type="button">
-      <strong>${choice.title}</strong><small>${choice.detail}</small>
+    <button class="accountability-choice followup-action-choice followup-action-${id}" data-hospital-reply-id="${id}" type="button" aria-label="${choice.title}：${choice.detail}">
+      <span class="followup-action-icon" aria-hidden="true"><i>${choice.icon}</i></span>
+      <span class="followup-action-copy"><strong>${choice.title}</strong><small>${choice.detail}</small></span>
+      <span class="followup-action-arrow" aria-hidden="true">→</span>
     </button>`).join("");
   $$('[data-hospital-reply-id]', elements.accountabilityOptions).forEach((button) => button.addEventListener("click", () => chooseHospitalFollowupReply(button.dataset.hospitalReplyId)));
   elements.accountabilityOutcome.hidden = true;
@@ -3322,20 +3824,38 @@ function resetChapterRuntime(chapterId) {
   state.roomAftermathTimer = null;
   state.chapterId = chapterId;
   state.step = "research";
+  state.feedVisibleCount = chapterId === "hospital" ? 1 : currentChapter().materials.length;
+  state.helpPostOpened = chapterId !== "hospital";
+  state.researchUnlocked = chapterId !== "hospital";
   state.selected = [];
+  state.materialsSubmitted = false;
   state.tags = {};
   state.tagHistory = {};
   state.inspected = new Set();
   state.currentMaterial = null;
+  state.currentCard = null;
+  state.currentCardOrigin = null;
+  state.commentDraft = null;
+  state.postComments = [];
+  state.usedCards = [];
   state.decision = null;
   state.draftChoice = null;
   state.draftEvaluation = null;
+  state.playerReplyText = "";
+  state.immediateAskerReply = "";
+  window.clearTimeout(state.speakerTimer);
+  state.speakerTimer = null;
   state.currentTendencies = { truth: 0, empathy: 0, expression: 0, caution: 0 };
   state.autoFlagCopy = "";
+  state.maxPatience = 6;
+  state.patience = state.maxPatience;
+  state.questionCooldown = 0;
+  state.thinking = 0;
   state.locked = false;
   state.outcome = null;
   setCompanionEmotion(null);
   elements.materialModal.hidden = true;
+  elements.cardDetailModal.hidden = true;
   elements.responsePanel.hidden = true;
   elements.responsePanel.classList.remove("is-sent", "is-drafting");
   elements.draftWorkshop.hidden = true;
@@ -3343,8 +3863,18 @@ function resetChapterRuntime(chapterId) {
   elements.publicDiscussion.hidden = true;
   elements.accountabilityPanel.hidden = true;
   elements.accountabilityOutcome.hidden = true;
+  renderCommentComposer();
+  renderPostComments();
   hideRoomDialogueActions();
   elements.progressSteps.classList.remove("is-complete");
+  if (document.body.classList.contains("dual-window-start")) {
+    document.body.classList.toggle("intake-stage", chapterId === "hospital");
+    document.body.classList.toggle("feed-open", chapterId !== "hospital");
+    document.body.classList.remove("post-detail");
+  }
+  elements.homeFeed.hidden = true;
+  elements.questionPanel.hidden = true;
+  renderResourceHud();
   updateOnboardingGuide();
 }
 
@@ -3551,27 +4081,52 @@ function updateProgress(activeIndex) {
 
 function startGame() {
   state.started = true;
-  state.browserUnlocked = false;
+  const dualWindowStart = location.pathname.endsWith("/v2.html");
+  document.body.classList.toggle("dual-window-start", dualWindowStart);
+  document.body.classList.toggle("intake-stage", dualWindowStart);
+  document.body.classList.toggle("feed-open", !dualWindowStart);
+  document.body.classList.remove("post-detail");
+  state.browserUnlocked = dualWindowStart;
+  state.helpPostOpened = !dualWindowStart;
+  state.researchUnlocked = !dualWindowStart;
+  state.feedVisibleCount = dualWindowStart ? 1 : currentMaterials().length;
+  elements.homeFeed.hidden = !dualWindowStart;
+  elements.questionPanel.hidden = dualWindowStart;
+  elements.gameResourceHud.hidden = !dualWindowStart;
+  renderResourceHud();
+  if (dualWindowStart) elements.addressBar.innerHTML = '<span class="lock-dot"></span> zhihu.local/';
   state.computerMessageReady = false;
   elements.bootOverlay.hidden = true;
   elements.aiCharacter.classList.add("is-awake");
+  elements.aiCharacter.classList.toggle("uses-stage-asset", dualWindowStart);
   elements.roomComputer.classList.add("is-awaiting-message");
   elements.roomComputer.classList.remove("has-new-message", "is-visited");
   elements.roomComputerMessage.hidden = true;
   elements.roomComputer.setAttribute("aria-label", "房间里的电脑，目前没有新消息");
-  elements.chapterName.textContent = "档案 00 · 等待新消息";
-  setBrowserLaunchAvailable(false);
+  elements.chapterName.textContent = dualWindowStart ? "档案 00 · 第一次独自去医院" : "档案 00 · 等待新消息";
+  setBrowserLaunchAvailable(dualWindowStart);
   const browserWindow = getWindowElement("browserWindow");
-  browserWindow.classList.add("is-minimized");
-  browserWindow.classList.remove("is-front");
   updateWindowTask("browserWindow", { closed: false, active: false });
   const roomWindow = getWindowElement("roomWindow");
-  roomWindow.classList.add("is-maximized");
-  updateMaximizeControl(roomWindow);
-  focusWindow("roomWindow");
+  if (dualWindowStart) {
+    state.onboardingDismissed = true;
+    elements.onboardingGuide.hidden = true;
+    browserWindow.classList.remove("is-minimized", "is-closed");
+    roomWindow.classList.remove("is-minimized", "is-closed", "is-maximized");
+    updateMaximizeControl(roomWindow);
+    focusWindow("browserWindow");
+  } else {
+    browserWindow.classList.add("is-minimized");
+    browserWindow.classList.remove("is-front");
+    roomWindow.classList.add("is-maximized");
+    updateMaximizeControl(roomWindow);
+    focusWindow("roomWindow");
+  }
   scheduleCompanionRoam(9000);
-  updateOnboardingGuide();
-  setAiText("你来了？我还以为今晚只有我一个人，先随便看看吧，电脑要是亮了我再叫你");
+  if (!dualWindowStart) updateOnboardingGuide();
+  setAiText(dualWindowStart
+    ? "左边有几条新帖子，先点第一条求助帖。"
+    : "你来了？我还以为今晚只有我一个人，先随便看看吧，电脑要是亮了我再叫你");
   const scheduledAtRevision = state.interactionRevision;
   state.introTimer = window.setTimeout(() => {
     state.introTimer = null;
@@ -3582,26 +4137,63 @@ function startGame() {
 
 function bindEvents() {
   elements.startButton.addEventListener("click", startGame);
+  elements.homeFeed.addEventListener("click", (event) => {
+    if (event.target.closest("#firstHelpPost")) openHelpPost();
+  });
+  elements.homeFeed.addEventListener("keydown", (event) => {
+    if (!event.target.closest("#firstHelpPost")) return;
+    if (event.key !== "Enter" && event.key !== " ") return;
+    event.preventDefault();
+    openHelpPost();
+  });
+  elements.followAskerButton.addEventListener("click", () => {
+    const following = elements.followAskerButton.classList.toggle("is-following");
+    elements.followAskerButton.textContent = following ? "✓ 已关注" : "＋ 关注";
+  });
+  elements.postCommentButton.addEventListener("click", openCommentGate);
+  elements.postVoteButton.addEventListener("click", () => {
+    const active = elements.postVoteButton.classList.toggle("is-active");
+    elements.postVoteButton.innerHTML = `${active ? "▲ 已赞同" : "▲ 赞同"} <strong>${active ? "19" : "18"}</strong>`;
+  });
+  elements.postLikeButton.addEventListener("click", () => {
+    const active = elements.postLikeButton.classList.toggle("is-active");
+    elements.postLikeButton.textContent = active ? "♥ 已喜欢" : "♥ 喜欢";
+  });
+  elements.postShareButton.addEventListener("click", () => showToast("这条帖子暂时只在共读房间里保存"));
+  elements.postMoreButton.addEventListener("click", () => showToast("更多操作将在完成共读后开放"));
   elements.onboardingAction.addEventListener("click", handleOnboardingAction);
   elements.onboardingDismiss.addEventListener("click", () => {
     state.onboardingDismissed = true;
     updateOnboardingGuide();
   });
   elements.aiCharacter.addEventListener("click", () => {
+    if (state.started && location.pathname.endsWith("/v2.html") && state.helpPostOpened && !state.researchUnlocked) {
+      unlockResearchFeed();
+      return;
+    }
     showDialogue();
     letDialogueRest(6200);
   });
   elements.aiCharacter.addEventListener("keydown", (event) => {
     if (event.key !== "Enter" && event.key !== " ") return;
     event.preventDefault();
+    if (state.started && location.pathname.endsWith("/v2.html") && state.helpPostOpened && !state.researchUnlocked) {
+      unlockResearchFeed();
+      return;
+    }
     showDialogue();
     letDialogueRest(6200);
   });
-  elements.synthesizeButton.addEventListener("click", openDecision);
+  elements.synthesizeButton.addEventListener("click", handleTrayAction);
+  elements.replyComposerInput.addEventListener("input", handleReplyComposerInput);
   elements.sendDraftAction.addEventListener("click", sendResponseDraft);
+  elements.sendCardToComment.addEventListener("click", sendActiveCardToComment);
+  elements.sendCommentButton.addEventListener("click", sendCommentToPost);
   elements.modalSendAction.addEventListener("click", () => { if (state.currentMaterial) selectMaterial(state.currentMaterial); });
   $("#closeModal").addEventListener("click", closeMaterialModal);
   $("#modalCloseAction").addEventListener("click", closeMaterialModal);
+  $("#closeCardDetail").addEventListener("click", closeCardDetail);
+  $("#cardDetailCloseAction").addEventListener("click", closeCardDetail);
   elements.followupNotification.addEventListener("click", handleNotification);
   elements.followupContinue.addEventListener("click", continueFollowupInRoom);
   elements.finalChoiceList.addEventListener("click", (event) => {
@@ -3669,6 +4261,7 @@ function bindEvents() {
   document.addEventListener("keydown", (event) => {
     if (event.key !== "Escape") return;
     if (!elements.materialModal.hidden) closeMaterialModal();
+    if (!elements.cardDetailModal.hidden) closeCardDetail();
   });
 }
 
@@ -3677,6 +4270,8 @@ function initialize() {
   renderChapterCopy();
   renderMaterials();
   renderTray();
+  renderPostComments();
+  renderCommentComposer();
   updateCompanionIdentity();
   bindWindowManager();
   bindEvents();

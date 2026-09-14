@@ -119,6 +119,8 @@ const requiredV1Html = [
   "followupContinue",
   "draftWorkshop",
   "draftThread",
+  "replyComposer",
+  "replyComposerInput",
   "sendDraftAction",
   "publicDiscussion",
   "publicComments",
@@ -132,6 +134,12 @@ const requiredV1Html = [
   "roomComputerScreen",
   "finalConversation",
   "finalChoiceList",
+  "cardDetailModal",
+  "sendCardToComment",
+  "trayNote",
+  "commentComposer",
+  "commentDraftCard",
+  "sendCommentButton",
   "endingOverlay",
   "endingTitle",
   "endingArchive",
@@ -172,6 +180,11 @@ const requiredV1Flow = [
   "setCompanionEmotion",
   "animateMaterialTransit",
   "renderRoomMaterialStack",
+  "openCardDetail",
+  "submitMaterialsToCompanion",
+  "sendActiveCardToComment",
+  "sendCommentToPost",
+  "renderPostComments",
   "stageChapterOneFacilities",
   "placeAutonomyFold"
 ];
@@ -235,8 +248,11 @@ if (!v1Js.includes('state.permission === "allow"') || !v1Js.includes("showChapte
 if (!["route-verifier", "route-listener", "route-initiator"].every((token) => v1Js.includes(token) && v1Css.includes(`.${token}`))) {
   throw new Error("v1 三条路线缺少房间或札记回声接线");
 }
-if (!v1Html.includes("./v1.css?v=20260902-76") || !v1Html.includes("./app-v1.js?v=20260902-76")) {
+if (!v1Html.includes("./v1.css?v=20260914-zip-assets") || !v1Html.includes("./app-v1.js?v=20260914-zip-assets")) {
   throw new Error("v1 视觉资源版本号未更新");
+}
+if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || !v1Html.includes('id="gameResourceHud"') || !v1Html.includes('id="thinkingResource"') || !v1Html.includes('ui-patience-6.png') || !v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("state.selected.length * 2") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("function renderTray") || !v1Js.includes("function sendActiveCardToComment") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
+  throw new Error("v2 求助帖首点、AI 解锁六条回答或知乎信息流排版缺失");
 }
 if (!v1Js.includes("const finalConversationChoices") || !["together", "ask", "reread"].every((choice) => v1Js.includes(`${choice}: {`)) || !v1Js.includes('state.step = "ending-conversation"') || !v1Js.includes('state.step = "ending"') || !v1Js.includes('notificationMode === "ending"')) {
   throw new Error("v1 第二章结束后缺少可回应的伙伴对话、差异化结局或可返回的完成状态");
@@ -256,8 +272,8 @@ if (!v1Html.includes('id="companionNaming"') || !v1Html.includes('id="aiSpeaker"
 if (!v1Css.includes(".ai-dialogue.is-resting") || !v1Css.includes("bottom: 3.2%") || !v1Js.includes("letDialogueRest")) {
   throw new Error("v1 房间对话仍未改为可收起的底部对话栏");
 }
-if (!v1Html.includes("伙伴的共读桌面") || !v1Html.includes("从调查页递来的材料会留在这里") || v1Html.includes("把一份检查过的材料拖进房间") || !v1Js.includes("companionEnvironmentThoughts") || !v1Js.includes("maybeSpeakEnvironmentThought(interactionId)")) {
-  throw new Error("v1 共读桌面仍被包装成拖拽玩法，或伙伴缺少环境自主观察");
+if (!v1Html.includes("伙伴的整理桌") || !v1Html.includes("两份素材并排放好，提交后才会显示四张卡牌") || v1Html.includes("把一份检查过的材料拖进房间") || v1Html.includes("playerBackpack") || v1Html.includes("backpackModal") || !v1Js.includes("companionEnvironmentThoughts") || !v1Js.includes("maybeSpeakEnvironmentThought(interactionId)")) {
+  throw new Error("v1 整理桌左右并排与直接呈现卡牌的流程缺失，或伙伴缺少环境自主观察");
 }
 const rewrittenDecisionPaths = [
   "先说去医院前要准备什么", "先问清他在哪所学校、准备去哪家医院", "先说到了医院不知道怎么办", "直接把整套就诊流程写给他",
@@ -380,7 +396,7 @@ const forbiddenV1PlayerCopy = [
 if (forbiddenV1PlayerCopy.some((copy) => v1Html.includes(copy) || v1Js.includes(copy))) {
   throw new Error("v1 玩家界面仍暴露结算或状态实现文案");
 }
-const commitMaterialBlock = v1Js.slice(v1Js.indexOf("function commitMaterialSelection"), v1Js.indexOf("function removeMaterial"));
+const commitMaterialBlock = v1Js.slice(v1Js.indexOf("function commitMaterialSelection"), v1Js.indexOf("function removeMaterial(materialId)"));
 if (!commitMaterialBlock.includes("animateMaterialTransit") || commitMaterialBlock.includes('focusWindow("roomWindow")')) {
   throw new Error("v1 材料递交没有通过跨窗动画，或仍会强制把房间抢到前台");
 }
@@ -438,8 +454,15 @@ console.log("PASS v1 多份来源错标会按材料身份分别解释，不再�
 if (!v1Js.includes("hospitalDraftApproaches") || !v1Js.includes("hospitalFollowupReplyChoices") || !v1Js.includes('state.step = "followup-conversation-closing"') || !v1Js.includes("hospitalConversationResolution")) {
   throw new Error("v1 第一章缺少发送前草稿取舍、评论追问、二次回应或跨章回声");
 }
-if (!v1Html.includes("第一次共读的三个步骤") || !v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "去共读房间，告诉伙伴这两份材料怎么用"')) {
+const followupActionSource = v1Js.match(/const hospitalFollowupReplyChoices = \{[\s\S]*?\n\};/)?.[0] || "";
+if ((followupActionSource.match(/icon:/g) || []).length !== 3 || !["✉", "♡", "⌕"].every((icon) => followupActionSource.includes(`icon: "${icon}"`)) || !v1Js.includes("followup-action-choice")) {
+  throw new Error("v1 回访阶段没有锁定为三个带图标的回应动作");
+}
+if (!v1Html.includes("第一次共读的三个步骤") || !v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "四张卡已经摆在整理桌上"')) {
   throw new Error("v1 开场缺少流程预告、分步任务提示或跨窗口引导");
+}
+if (v1Html.includes('class="browser-toolbar"') || !v1Css.includes(".browser-toolbar { display: none; }")) {
+  throw new Error("v1 知乎窗口仍保留地址栏工具行");
 }
 if (!v1Html.includes('class="boot-scene-room"') || !v1Html.includes('class="boot-scene-character"') || !v1Html.includes("和房间里的伙伴") || !v1Css.includes(".boot-scene figcaption")) {
   throw new Error("v1 封面没有使用正式房间与伙伴美术，或缺少开场叙事层");
@@ -449,4 +472,4 @@ if (!v1Css.includes(".question-body { font-size: 14px; }") || !v1Css.includes(".
   throw new Error("v1 正文、评论、伙伴对话或结局文字仍未统一放大");
 }
 
-console.log("PASS v1 正式房间与伙伴封面、房间收信与电脑主动开题、伙伴口语整理、整体可读性放大、开场三步预告、随进度变化的跨窗口引导、六帧读纸、脚底锚定步态、不透明床边站姿、承重坐姿、自主观察、两章统一公开评论、两章发送前草稿取舍、全选项隐藏属性审计、跨章属性事件、结局属性回声、二次回应、跨章关系记忆、仅作用于新增设施的成长视觉层、三种结局与 20260902-76 资源版本已锁定");
+console.log("PASS v1 正式房间与伙伴封面、房间收信与电脑主动开题、伙伴口语整理、整体可读性放大、开场三步预告、随进度变化的跨窗口引导、六帧读纸、脚底锚定步态、不透明床边站姿、承重坐姿、自主观察、两章统一公开评论、两章发送前草稿取舍、全选项隐藏属性审计、跨章属性事件、结局属性回声、二次回应、跨章关系记忆、仅作用于新增设施的成长视觉层、三种结局与 20260914-zip-assets 资源版本已锁定");
