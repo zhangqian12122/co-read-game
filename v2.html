@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>共读房间</title>
+  <link rel="stylesheet" href="./v2.css?v=zhihu-doc-1">
+  <script>if (location.protocol === 'file:') location.replace('http://127.0.0.1:4173/v2.html');</script>
+</head>
+<body>
+  <main class="game" id="game" aria-label="知乎共读游戏">
+    <section class="room-screen" id="roomScreen" aria-label="共读房间">
+      <img class="room-bg" src="./assets/room-stage-0-v2.png" alt="主角坐在电脑前的夜晚共读房间">
+      <div class="room-shade"></div>
+      <button class="computer-hitbox" id="computerButton" type="button" aria-label="打开房间里的电脑">
+        <span class="computer-screen-shimmer" aria-hidden="true"></span><span class="computer-status-led" aria-hidden="true"></span>
+      </button>
+    </section>
+
+    <section class="desktop-screen" id="desktopScreen" hidden aria-label="Windows 桌面">
+      <div class="desktop-wallpaper"></div>
+      <div class="desktop-icons">
+        <button class="desktop-icon" type="button"><img class="desktop-icon-image" src="./assets/win11-this-pc.png" alt=""><b>此电脑</b></button>
+        <button class="desktop-icon" type="button"><img class="desktop-icon-image" src="./assets/win11-recycle-bin.png" alt=""><b>回收站</b></button>
+        <button class="desktop-icon" type="button"><img class="desktop-icon-image edge" src="./assets/win11-edge.png" alt=""><b>Microsoft Edge</b></button>
+        <button class="desktop-icon" id="zhihuIcon" type="button"><img class="desktop-icon-image zhihu" src="./assets/zhihu-logo.png" alt="知乎"><b>知乎</b></button>
+      </div>
+      <div class="desktop-character" aria-hidden="true"><img src="./assets/ai-character-stage-0-v1.png" alt=""></div>
+      <div class="desktop-taskbar">
+        <img class="win11-weather" src="./assets/win11-taskbar-weather.png" alt="32°C 大部晴朗">
+        <div class="win11-taskbar-center"><img class="win11-start-search" src="./assets/win11-taskbar-start-search.png" alt="开始和搜索"><button class="win11-task-icon" id="taskbarZhihu" type="button" aria-label="打开知乎"><img src="./assets/zhihu-logo.png" alt=""></button></div>
+        <img class="win11-tray" src="./assets/win11-taskbar-tray.png" alt="输入法 网络 音量 电量 时间">
+      </div>
+      <section class="zhihu-window" id="zhihuWindow" hidden aria-label="知乎首页">
+        <header class="zhihu-titlebar" aria-label="浏览器标题栏">
+          <div class="browser-tab-strip">
+            <button class="tab-menu" type="button" aria-label="标签页菜单">⌄</button>
+            <div class="browser-tab"><img src="./assets/zhihu-logo.png" alt=""><span id="browserTabTitle">首页 - 知乎</span><i aria-hidden="true">×</i></div>
+            <button class="new-tab" type="button" aria-label="新建标签页">＋</button>
+            <span class="window-spacer"></span>
+            <span class="window-control" aria-hidden="true">─</span><span class="window-control" aria-hidden="true">□</span>
+            <button class="window-close" id="backRoom" type="button" aria-label="关闭浏览器并返回房间">×</button>
+          </div>
+          <div class="browser-toolbar">
+            <button id="browserBack" type="button" aria-label="后退">←</button><button type="button" aria-label="前进" disabled>→</button><button id="browserHome" type="button" aria-label="刷新首页">↻</button>
+            <div class="address-bar"><span class="site-lock" aria-hidden="true"></span><span>https://www.zhihu.com</span><b aria-hidden="true">☆</b></div>
+            <button type="button" aria-label="浏览器菜单">•••</button>
+          </div>
+        </header>
+
+        <div class="zhihu-site">
+          <header class="zhihu-site-header">
+            <button class="zhihu-wordmark" type="button" data-zhihu-view="feed">知乎</button>
+            <nav class="zhihu-site-nav" aria-label="知乎栏目">
+              <button type="button" disabled>关注</button><button class="active" type="button" data-zhihu-view="feed">推荐</button><button type="button" disabled>热榜</button><button type="button" disabled>专栏</button><button type="button" disabled>圈子</button>
+            </nav>
+            <label class="zhihu-search"><input type="search" placeholder="搜索知乎内容" aria-label="搜索知乎内容"><button type="button" aria-label="搜索"></button></label>
+            <div class="zhihu-header-actions">
+              <button class="create-round" type="button" aria-label="创作">＋</button>
+              <button class="header-action" type="button" data-zhihu-view="inbox"><span class="bell-icon" aria-hidden="true"></span><small>消息</small></button>
+              <button class="header-action" type="button" data-zhihu-view="inbox"><span class="mail-icon" aria-hidden="true"></span><small>私信</small></button>
+              <button class="profile-avatar" type="button" data-zhihu-view="profile" aria-label="个人主页">答</button>
+            </div>
+          </header>
+
+          <div class="zhihu-scroll" id="zhihuScroll">
+            <section class="zhihu-view feed-layout" id="zhihuFeed" data-view-name="feed">
+              <main class="feed-column">
+                <article class="creator-box">
+                  <div class="creator-prompt"><span class="mini-avatar">答</span><span>分享此刻的想法...</span><button type="button">发想法</button></div>
+                  <div class="creator-shortcuts"><span>▣ 提问题</span><span>▤ 写回答</span><span>▰ 写文章</span><span>▸ 发视频</span></div>
+                </article>
+
+                <article class="feed-card help-post" id="readPost" tabindex="0" role="button" aria-label="进入求助帖">
+                  <div class="feed-source"><span class="source-avatar">问</span><b>有人遇到麻烦了</b><time>刚刚</time><span class="waiting-chip">等你回答</span></div>
+                  <h1>第一次一个人去医院挂号，需要提前准备什么？</h1>
+                  <p>明天要自己去医院，但不知道先去哪、要带什么，也有点害怕弄错流程。希望有经历过的人能告诉我一下。</p>
+                  <footer class="feed-actions"><button type="button">▲ 关注问题 12</button><span>💬 3 条评论</span><span>☆ 收藏</span><span>↗ 分享</span><span>•••</span></footer>
+                </article>
+
+                <article class="feed-card">
+                  <h2>独自去医院看病有哪些流程和注意事项？</h2>
+                  <p><b>生活经验研究所：</b>先准备好身份证、医保凭证和手机，提前确认科室与院区。到院后依次完成取号、签到、候诊……</p>
+                  <footer class="feed-actions"><button type="button">▲ 赞同 286</button><span>💬 24 条评论</span><span>☆ 收藏</span><span>♡ 喜欢</span></footer>
+                </article>
+
+                <article class="feed-card">
+                  <h2>一个人生活后，你掌握了哪些让自己安心的小事？</h2>
+                  <p><b>山风：</b>把重要证件放在固定位置，出门前只检查三件东西：手机、钥匙和证件。慢慢就不会那么慌了。</p>
+                  <footer class="feed-actions"><button type="button">▲ 赞同 57</button><span>💬 9 条评论</span><span>☆ 收藏</span><span>↗ 分享</span></footer>
+                </article>
+              </main>
+
+              <aside class="zhihu-sidebar">
+                <section class="side-card creation-card"><header><b>创作中心</b><span>草稿箱(0)</span></header><div><strong>开启你的知乎创作之旅</strong><small>快来成为知乎创作者吧～</small></div><button type="button">＋ 开始创作</button></section>
+                <section class="side-card hot-card"><header><b><i></i> 大家都在搜</b><button type="button">换一换</button></header><ol><li><span>第一次独自去医院的流程</span><em>306 万</em></li><li><span>医保电子凭证怎么使用</span><em>305 万</em></li><li><span>挂号应该选择哪个科室</span><em>298 万</em></li><li><span>年轻人独居必备清单</span><em>255 万</em></li><li><span>如何缓解第一次就医紧张</span><em>253 万</em></li><li><span>线上问诊需要注意什么</span><em>252 万</em></li></ol></section>
+              </aside>
+            </section>
+
+            <section class="zhihu-view simple-page" id="zhihuInbox" data-view-name="inbox" hidden>
+              <header><h1>消息与私信</h1><span>全部已读</span></header>
+              <article><span class="message-avatar">小</span><div><b>小禾</b><p>谢谢你之前的回答，我已经顺利办完手续了。</p><time>昨天 22:18</time></div></article>
+              <article><span class="message-avatar blue">知</span><div><b>知乎小管家</b><p>你收到了一条新的求助邀请。</p><time>今天 21:40</time></div></article>
+            </section>
+
+            <section class="zhihu-view simple-page profile-page" id="zhihuProfile" data-view-name="profile" hidden>
+              <div class="profile-cover"></div><div class="profile-summary"><span class="profile-big-avatar">答</span><div><h1>共读答主</h1><p>把复杂的问题说清楚，也把慌张的人接住。</p></div></div>
+              <div class="profile-stats"><span><b>3</b>回答</span><span><b>18</b>赞同</span><span><b>2</b>收藏</span><span><b>6</b>关注者</span></div>
+            </section>
+
+            <section class="zhihu-view post-page" id="zhihuPost" data-view-name="post" hidden>
+              <button class="post-back" id="postBack" type="button">← 返回推荐</button>
+              <article class="question-card"><span class="question-label">求助</span><h1>第一次一个人去医院挂号，需要提前准备什么？</h1><p>明天要自己去医院，但不知道先去哪、要带什么，也有点害怕弄错流程。希望有经历过的人能告诉我一下。</p><div><button type="button">关注问题</button><span>12 个回答 · 36 人关注</span></div></article>
+              <section class="comment-list"><h2>评论</h2><article><span class="comment-avatar">路</span><div><b>路过的医生</b><p>先确认院区和科室，带上身份证与医保凭证，手机保持有电。</p><small>刚刚 · 回复 · 喜欢</small></div></article><article><span class="comment-avatar gray">舟</span><div><b>一叶舟</b><p>如果还是不确定，可以先拨打医院导诊台电话问一下。</p><small>1 分钟前 · 回复 · 喜欢</small></div></article></section>
+            </section>
+          </div>
+        </div>
+      </section>
+      <aside class="zhihu-note" id="partnerCard" hidden aria-label="看山共读伙伴"><div class="partner-heading"><canvas class="partner-avatar" id="partnerCanvas" width="180" height="180" title="拖动移动；单击挥手或跳舞；双击转身"></canvas></div></aside>
+    </section>
+  </main>
+  <script src="./app.js?v=zhihu-doc-1"></script>
+  <script type="module" src="./assistant3d.js?v=zhihu-doc-1"></script>
+</body>
+</html>
