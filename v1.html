@@ -11,18 +11,12 @@
   <link rel="preload" as="image" href="./assets/ai-character-walk-back-v4.png?v=20260831-1">
   <link rel="preload" as="image" href="./assets/ai-character-bed-sequence-v5.png?v=20260831-1">
   <link rel="preload" as="image" href="./assets/ai-character-bed-seated-v1.png?v=20260831-1">
-  <link rel="stylesheet" href="./styles.css?v=20260830-5">
-  <link rel="stylesheet" href="./v1.css?v=20260914-zip-assets">
+  <link rel="stylesheet" href="./styles.css?v=20260914-grassland">
+  <link rel="stylesheet" href="./v1.css?v=20260914-material-consume">
 </head>
 <body>
   <main class="desktop" id="desktop" aria-label="共读模式虚拟桌面">
     <div class="desktop-grain" aria-hidden="true"></div>
-    <header class="system-strip">
-      <div class="system-brand"><span class="brand-pixel"></span> ZHIHU / CO-READ OS</div>
-      <div class="chapter-name" id="chapterName">档案 00 · 第一次独自去医院</div>
-      <div class="system-clock" id="systemClock">21:08</div>
-    </header>
-
     <nav class="desktop-icons" aria-label="桌面应用">
       <button class="desktop-icon is-active" data-focus="browserWindow" type="button">
         <span class="icon-shape browser-icon" aria-hidden="true"></span><span>浏览器</span>
@@ -46,13 +40,12 @@
       </header>
       <div id="addressBar" hidden aria-hidden="true"></div>
       <div class="zhihu-nav">
-        <strong class="zhihu-wordmark">知乎</strong><span>首页</span><span>等你来答</span><span>关注</span>
+        <strong class="zhihu-wordmark">知乎</strong><button class="zhihu-nav-link is-active" id="partnerInboxNav" data-zhihu-nav="partner" type="button">伙伴递交</button><button class="zhihu-nav-link" data-zhihu-nav="materials" type="button">素材</button><button class="zhihu-nav-link" data-zhihu-nav="chat" type="button">私聊</button><button class="zhihu-nav-link" data-zhihu-nav="profile" type="button">个人中心</button><button class="zhihu-nav-link" data-zhihu-nav="codex" type="button">图鉴</button>
         <span class="nav-spacer"></span>
         <span class="co-read-indicator"><i></i> 共读中</span>
       </div>
       <div class="browser-page">
-        <section class="home-feed" id="homeFeed" aria-label="知乎首页帖子" hidden>
-          <header class="home-feed-heading"><strong>首页</strong><span>推荐</span><span>关注</span></header>
+        <section class="home-feed" id="homeFeed" aria-label="伙伴递交的求助帖" hidden>
           <div class="home-feed-list">
             <article class="home-post is-first-target" id="firstHelpPost" role="button" tabindex="0" aria-label="进入第一条求助帖">
               <div class="home-post-author"><span class="home-post-avatar avatar-sprite avatar-yuyi" aria-hidden="true"></span><span><strong>匿名用户</strong><small>刚来知乎 · 生活经验</small></span></div>
@@ -64,6 +57,23 @@
             <article class="home-post is-locked" aria-disabled="true"><div class="home-post-author"><span class="home-post-avatar avatar-sprite avatar-fact-checker" aria-hidden="true"></span><span><strong>白桃汽水</strong><small>职业发展</small></span></div><h2>工作三年，只有三个月存款，该不该裸辞转行？</h2><p>每天都想离开现在的行业，可下班之后又没有力气准备新的方向…… <em>阅读全文⌄</em></p><div class="home-post-stats"><span>▲ 赞同 5,796</span><span>● 318 条评论</span><span>★ 983</span><span>↗ 分享</span></div></article>
             <article class="home-post is-locked" aria-disabled="true"><div class="home-post-author"><span class="home-post-avatar avatar-lotus-elder" aria-hidden="true"></span><span><strong>周末想清楚</strong><small>个人成长</small></span></div><h2>第一次面对一个人做决定，怎么知道自己没有选错？</h2><p>大家都说要相信自己，但我现在只想先知道下一步应该做什么…… <em>阅读全文⌄</em></p><div class="home-post-stats"><span>▲ 赞同 862</span><span>● 61 条评论</span><span>★ 211</span><span>↗ 分享</span></div></article>
           </div>
+        </section>
+        <section class="material-library-panel" id="materialLibraryPanel" aria-label="素材库" hidden>
+          <header class="material-library-header">
+            <div><span class="eyebrow">素材库</span><h2>刚刚收下的素材</h2></div>
+            <strong id="materialLibraryCount">0 份</strong>
+          </header>
+          <p class="material-library-intro" id="materialLibraryIntro">把刚刚选中的原始素材集中放在这里，可以切换查看每一份素材。</p>
+          <div class="material-library-tabs" id="materialLibraryTabs" role="tablist" aria-label="切换素材"></div>
+          <article class="material-library-detail" id="materialLibraryDetail" hidden>
+            <div class="material-library-source"><span id="materialLibraryKind">素材</span><small id="materialLibraryStatus">已输入</small></div>
+            <h3 id="materialLibraryTitle"></h3>
+            <div class="material-library-meta" id="materialLibraryMeta"></div>
+            <div class="material-library-body" id="materialLibraryBody"></div>
+            <blockquote id="materialLibraryQuote"></blockquote>
+            <div class="material-library-cards" id="materialLibraryCards"></div>
+          </article>
+          <div class="material-library-empty" id="materialLibraryEmpty"><strong>这里还没有素材</strong><span>先去“伙伴递交”里打开帖子，再把素材递给伙伴。</span></div>
         </section>
         <aside class="onboarding-guide" id="onboardingGuide" aria-labelledby="onboardingTitle" hidden>
           <div class="onboarding-guide-index" id="onboardingStep">第一次共读 · 1 / 3</div>
@@ -99,13 +109,33 @@
             <div><strong>评论区</strong><span id="postCommentCount">0 条评论</span></div>
             <p id="postCommentsEmptyCopy" hidden></p>
             <div class="posted-comments" id="postedComments" aria-live="polite"></div>
-            <section class="comment-composer" id="commentComposer" aria-label="评论卡牌选择" hidden>
-              <header><span id="commentComposerLabel">评论卡牌 / 选择一张</span><strong id="commentDraftCardType"></strong></header>
+            <section class="comment-composer" id="commentComposer" aria-label="知乎评论编辑框" hidden>
+              <header class="comment-composer-meta"><span id="commentComposerLabel">评论区 / 等待素材卡</span><strong id="commentDraftCardType"></strong></header>
               <div class="comment-card-choices" id="commentCardChoices" aria-label="四张可选卡牌" hidden></div>
               <p class="comment-draft-source" id="commentDraftSource"></p>
               <article class="comment-card-preview" id="commentDraftCard" aria-label="准备发出的卡牌" hidden></article>
-              <textarea id="commentComposerInput" rows="5" aria-label="评论正文"></textarea>
-              <div class="comment-composer-actions"><small id="commentComposerHint">先点评论，再从四张卡里选一张</small><button class="primary-action compact" id="sendCommentButton" type="button">发到评论区 →</button></div>
+              <div class="comment-editor">
+                <span class="comment-editor-avatar avatar-sprite avatar-yuyi" aria-hidden="true"></span>
+                <div class="comment-editor-main">
+                  <div class="comment-card-drop-zone" id="commentDropZone" aria-label="把右侧素材卡拖到评论框">
+                    <span class="comment-drop-hint"><strong>拖入素材卡</strong><b aria-hidden="true">←</b></span>
+                    <textarea id="commentComposerInput" rows="4" maxlength="220" aria-label="素材卡正文" readonly placeholder="理性发言，友善互动"></textarea>
+                  </div>
+                  <div class="comment-editor-toolbar">
+                    <button class="primary-action compact" id="sendCommentButton" type="button">发布</button>
+                  </div>
+                </div>
+              </div>
+              <div class="comment-composer-actions"><small id="commentComposerHint">只能拖入一张素材卡，正文仅作展示</small></div>
+            </section>
+            <section class="dialogue-turn-panel" id="dialogueTurnPanel" aria-labelledby="dialogueTurnTitle" hidden>
+              <header class="dialogue-turn-heading">
+                <div><span class="eyebrow" id="dialogueTurnEyebrow">下一回合 / 01</span><h3 id="dialogueTurnTitle">他回复了，接下来怎么做？</h3></div>
+                <span class="dialogue-turn-round" id="dialogueTurnRound">耐心 6 · 回合 1</span>
+              </header>
+              <p class="dialogue-turn-prompt" id="dialogueTurnPrompt">每次只做一件事：继续出牌、追问、安抚，或者回去换一份素材。</p>
+              <div class="dialogue-action-list" id="dialogueActionList"></div>
+              <p class="dialogue-turn-status" id="dialogueTurnStatus" aria-live="polite"></p>
             </section>
           </section>
         </section>
@@ -197,9 +227,9 @@
                 <img src="./assets/ui-patience-6.png?v=20260914-icons" alt="">
                 <span class="resource-readout"><b>耐心</b><strong id="patienceValue">6</strong></span>
               </span>
-              <span class="resource-chip cooldown-resource" id="questionCooldownResource" title="追问冷却 0" aria-label="追问冷却 0">
+              <span class="resource-chip cooldown-resource" id="questionCooldownResource" title="追问次数 2" aria-label="追问次数 2">
                 <img src="./assets/ui-question-cooldown-0.png?v=20260914-icons" alt="">
-                <span class="resource-readout"><b>追问</b><strong id="questionCooldownValue">0</strong></span>
+                <span class="resource-readout"><b>追问</b><strong id="questionCooldownValue">2</strong></span>
               </span>
               <span class="resource-chip thinking-resource" id="thinkingResource" title="你的思考记录 0" aria-label="你的思考记录 0">
                 <span class="resource-glyph" aria-hidden="true">⌁</span>
@@ -284,7 +314,7 @@
       </header>
       <section class="card-detail-copy"><span>正文</span><p id="cardDetailBody"></p></section>
       <div class="card-detail-boundary" id="cardDetailBoundary"></div>
-      <footer class="modal-actions"><button class="secondary-action" id="cardDetailCloseAction" type="button">返回整理桌</button><button class="primary-action compact" id="cardDetailReturnPost" type="button">返回知乎帖子 →</button></footer>
+      <footer class="modal-actions"><button class="secondary-action" id="cardDetailCloseAction" type="button">返回整理桌</button></footer>
     </article>
   </section>
 
@@ -309,6 +339,6 @@
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="./app-v1.js?v=20260914-zip-assets"></script>
+  <script src="./app-v1.js?v=20260914-material-consume-v1"></script>
 </body>
 </html>

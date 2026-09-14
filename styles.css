@@ -66,34 +66,22 @@ button:focus-visible,
   min-width: 1040px;
   min-height: 680px;
   overflow: hidden;
-  background-color: var(--desktop);
-  background-image:
-    linear-gradient(rgba(255, 255, 255, .045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, .045) 1px, transparent 1px),
-    linear-gradient(135deg, transparent 0 72%, rgba(21, 53, 95, .16) 72% 100%);
-  background-size: 20px 20px, 20px 20px, 100% 100%;
+  background-color: #76a8e8;
+  background-image: url("./assets/wallpaper-bliss.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 .desktop::before {
-  content: "";
-  position: absolute;
-  top: 84px;
-  right: 6vw;
-  width: 240px;
-  height: 240px;
-  border: 16px solid rgba(255, 255, 255, .05);
-  transform: rotate(45deg);
-  box-shadow: 0 0 0 32px rgba(255, 255, 255, .025);
+  display: none;
 }
 
 .desktop-grain {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  opacity: .16;
-  background-image: repeating-radial-gradient(circle at 22% 31%, transparent 0 2px, rgba(5, 23, 45, .18) 3px 4px);
-  background-size: 9px 9px;
-  mix-blend-mode: multiply;
+  opacity: 0;
 }
 
 .system-strip {

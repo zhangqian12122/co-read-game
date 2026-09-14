@@ -109,7 +109,6 @@ if (walkAssets.some((asset) => asset.size < 1024)) {
 }
 
 const requiredV1Html = [
-  "chapterName",
   "onboardingGuide",
   "onboardingAction",
   "onboardingDismiss",
@@ -135,8 +134,8 @@ const requiredV1Html = [
   "finalConversation",
   "finalChoiceList",
   "cardDetailModal",
-  "cardDetailReturnPost",
   "commentCardChoices",
+  "commentDropZone",
   "commentComposerLabel",
   "commentComposerHint",
   "trayNote",
@@ -186,7 +185,7 @@ const requiredV1Flow = [
   "openCardDetail",
   "submitMaterialsToCompanion",
   "selectCommentCard",
-  "returnToPostFromCard",
+  "parseDraggedCard",
   "sendCommentToPost",
   "renderPostComments",
   "stageChapterOneFacilities",
@@ -252,11 +251,43 @@ if (!v1Js.includes('state.permission === "allow"') || !v1Js.includes("showChapte
 if (!["route-verifier", "route-listener", "route-initiator"].every((token) => v1Js.includes(token) && v1Css.includes(`.${token}`))) {
   throw new Error("v1 三条路线缺少房间或札记回声接线");
 }
-if (!v1Html.includes("./v1.css?v=20260914-zip-assets") || !v1Html.includes("./app-v1.js?v=20260914-zip-assets")) {
+if (!v1Html.includes("./v1.css?v=20260914-material-consume") || !v1Html.includes("./app-v1.js?v=20260914-material-consume-v1")) {
   throw new Error("v1 视觉资源版本号未更新");
 }
-if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || !v1Html.includes('id="gameResourceHud"') || !v1Html.includes('id="thinkingResource"') || !v1Html.includes('ui-patience-6.png') || !v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Html.includes('id="commentCardChoices"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("state.selected.length * 2") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("function renderTray") || !v1Js.includes("function selectCommentCard") || !v1Js.includes("function returnToPostFromCard") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
+if (!v1Html.includes('id="partnerInboxNav"') || !v1Html.includes('data-zhihu-nav="partner"') || !v1Html.includes('data-zhihu-nav="chat"') || !v1Html.includes('data-zhihu-nav="profile"') || !v1Html.includes('data-zhihu-nav="codex"') || v1Html.includes('home-feed-heading') || !v1Html.includes('<div class="home-feed-list">') || !v1Html.includes(">私聊</button>") || !v1Html.includes(">个人中心</button>") || !v1Html.includes(">图鉴</button>") || !v1Js.includes("function openPartnerInbox") || !v1Js.includes("function setZhihuNav") || !v1Js.includes("data-zhihu-nav")) {
+  throw new Error("伙伴递交页没有接上首次看到的求助帖入口");
+}
+if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || !v1Html.includes('id="gameResourceHud"') || !v1Html.includes('id="thinkingResource"') || !v1Html.includes('ui-patience-6.png') || !v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Html.includes('id="commentCardChoices"') || !v1Html.includes('id="commentDropZone"') || !v1Html.includes('maxlength="220"') || !v1Html.includes('aria-label="素材卡正文"') || !v1Html.includes('readonly placeholder="理性发言，友善互动"') || !v1Html.includes('comment-editor-toolbar') || !v1Js.includes('placeholder = "理性发言，友善互动"') || v1Html.includes('id="cardDetailReturnPost"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("function getAvailableCardDetails") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("function renderTray") || !v1Js.includes("function selectCommentCard") || !v1Js.includes("function parseDraggedCard") || !v1Js.includes('application/x-co-read-card') || !v1Js.includes('dataTransfer.dropEffect = "copy"') || !v1Js.includes('if (!state.commentDraft)') || !v1Js.includes('type: draft?.type || "普通评论"') || !v1Js.includes("posted-comment-actions") || v1Js.includes("function returnToPostFromCard") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".comment-card-drop-zone") || !v1Css.includes(".comment-editor-toolbar") || !v1Css.includes(".posted-comment-actions") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
   throw new Error("v2 求助帖首点、AI 解锁六条回答或知乎信息流排版缺失");
+}
+if (v1Js.includes("游戏虚构") || !v1Js.includes('elements.modalCaution.hidden = material.id === "official"')) {
+  throw new Error("素材详情仍显示游戏虚构或医院提示语未隐藏");
+}
+if (!v1Js.includes('state.materialsSubmitted ? "素材提取完成" : "等待提交"')) {
+  throw new Error("整理桌仍显示旧的卡牌呈现文案");
+}
+if (!v1Js.includes('if (selected) actionText = "已输入"') || v1Js.includes('actionText = "已在房间"')) {
+  throw new Error("已选入素材的按钮仍显示旧文案");
+}
+if (!v1Html.includes('id="materialLibraryPanel"') || !v1Html.includes('data-zhihu-nav="materials"') || !v1Html.includes('id="materialLibraryTabs"') || !v1Js.includes("function renderMaterialLibrary") || !v1Js.includes("function openMaterialLibrary")) {
+  throw new Error("独立素材库入口或切换素材区域没有接入");
+}
+if (!v1Js.includes("function consumeCollectedMaterialsAfterReply") || !v1Js.includes("state.usedCards.includes(getCardKey(card))") || !v1Js.includes("发出后立即消耗") || !v1Js.includes("elements.synthesizeButton.hidden = state.locked")) {
+  throw new Error("素材卡发送后的消耗与整次回复后的清空没有接入");
+}
+const postCommentRenderBlock = v1Js.slice(v1Js.indexOf("function renderPostComments"), v1Js.indexOf("function renderCommentCardChoices"));
+if (postCommentRenderBlock.includes("getCardFaceMarkup") || !v1Js.includes("function getPostAuthorReply") || !v1Js.includes("isAuthorReply") || !v1Js.includes("对方已经回了你的评论")) {
+  throw new Error("评论区仍展示素材卡面，或发送后没有接入提问者回复");
+}
+if (!v1Html.includes('id="dialogueTurnPanel"') || !v1Html.includes('id="dialogueActionList"') || !v1Html.includes('id="dialogueTurnStatus"') || !v1Js.includes("function renderDialogueTurn") || !v1Js.includes("function chooseDialogueAction") || !v1Js.includes("function chooseDialogueQuestion") || !v1Js.includes("dialogueAwaitingAction") || !v1Js.includes("askCharges") || !v1Js.includes("稍等，我查一下") || !v1Css.includes(".dialogue-turn-panel") || !v1Css.includes(".dialogue-action")) {
+  throw new Error("评论区回复后的回合操作面板没有接入完整");
+}
+if (!v1Css.includes("flex-direction: column") || !v1Css.includes(".posted-comment.is-author-reply::before") || !v1Css.includes("margin: -1px 0 0 44px")) {
+  throw new Error("评论区没有按上下楼层显示对方追评");
+}
+const trayActionBlock = v1Js.slice(v1Js.indexOf("function handleTrayAction"), v1Js.indexOf("function deriveMisjudgmentHistory"));
+if (!trayActionBlock.includes("openCommentGate()") || trayActionBlock.includes("openDecision()") || !v1Js.includes("回到评论区，看对方回复")) {
+  throw new Error("素材回复完成后仍会打开旧的决定面板，未跳回对应评论区");
 }
 if (!v1Js.includes("const finalConversationChoices") || !["together", "ask", "reread"].every((choice) => v1Js.includes(`${choice}: {`)) || !v1Js.includes('state.step = "ending-conversation"') || !v1Js.includes('state.step = "ending"') || !v1Js.includes('notificationMode === "ending"')) {
   throw new Error("v1 第二章结束后缺少可回应的伙伴对话、差异化结局或可返回的完成状态");
@@ -273,7 +304,7 @@ if (!v1Html.includes('id="roomComputerMessage"') || !v1Js.includes("receiveFirst
 if (!v1Html.includes('id="companionNaming"') || !v1Html.includes('id="aiSpeaker"') || v1Html.includes("尚未命名") || !v1Js.includes('state.step = "chapter-naming"') || !v1Js.includes("updateCompanionIdentity()")) {
   throw new Error("v1 伙伴命名没有在第一章行为形成后接入后续身份");
 }
-if (!v1Css.includes(".ai-dialogue.is-resting") || !v1Css.includes("bottom: 3.2%") || !v1Js.includes("letDialogueRest")) {
+if (!v1Css.includes(".ai-dialogue.is-resting") || !v1Css.includes("bottom: 8%") || !v1Css.includes("left: 50%") || !v1Css.includes("translateX(-50%)") || !v1Js.includes("letDialogueRest")) {
   throw new Error("v1 房间对话仍未改为可收起的底部对话栏");
 }
 if (!v1Html.includes("伙伴的整理桌") || !v1Html.includes("两份素材并排放好，提交后才会显示四张卡牌") || v1Html.includes("把一份检查过的材料拖进房间") || v1Html.includes("playerBackpack") || v1Html.includes("backpackModal") || !v1Js.includes("companionEnvironmentThoughts") || !v1Js.includes("maybeSpeakEnvironmentThought(interactionId)")) {
