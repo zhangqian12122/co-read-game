@@ -318,8 +318,8 @@ if (!v1Js.includes("你们放着新的不用，反而拿一张五年前的攻略
 if (!v1Js.includes("function getIncidentDecisionEcho") || !v1Js.includes("后面却把我的问题直接变成了答案") || !v1Js.includes("偏偏没先问这张流程是几年前写的") || !v1Js.includes("连有用的部分也不敢信了") || !v1Js.includes("outcome.incident ? getIncidentDecisionEcho")) {
   throw new Error("v1 不同事故仍在拼接同一段回复次序后果，或具体事故没有覆盖通用旧文案");
 }
-if (!v1Html.includes("以共读答主身份进入") || !v1Html.includes("回答署名：共读答主 · 你") || !v1Html.includes('id="followupResult"') || !v1Js.includes("署名：共读答主 · 你") || !v1Js.includes("医院刚更新的说明") || !v1Js.includes("reversedBoth") || !v1Css.includes(".inline-followup-panel.is-harm")) {
-  throw new Error("v1 未在回答前说明玩家身份，或全反选路线没有同时呈现发出状态、双重误判与负面后果");
+if (!v1Html.includes('id="followupResult"') || !v1Js.includes("署名：共读答主 · 你") || !v1Js.includes("医院刚更新的说明") || !v1Js.includes("reversedBoth") || !v1Css.includes(".inline-followup-panel.is-harm")) {
+  throw new Error("v1 全反选路线没有同时呈现发出状态、双重误判与负面后果");
 }
 if (!v1Html.includes('id="accountabilityPanel"') || !v1Js.includes("const accountabilityChoices") || !["admit", "explain", "blame", "ignore"].every((choice) => v1Js.includes(`${choice}: {`)) || !v1Js.includes("showAccountabilityChoices") || !v1Js.includes("resolveAccountabilityChoice") || !v1Js.includes("accountabilityResolution") || !v1Css.includes(".accountability-choice.is-selected")) {
   throw new Error("v1 负面回访没有接入承认、解释、甩锅、沉默四种回应，或选择没有进入房间记忆与下一章伙伴行为");
@@ -458,18 +458,18 @@ const followupActionSource = v1Js.match(/const hospitalFollowupReplyChoices = \{
 if ((followupActionSource.match(/icon:/g) || []).length !== 3 || !["✉", "♡", "⌕"].every((icon) => followupActionSource.includes(`icon: "${icon}"`)) || !v1Js.includes("followup-action-choice")) {
   throw new Error("v1 回访阶段没有锁定为三个带图标的回应动作");
 }
-if (!v1Html.includes("第一次共读的三个步骤") || !v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "四张卡已经摆在整理桌上"')) {
-  throw new Error("v1 开场缺少流程预告、分步任务提示或跨窗口引导");
+if (!v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "四张卡已经摆在整理桌上"')) {
+  throw new Error("v1 缺少分步任务提示或跨窗口引导");
 }
 if (v1Html.includes('class="browser-toolbar"') || !v1Css.includes(".browser-toolbar { display: none; }")) {
   throw new Error("v1 知乎窗口仍保留地址栏工具行");
 }
-if (!v1Html.includes('class="boot-scene-room"') || !v1Html.includes('class="boot-scene-character"') || !v1Html.includes("和房间里的伙伴") || !v1Css.includes(".boot-scene figcaption")) {
-  throw new Error("v1 封面没有使用正式房间与伙伴美术，或缺少开场叙事层");
+if (v1Html.includes('class="boot-overlay"') || v1Html.includes('id="bootOverlay"') || v1Html.includes('id="startButton"') || v1Js.includes("bootOverlay") || v1Js.includes("startButton") || !v1Js.includes("bindEvents();\n  startGame();")) {
+  throw new Error("v1 仍保留开场封面，或没有在初始化时直接进入主界面");
 }
 
 if (!v1Css.includes(".question-body { font-size: 14px; }") || !v1Css.includes(".public-comment p { font-size: 12px; }") || !v1Css.includes(".ai-dialogue > p,") || !v1Css.includes(".ending-body { font-size: 15px; }")) {
   throw new Error("v1 正文、评论、伙伴对话或结局文字仍未统一放大");
 }
 
-console.log("PASS v1 正式房间与伙伴封面、房间收信与电脑主动开题、伙伴口语整理、整体可读性放大、开场三步预告、随进度变化的跨窗口引导、六帧读纸、脚底锚定步态、不透明床边站姿、承重坐姿、自主观察、两章统一公开评论、两章发送前草稿取舍、全选项隐藏属性审计、跨章属性事件、结局属性回声、二次回应、跨章关系记忆、仅作用于新增设施的成长视觉层、三种结局与 20260914-zip-assets 资源版本已锁定");
+console.log("PASS v1 直接进入主界面、房间收信与电脑主动开题、伙伴口语整理、整体可读性放大、随进度变化的跨窗口引导、六帧读纸、脚底锚定步态、不透明床边站姿、承重坐姿、自主观察、两章统一公开评论、两章发送前草稿取舍、全选项隐藏属性审计、跨章属性事件、结局属性回声、二次回应、跨章关系记忆、仅作用于新增设施的成长视觉层、三种结局与 20260914-zip-assets 资源版本已锁定");

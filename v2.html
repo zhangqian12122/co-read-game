@@ -266,29 +266,6 @@
     </footer>
   </main>
 
-  <section class="boot-overlay" id="bootOverlay" aria-labelledby="bootTitle">
-    <div class="boot-card">
-      <div class="boot-content">
-        <div class="boot-index">CO-READ ARCHIVE / 00</div>
-        <p class="boot-kicker">知乎共读计划 · 今晚 21:08</p><h1 id="bootTitle">和房间里的伙伴，<br>回一封公开提问。</h1>
-        <p class="boot-copy">你负责最后怎么回，伙伴负责陪你看材料，也会记住你们今晚怎么选。你们给的是公开建议，回答发出去以后，看到的人不止提问者。</p>
-        <div class="boot-objective"><span>今晚的房间</span><p>电脑还没亮，先进去和伙伴见个面，等消息来了再说。</p></div>
-        <div class="boot-route" aria-label="第一次共读的三个步骤">
-          <span><i>1</i><b>调查</b><small>打开材料，看作者和日期</small></span>
-          <span><i>2</i><b>共读</b><small>选两份，告诉伙伴怎么用</small></span>
-          <span><i>3</i><b>回答</b><small>一起改草稿，最后由你发送</small></span>
-        </div>
-        <button class="boot-button" id="startButton" type="button">以共读答主身份进入 <span>→</span></button><small>回答署名：共读答主 · 你 × 共读伙伴 00</small>
-      </div>
-      <figure class="boot-scene" aria-label="夜晚的共读房间和房间里的伙伴 00">
-        <img class="boot-scene-room" src="./assets/room-stage-0-v1.png?v=20260830-2" alt="" aria-hidden="true">
-        <span class="boot-scene-light" aria-hidden="true"></span>
-        <img class="boot-scene-character" src="./assets/ai-character-stage-0-v1.png?v=20260830-2" alt="房间里的共读伙伴 00">
-        <figcaption><small>CO-READ ROOM / 00</small><strong>房间里的伙伴还没名字</strong><span>它正拿着第一份空白札记等你</span></figcaption>
-      </figure>
-    </div>
-  </section>
-
   <section class="modal-backdrop" id="materialModal" hidden>
     <article class="material-modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
       <header class="modal-header"><div><span class="eyebrow" id="modalType">材料</span><h2 id="modalTitle"></h2></div><button class="close-modal" id="closeModal" type="button" aria-label="关闭">×</button></header>
@@ -332,6 +309,5 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="./app-v1.js?v=20260914-zip-assets"></script>
-  <script>if (location.pathname.endsWith('/v2.html')) document.getElementById('startButton')?.click();</script>
 </body>
 </html>

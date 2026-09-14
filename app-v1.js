@@ -998,7 +998,7 @@ const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
 
 const elements = {
-  desktop: $("#desktop"), bootOverlay: $("#bootOverlay"), startButton: $("#startButton"), chapterName: $("#chapterName"), addressBar: $("#addressBar"), systemClock: $("#systemClock"), taskbarTime: $("#taskbarTime"),
+  desktop: $("#desktop"), chapterName: $("#chapterName"), addressBar: $("#addressBar"), systemClock: $("#systemClock"), taskbarTime: $("#taskbarTime"),
   onboardingGuide: $("#onboardingGuide"), onboardingStep: $("#onboardingStep"), onboardingTitle: $("#onboardingTitle"), onboardingText: $("#onboardingText"), onboardingAction: $("#onboardingAction"), onboardingDismiss: $("#onboardingDismiss"),
   homeFeed: $("#homeFeed"), gameResourceHud: $("#gameResourceHud"), patienceResource: $("#patienceResource"), patienceValue: $("#patienceValue"), questionCooldownResource: $("#questionCooldownResource"), questionCooldownValue: $("#questionCooldownValue"), thinkingResource: $("#thinkingResource"), thinkingValue: $("#thinkingValue"), questionPanel: $("#questionPanel"), postAuthorAvatar: $("#postAuthorAvatar"), postAuthorName: $("#postAuthorName"), postAuthorMeta: $("#postAuthorMeta"), postAuthorBio: $("#postAuthorBio"), followAskerButton: $("#followAskerButton"), postVoteButton: $("#postVoteButton"), postCommentButton: $("#postCommentButton"), postLikeButton: $("#postLikeButton"), postShareButton: $("#postShareButton"), postMoreButton: $("#postMoreButton"), questionKicker: $("#questionKicker"), questionTitle: $("#questionTitle"), questionBody: $("#questionBody"), askerNote: $("#askerNote"), questionStats: $("#questionStats"),
   researchEyebrow: $("#researchEyebrow"), researchTitle: $("#researchTitle"), researchInstruction: $("#researchInstruction"), trayEyebrow: $("#trayEyebrow"), trayNote: $("#trayNote"),
@@ -4096,7 +4096,6 @@ function startGame() {
   renderResourceHud();
   if (dualWindowStart) elements.addressBar.innerHTML = '<span class="lock-dot"></span> zhihu.local/';
   state.computerMessageReady = false;
-  elements.bootOverlay.hidden = true;
   elements.aiCharacter.classList.add("is-awake");
   elements.aiCharacter.classList.toggle("uses-stage-asset", dualWindowStart);
   elements.roomComputer.classList.add("is-awaiting-message");
@@ -4136,7 +4135,6 @@ function startGame() {
 }
 
 function bindEvents() {
-  elements.startButton.addEventListener("click", startGame);
   elements.homeFeed.addEventListener("click", (event) => {
     if (event.target.closest("#firstHelpPost")) openHelpPost();
   });
@@ -4275,6 +4273,7 @@ function initialize() {
   updateCompanionIdentity();
   bindWindowManager();
   bindEvents();
+  startGame();
 }
 
 initialize();
