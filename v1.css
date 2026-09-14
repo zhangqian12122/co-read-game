@@ -3201,6 +3201,76 @@ body.dual-window-start.post-detail .question-stats {
 
 .comment-composer-actions small { color: #8191a1; font-size: 9px; }
 
+.comment-card-choices {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 11px 0 10px;
+}
+
+.comment-card-choice {
+  position: relative;
+  display: block;
+  min-width: 0;
+  padding: 0 0 24px;
+  border: 2px solid #b9cde2;
+  background: #fff;
+  color: #273c55;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 120ms linear, transform 120ms steps(2, end), box-shadow 120ms linear;
+}
+
+.comment-card-choice:hover,
+.comment-card-choice:focus-visible {
+  border-color: #2675ce;
+  box-shadow: 3px 3px 0 rgba(23, 105, 210, .16);
+  transform: translateY(-2px);
+  outline: 0;
+}
+
+.comment-card-choice .collectible-card-face {
+  min-height: 150px;
+  padding: 6px 7px 6px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  grid-template-rows: auto auto minmax(40px, 1fr) auto;
+}
+
+.comment-card-choice .collectible-card-ribbon { padding-bottom: 4px; }
+.comment-card-choice .collectible-card-ribbon i { width: 19px; height: 19px; font-size: 10px; }
+.comment-card-choice .collectible-card-ribbon b { font-size: 9px; }
+.comment-card-choice .collectible-card-ribbon em { font-size: 6px; }
+.comment-card-choice .collectible-card-title { min-height: 21px; padding: 5px 1px 3px; font-size: 9px; }
+.comment-card-choice .collectible-card-body { padding: 5px 6px; font-size: 7px; line-height: 1.4; }
+.comment-card-choice .collectible-card-footer { padding-top: 5px; }
+.comment-card-choice .collectible-card-footer small { font-size: 5px; }
+.comment-card-choice .collectible-card-footer strong { padding: 3px 4px; font-size: 6px; }
+
+.comment-card-choice-label {
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  left: 6px;
+  padding: 4px 5px;
+  border: 1px solid #a9c3e0;
+  background: #edf5ff;
+  color: #1769d2;
+  font: 800 8px/1 var(--ui-font);
+  text-align: center;
+}
+
+.comment-card-choices-empty {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 12px;
+  border: 1px dashed #afc0d1;
+  color: #7f8d9c;
+  font-size: 11px;
+  text-align: center;
+}
+
 .posted-comment-card {
   width: min(228px, 100%);
   margin-top: 10px;

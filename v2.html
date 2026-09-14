@@ -99,12 +99,13 @@
             <div><strong>评论区</strong><span id="postCommentCount">0 条评论</span></div>
             <p id="postCommentsEmptyCopy" hidden></p>
             <div class="posted-comments" id="postedComments" aria-live="polite"></div>
-            <section class="comment-composer" id="commentComposer" aria-label="评论草稿" hidden>
-              <header><span>素材卡正文</span><strong id="commentDraftCardType"></strong></header>
+            <section class="comment-composer" id="commentComposer" aria-label="评论卡牌选择" hidden>
+              <header><span id="commentComposerLabel">评论卡牌 / 选择一张</span><strong id="commentDraftCardType"></strong></header>
+              <div class="comment-card-choices" id="commentCardChoices" aria-label="四张可选卡牌" hidden></div>
               <p class="comment-draft-source" id="commentDraftSource"></p>
               <article class="comment-card-preview" id="commentDraftCard" aria-label="准备发出的卡牌" hidden></article>
               <textarea id="commentComposerInput" rows="5" aria-label="评论正文"></textarea>
-              <div class="comment-composer-actions"><small>正文已从右侧素材卡带入，可直接发出</small><button class="primary-action compact" id="sendCommentButton" type="button">发到评论区 →</button></div>
+              <div class="comment-composer-actions"><small id="commentComposerHint">先点评论，再从四张卡里选一张</small><button class="primary-action compact" id="sendCommentButton" type="button">发到评论区 →</button></div>
             </section>
           </section>
         </section>
@@ -283,7 +284,7 @@
       </header>
       <section class="card-detail-copy"><span>正文</span><p id="cardDetailBody"></p></section>
       <div class="card-detail-boundary" id="cardDetailBoundary"></div>
-      <footer class="modal-actions"><button class="secondary-action" id="cardDetailCloseAction" type="button">返回桌面</button><button class="primary-action compact" id="sendCardToComment" type="button">把正文送到评论区 →</button></footer>
+      <footer class="modal-actions"><button class="secondary-action" id="cardDetailCloseAction" type="button">返回整理桌</button><button class="primary-action compact" id="cardDetailReturnPost" type="button">返回知乎帖子 →</button></footer>
     </article>
   </section>
 

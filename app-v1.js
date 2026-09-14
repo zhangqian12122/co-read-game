@@ -1006,8 +1006,8 @@ const elements = {
   dropZone: $("#dropZone"), emptyDrop: $("#emptyDrop"), trayCount: $("#trayCount"), trayCardCount: $("#trayCardCount"), synthesizeButton: $("#synthesizeButton"), roomScene: $("#roomScene"),
   aiCharacter: $("#aiCharacter"), aiDialogue: $("#aiDialogue"), aiSpeaker: $("#aiSpeaker"), aiText: $("#aiText"), wallNote: $("#wallNote"), shelfBook: $("#shelfBook"), materialModal: $("#materialModal"),
   modalType: $("#modalType"), modalTitle: $("#modalTitle"), modalLedger: $("#modalLedger"), modalBody: $("#modalBody"), modalCaution: $("#modalCaution"), modalSendAction: $("#modalSendAction"),
-  cardDetailModal: $("#cardDetailModal"), cardDetailIcon: $("#cardDetailIcon"), cardDetailType: $("#cardDetailType"), cardDetailTitle: $("#cardDetailTitle"), cardDetailMeta: $("#cardDetailMeta"), cardDetailBody: $("#cardDetailBody"), cardDetailBoundary: $("#cardDetailBoundary"), sendCardToComment: $("#sendCardToComment"),
-  postCommentCount: $("#postCommentCount"), postCommentsEmptyCopy: $("#postCommentsEmptyCopy"), postedComments: $("#postedComments"), commentComposer: $("#commentComposer"), commentDraftCardType: $("#commentDraftCardType"), commentDraftSource: $("#commentDraftSource"), commentDraftCard: $("#commentDraftCard"), commentComposerInput: $("#commentComposerInput"), sendCommentButton: $("#sendCommentButton"),
+  cardDetailModal: $("#cardDetailModal"), cardDetailIcon: $("#cardDetailIcon"), cardDetailType: $("#cardDetailType"), cardDetailTitle: $("#cardDetailTitle"), cardDetailMeta: $("#cardDetailMeta"), cardDetailBody: $("#cardDetailBody"), cardDetailBoundary: $("#cardDetailBoundary"), cardDetailReturnPost: $("#cardDetailReturnPost"),
+  postCommentCount: $("#postCommentCount"), postCommentsEmptyCopy: $("#postCommentsEmptyCopy"), postedComments: $("#postedComments"), commentComposer: $("#commentComposer"), commentComposerLabel: $("#commentComposerLabel"), commentCardChoices: $("#commentCardChoices"), commentDraftCardType: $("#commentDraftCardType"), commentDraftSource: $("#commentDraftSource"), commentDraftCard: $("#commentDraftCard"), commentComposerInput: $("#commentComposerInput"), commentComposerHint: $("#commentComposerHint"), sendCommentButton: $("#sendCommentButton"),
   responsePanel: $("#responsePanel"), decisionEyebrow: $("#decisionEyebrow"), decisionTitle: $("#decisionTitle"), decisionPrompt: $("#decisionPrompt"), aiSummary: $("#aiSummary"), decisionOptions: $("#decisionOptions"),
   draftWorkshop: $("#draftWorkshop"), draftWorkshopStatus: $("#draftWorkshopStatus"), draftWorkshopTitle: $("#draftWorkshopTitle"), draftThread: $("#draftThread"), draftOptions: $("#draftOptions"), replyComposer: $("#replyComposer"), replyComposerInput: $("#replyComposerInput"), draftPreview: $("#draftPreview"), draftPreviewText: $("#draftPreviewText"), sendDraftAction: $("#sendDraftAction"),
   followupNotification: $("#followupNotification"), notificationPixel: $("#notificationPixel"), notificationTitle: $("#notificationTitle"), notificationDetail: $("#notificationDetail"),
@@ -1110,9 +1110,10 @@ function openCommentGate() {
       return;
     }
     if (state.materialsSubmitted) {
-      focusWindow("roomWindow");
-      setAiText("四张卡已经呈现在整理桌上了。先点一张看正文，再把它带回评论区。" );
-      showToast("先在整理桌选择一张卡");
+      renderCommentComposer();
+      elements.commentComposer?.scrollIntoView({ behavior: "smooth", block: "center" });
+      setAiText("回到帖子了。评论区会把四张卡摆出来，你自己选一张再写评论。" );
+      showToast("从四张卡里选择一张");
       return;
     }
     setAiText("伙伴还没有把两份素材整理好。先把看过的素材递给他。" );
@@ -1162,7 +1163,7 @@ function updateOnboardingGuide() {
   } else if (!state.materialsSubmitted) {
     guide = { step: "第一次共读 · 2 / 3", title: "两份素材已经放到整理桌", text: "现在还拿不到卡牌。点击“递给伙伴并提交”，伙伴处理完成后才会生成四张卡。", action: "synthesize", label: "递给伙伴并提交" };
   } else {
-    guide = { step: "第一次共读 · 2 / 3", title: "四张卡已经摆在整理桌上", text: "左右两份素材各拆成两张卡。点一张查看正文，再把它带回知乎评论区。", action: "synthesize", label: "选择一张卡" };
+    guide = { step: "第一次共读 · 2 / 3", title: "四张卡已经摆在整理桌上", text: "左右两份素材各拆成两张卡。先点卡看正文，再点返回知乎帖子，评论区里再选卡。", action: "synthesize", label: "查看卡牌" };
   }
 
   elements.onboardingStep.textContent = guide.step;
@@ -2033,9 +2034,9 @@ function openCardDetail(materialId, fragmentKind = "quote", origin = "table") {
   elements.cardDetailMeta.textContent = detail.meta;
   elements.cardDetailBody.textContent = detail.body;
   elements.cardDetailBoundary.textContent = detail.boundary;
-  const canSend = !state.locked && origin === "table";
-  elements.sendCardToComment.disabled = !canSend;
-  elements.sendCardToComment.textContent = state.locked ? "本章已提交" : canSend ? "把这张卡带到评论区 →" : "请先提交素材";
+  const canReturn = !state.locked && origin === "table";
+  elements.cardDetailReturnPost.disabled = !canReturn;
+  elements.cardDetailReturnPost.textContent = state.locked ? "本章已提交" : canReturn ? "返回知乎帖子 →" : "请先提交素材";
   elements.cardDetailModal.hidden = false;
   setCompanionEmotion("inspect", 1300);
 }
@@ -2060,45 +2061,93 @@ function renderPostComments() {
   elements.postCommentButton.innerHTML = `● 评论 <strong>${comments.length}</strong>`;
 }
 
+function renderCommentCardChoices() {
+  if (!elements.commentCardChoices) return;
+  const choices = state.selected.flatMap((materialId) => ["quote", "source"].map((fragmentKind) => ({ materialId, fragmentKind })))
+    .filter(({ materialId, fragmentKind }) => !state.usedCards.includes(getCardKey({ materialId, fragmentKind })))
+    .map(({ materialId, fragmentKind }) => getCardDetail(materialId, fragmentKind))
+    .filter(Boolean);
+  elements.commentCardChoices.innerHTML = choices.length
+    ? choices.map((detail) => `<button class="comment-card-choice ${getCardTypeClass(detail.type)}" data-comment-material-id="${detail.materialId}" data-comment-fragment-kind="${detail.fragmentKind}" type="button" aria-label="选择${detail.type}：${detail.title}">${getCardFaceMarkup(detail, { compact: true })}<span class="comment-card-choice-label">选择这张卡</span></button>`).join("")
+    : `<p class="comment-card-choices-empty">四张卡都已经用过了。</p>`;
+  $$("[data-comment-material-id]", elements.commentCardChoices).forEach((button) => button.addEventListener("click", () => selectCommentCard(button.dataset.commentMaterialId, button.dataset.commentFragmentKind)));
+}
+
+function selectCommentCard(materialId, fragmentKind) {
+  if (!state.materialsSubmitted || state.locked) return;
+  const cardKey = getCardKey({ materialId, fragmentKind });
+  if (state.usedCards.includes(cardKey)) {
+    showToast("这张卡已经发到评论区了");
+    return;
+  }
+  const detail = getCardDetail(materialId, fragmentKind);
+  if (!detail) return;
+  markPlayerInteraction();
+  state.commentDraft = detail;
+  renderCommentComposer();
+  elements.commentComposerInput?.focus();
+  setAiText(`你选了${detail.type}。先确认正文，再决定要不要发到评论区。`);
+  showToast(`已选择${detail.type}`);
+}
+
 function renderCommentComposer() {
   const draft = state.commentDraft;
-  elements.commentComposer.hidden = !draft;
+  const choosingCard = !draft && state.materialsSubmitted && !state.locked;
+  elements.commentComposer.hidden = !(draft || choosingCard);
+  if (choosingCard) {
+    elements.commentComposerLabel.textContent = "评论卡牌 / 选择一张";
+    elements.commentDraftCardType.textContent = `${state.selected.length * 2} 张可选`;
+    elements.commentCardChoices.hidden = false;
+    elements.commentDraftSource.textContent = "先在这里选卡，选中后才会出现评论正文。";
+    elements.commentDraftCard.hidden = true;
+    elements.commentDraftCard.innerHTML = "";
+    elements.commentComposerInput.hidden = true;
+    elements.commentComposerInput.value = "";
+    elements.commentComposerInput.disabled = true;
+    elements.commentComposerHint.textContent = "四张卡只在你点开评论后出现，不会自动跳转。";
+    elements.sendCommentButton.hidden = true;
+    renderCommentCardChoices();
+    return;
+  }
   if (!draft) {
+    elements.commentCardChoices.hidden = true;
     elements.commentComposerInput.value = "";
     elements.commentDraftCard.hidden = true;
     elements.commentDraftCard.innerHTML = "";
+    elements.commentComposerInput.hidden = false;
+    elements.commentComposerInput.disabled = false;
+    elements.sendCommentButton.hidden = false;
     return;
   }
+  elements.commentComposerLabel.textContent = "素材卡正文 / 评论草稿";
   elements.commentDraftCardType.textContent = draft.type;
   elements.commentDraftSource.textContent = `来自：${draft.title}`;
+  elements.commentCardChoices.hidden = true;
   elements.commentDraftCard.className = `comment-card-preview ${getCardTypeClass(draft.type)}`;
   elements.commentDraftCard.innerHTML = getCardFaceMarkup(draft, { compact: true });
   elements.commentDraftCard.hidden = false;
+  elements.commentComposerInput.hidden = false;
   elements.commentComposerInput.value = draft.commentText;
   elements.commentComposerInput.disabled = state.locked;
+  elements.commentComposerHint.textContent = "正文已经带入评论框，你可以修改后再发出。";
+  elements.sendCommentButton.hidden = false;
   elements.sendCommentButton.disabled = state.locked;
 }
 
-function sendActiveCardToComment() {
-  if (!state.currentCard || state.locked) return;
-  if (state.currentCardOrigin !== "table" || !state.materialsSubmitted) {
-    closeCardDetail();
-    showToast("请从整理桌选择已经生成的卡牌");
-    return;
-  }
-  const detail = getCardDetail(state.currentCard.materialId, state.currentCard.fragmentKind);
-  if (!detail) return;
-  state.commentDraft = detail;
+function returnToPostFromCard() {
+  if (state.locked) return;
   closeCardDetail();
   elements.questionPanel.hidden = false;
   document.body.classList.add("post-detail");
   elements.addressBar.innerHTML = '<span class="lock-dot"></span> zhihu.local/question/first-hospital-visit';
-  renderCommentComposer();
-  renderTray();
+  if (!state.commentDraft) {
+    elements.commentComposer.hidden = true;
+    elements.commentCardChoices.hidden = true;
+  }
   focusWindow("browserWindow");
-  elements.commentComposer.scrollIntoView({ behavior: "smooth", block: "center" });
-  setAiText(`这张${detail.type}的正文已经放进评论区草稿了。你看一眼，确认后就能发出去。`);
-  showToast("正文已放入评论区草稿");
+  elements.questionPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+  setAiText("回到帖子了。想发卡的话，请自己点评论，再从四张卡里选一张。" );
+  showToast("已回到知乎帖子，点击评论选择卡牌");
 }
 
 function sendCommentToPost() {
@@ -2189,7 +2238,7 @@ function submitMaterialsToCompanion() {
   window.setTimeout(() => elements.roomReadingSeat.classList.remove("is-companion-checking"), 760);
   setCompanionEmotion("receive", 1800);
   renderTray();
-  setAiText("我已经把两份素材各拆成两张卡牌，左右都摆在整理桌上了。点一张看正文，再带回知乎评论区。" );
+  setAiText("我已经把两份素材各拆成两张卡牌，左右都摆在整理桌上了。先点卡看正文，再点返回知乎帖子；评论区里你自己选卡。" );
   showToast("伙伴已提交素材，四张卡牌已摆上整理桌");
 }
 
@@ -4185,7 +4234,7 @@ function bindEvents() {
   elements.synthesizeButton.addEventListener("click", handleTrayAction);
   elements.replyComposerInput.addEventListener("input", handleReplyComposerInput);
   elements.sendDraftAction.addEventListener("click", sendResponseDraft);
-  elements.sendCardToComment.addEventListener("click", sendActiveCardToComment);
+  elements.cardDetailReturnPost.addEventListener("click", returnToPostFromCard);
   elements.sendCommentButton.addEventListener("click", sendCommentToPost);
   elements.modalSendAction.addEventListener("click", () => { if (state.currentMaterial) selectMaterial(state.currentMaterial); });
   $("#closeModal").addEventListener("click", closeMaterialModal);

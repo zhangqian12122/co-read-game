@@ -135,7 +135,10 @@ const requiredV1Html = [
   "finalConversation",
   "finalChoiceList",
   "cardDetailModal",
-  "sendCardToComment",
+  "cardDetailReturnPost",
+  "commentCardChoices",
+  "commentComposerLabel",
+  "commentComposerHint",
   "trayNote",
   "commentComposer",
   "commentDraftCard",
@@ -182,7 +185,8 @@ const requiredV1Flow = [
   "renderRoomMaterialStack",
   "openCardDetail",
   "submitMaterialsToCompanion",
-  "sendActiveCardToComment",
+  "selectCommentCard",
+  "returnToPostFromCard",
   "sendCommentToPost",
   "renderPostComments",
   "stageChapterOneFacilities",
@@ -251,7 +255,7 @@ if (!["route-verifier", "route-listener", "route-initiator"].every((token) => v1
 if (!v1Html.includes("./v1.css?v=20260914-zip-assets") || !v1Html.includes("./app-v1.js?v=20260914-zip-assets")) {
   throw new Error("v1 视觉资源版本号未更新");
 }
-if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || !v1Html.includes('id="gameResourceHud"') || !v1Html.includes('id="thinkingResource"') || !v1Html.includes('ui-patience-6.png') || !v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("state.selected.length * 2") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("function renderTray") || !v1Js.includes("function sendActiveCardToComment") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
+if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || !v1Html.includes('id="gameResourceHud"') || !v1Html.includes('id="thinkingResource"') || !v1Html.includes('ui-patience-6.png') || !v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Html.includes('id="commentCardChoices"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("state.selected.length * 2") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("function renderTray") || !v1Js.includes("function selectCommentCard") || !v1Js.includes("function returnToPostFromCard") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
   throw new Error("v2 求助帖首点、AI 解锁六条回答或知乎信息流排版缺失");
 }
 if (!v1Js.includes("const finalConversationChoices") || !["together", "ask", "reread"].every((choice) => v1Js.includes(`${choice}: {`)) || !v1Js.includes('state.step = "ending-conversation"') || !v1Js.includes('state.step = "ending"') || !v1Js.includes('notificationMode === "ending"')) {
