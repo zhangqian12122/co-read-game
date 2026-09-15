@@ -70,8 +70,6 @@ async function sendDraft(page) {
   await page.locator("#permissionAllow:not([hidden])").waitFor();
   assert.match(await page.locator("#growthList").innerText(), /三步/);
   await page.locator("#permissionAllow").click();
-  await page.locator("#skipCompanionName:not([hidden])").waitFor();
-  await page.locator("#skipCompanionName").evaluate((button) => button.click());
   await page.locator("#followupNotification:not([hidden])").waitFor();
   await page.locator("#followupNotification").click();
   assert.match(await page.locator("#questionTitle").innerText(), /裸辞转行/);
@@ -104,7 +102,7 @@ async function sendDraft(page) {
   await reachDraft(page, { official: "uncertain", context: "official" });
   await sendDraft(page);
   assert.equal(await page.locator('[data-hospital-reply-id="confirm"]').count(), 0);
-  assert.match(await page.locator("#followupTitle").innerText(), /悠一问|悠一/);
+  assert.match(await page.locator("#followupTitle").innerText(), /林一舟问|林一舟/);
   await page.locator("#followupContinue").click();
   await page.locator('[data-accountability-id="admit"]').waitFor();
 

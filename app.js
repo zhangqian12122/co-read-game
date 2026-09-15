@@ -62,7 +62,7 @@ const materials = [
     date: "今天 18:42",
     title: "“我在外地上学，不确定学校医保要不要先办理手续”",
     excerpt: "藏在评论区的补充，让问题从通用流程变成了需要确认地区条件的具体处境。",
-    author: "提问者 · 悠一",
+    author: "提问者 · 林一舟",
     source: "当事人补充",
     engagement: "评论第 17 楼 · 3 人赞同",
     correctTag: "context",
@@ -561,7 +561,7 @@ function chooseDecision(decisionId) {
   Object.entries(decision.tendencies).forEach(([key, value]) => { state.tendencies[key] += value; });
   elements.decisionModal.hidden = true;
   elements.synthesizeButton.disabled = true;
-  elements.synthesizeButton.textContent = "已经一起回复悠一";
+  elements.synthesizeButton.textContent = "已经一起回复林一舟";
   updateProgress(2);
   updateRoomAfterDecision(decisionId);
   window.setTimeout(() => {
@@ -596,7 +596,7 @@ function buildGrowthList() {
   const dominant = Object.entries(state.tendencies).sort((a, b) => b[1] - a[1])[0][0];
   const labels = {
     truth: "它在材料旁抄下了作者和日期",
-    empathy: "它把悠一说“有点紧张”的那句话留了下来",
+    empathy: "它把林一舟说“有点紧张”的那句话留了下来",
     expression: "它先画出一张可以照着做的清单",
     caution: "它在还没弄清的地方画了一个问号"
   };
@@ -636,14 +636,14 @@ function getFollowupOutcome() {
   if (state.decision === "clarify") {
     return {
       text: "你们先问了学校和医院，我才发现不同地方的手续真的不一样。今天已经顺利去过了。谢谢你没有笑我紧张，也没有直接拿别人的流程套在我身上。",
-      memory: "悠一后来告诉我们，先问学校和医院让他少走了弯路。",
+      memory: "林一舟后来告诉我们，先问学校和医院让他少走了弯路。",
       tone: "care"
     };
   }
   if (hasOfficial) {
     return {
       text: "我照着清单准备，又去医院官方页面核对了一次，今天已经顺利看完了。最有用的是你们把“确定的”和“需要再问的”分开写，我到现场没有那么慌。",
-      memory: "悠一把“确定的”和“还要问的”分开记在了手机里。",
+      memory: "林一舟把“确定的”和“还要问的”分开记在了手机里。",
       tone: "truth"
     };
   }
@@ -670,7 +670,7 @@ function openFollowup() {
   state.selected.forEach((materialId) => elements.roomScene.classList.add(`memory-${materialId.toLowerCase()}`));
   elements.shelfBook.classList.add("is-visible");
   focusWindow("memoryWindow");
-  elements.principleCard.innerHTML = `<span>8月30日 / 悠一的回访</span><p>${outcome.memory}</p>`;
+  elements.principleCard.innerHTML = `<span>8月30日 / 林一舟的回访</span><p>${outcome.memory}</p>`;
   elements.growthList.innerHTML = `<li><span class="growth-dot"></span> 墙上多了一张来自医院的票据</li><li><span class="growth-dot"></span> 书架里留着今天读过的两份材料</li>`;
   updateProgress(3);
   setAiText("原来回复发出去以后，材料也不会失去意义。下次碰到流程回答，我想先看看日期……可以吗？");
@@ -705,7 +705,7 @@ function choosePermission(permission) {
     elements.followupModal.hidden = true;
     minimizeWindow(elements.memoryWindow);
     focusWindow("roomWindow");
-    showToast("悠一的回访已经读完。书架旁亮起了一盏小灯。");
+    showToast("林一舟的回访已经读完。书架旁亮起了一盏小灯。");
   }, 520);
 }
 
@@ -721,7 +721,7 @@ function startGame() {
   state.started = true;
   elements.bootOverlay.hidden = true;
   elements.aiCharacter.classList.add("is-awake");
-  showToast("共读会话已恢复：先看看悠一的问题，再决定把什么递给伙伴。");
+  showToast("共读会话已恢复：先看看林一舟的问题，再决定把什么递给小助手。");
   window.setTimeout(() => setAiText("这个问题下面有很多经验，但我不知道哪些今天仍然有效。你愿意教我先看什么吗？"), 380);
 }
 

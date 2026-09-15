@@ -67,7 +67,7 @@ if (html.match(/https?:\/\//)) {
 if (!css.includes(".room-scene.has-memory") || !js.includes('classList.add("has-memory")')) {
   throw new Error("房间设施成长状态未完整接线");
 }
-if (!html.includes("共读伙伴 00") || !html.includes("提问者 · 悠一") || /交给AI|这名学生|形成记忆|行动边界/.test(html + js)) {
+if (!html.includes("小助手") || !html.includes("提问者 · 林一舟") || /交给AI|这名学生|形成记忆|行动边界/.test(html + js)) {
   throw new Error("角色身份仍含糊，或开发机制文案仍暴露给玩家");
 }
 if (!css.includes(".room-scene.boundary-allow") || !css.includes(".room-scene.boundary-ask") || !js.includes("memory-${materialId.toLowerCase()}")) {
@@ -89,6 +89,16 @@ const assetStats = await Promise.all(requiredAssets.map(async (file) => {
 }));
 if (assetStats.some((asset) => asset.size < 1024)) {
   throw new Error("美术资产文件异常为空");
+}
+const patienceAssetFiles = [1, 2, 3, 4, 5, 6, 7, 8, 16].map((value) => `ui-patience-${value}.png`);
+const patienceAssets = await Promise.all(patienceAssetFiles.map((file) => stat(path.join(root, "assets", file))));
+if (patienceAssets.some((asset) => asset.size < 1024) || !patienceAssetFiles.every((file) => v1Js.includes(`ui-patience-${file.match(/\d+/)[0]}.png`))) {
+  throw new Error("耐心值 1–8、16 的透明图标资源未完整接入");
+}
+const thinkingAssetFiles = [0, 1, 2, 3, 4].map((value) => `ui-thinking-${value}.png`);
+const thinkingAssets = await Promise.all(thinkingAssetFiles.map((file) => stat(path.join(root, "assets", file))));
+if (thinkingAssets.some((asset) => asset.size < 1024) || !thinkingAssetFiles.every((file) => v1Js.includes(file))) {
+  throw new Error("思考值 0–4 的透明图标资源未完整接入");
 }
 const readingPoseAsset = await stat(path.join(root, "assets", "ai-character-read-sequence-v2.png"));
 if (readingPoseAsset.size < 1024) {
@@ -112,6 +122,19 @@ const requiredV1Html = [
   "onboardingGuide",
   "onboardingAction",
   "onboardingDismiss",
+  "tutorialOpenButton",
+  "tutorialOverlay",
+  "tutorialProgress",
+  "tutorialNumber",
+  "tutorialStepLabel",
+  "tutorialTitle",
+  "tutorialText",
+  "tutorialDemo",
+  "tutorialFootnote",
+  "tutorialBack",
+  "tutorialSkip",
+  "tutorialNext",
+  "tutorialClose",
   "notificationTitle",
   "responsePanel",
   "followupPanel",
@@ -142,15 +165,21 @@ const requiredV1Html = [
   "commentComposer",
   "commentDraftCard",
   "sendCommentButton",
+  "codexPanel",
+  "codexGrid",
   "endingOverlay",
   "endingTitle",
   "endingArchive",
+  "endingNext",
   "endingRestart"
 ];
 const requiredV1Flow = [
   "markPlayerInteraction",
   "updateOnboardingGuide",
   "handleOnboardingAction",
+  "renderTutorialStep",
+  "openTutorial",
+  "closeTutorial",
   "freezeChapterSnapshot",
   "deriveMisjudgmentHistory",
   "getAvailableDecisions",
@@ -183,6 +212,10 @@ const requiredV1Flow = [
   "animateMaterialTransit",
   "renderRoomMaterialStack",
   "openCardDetail",
+  "openCodex",
+  "renderCodex",
+  "completeHospitalProgressThree",
+  "showHospitalEnding",
   "submitMaterialsToCompanion",
   "selectCommentCard",
   "parseDraggedCard",
@@ -251,17 +284,29 @@ if (!v1Js.includes('state.permission === "allow"') || !v1Js.includes("showChapte
 if (!["route-verifier", "route-listener", "route-initiator"].every((token) => v1Js.includes(token) && v1Css.includes(`.${token}`))) {
   throw new Error("v1 三条路线缺少房间或札记回声接线");
 }
-if (!v1Html.includes("./v1.css?v=20260914-material-consume") || !v1Html.includes("./app-v1.js?v=20260914-material-consume-v1")) {
+if (!v1Html.includes("./v1.css?v=20260915-thinking-icons-v1") || !v1Html.includes("./app-v1.js?v=20260915-dialogue-progress-v1")) {
   throw new Error("v1 视觉资源版本号未更新");
 }
-if (!v1Html.includes('id="partnerInboxNav"') || !v1Html.includes('data-zhihu-nav="partner"') || !v1Html.includes('data-zhihu-nav="chat"') || !v1Html.includes('data-zhihu-nav="profile"') || !v1Html.includes('data-zhihu-nav="codex"') || v1Html.includes('home-feed-heading') || !v1Html.includes('<div class="home-feed-list">') || !v1Html.includes(">私聊</button>") || !v1Html.includes(">个人中心</button>") || !v1Html.includes(">图鉴</button>") || !v1Js.includes("function openPartnerInbox") || !v1Js.includes("function setZhihuNav") || !v1Js.includes("data-zhihu-nav")) {
+if (!v1Html.includes('id="partnerInboxNav"') || !v1Html.includes('data-zhihu-nav="partner"') || !v1Html.includes('data-zhihu-nav="materials"') || v1Html.includes('data-zhihu-nav="chat"') || v1Html.includes('data-zhihu-nav="profile"') || !v1Html.includes('data-zhihu-nav="codex"') || v1Html.includes('home-feed-heading') || !v1Html.includes('<div class="home-feed-list">') || v1Html.includes(">私聊</button>") || v1Html.includes(">个人中心</button>") || !v1Html.includes(">图鉴</button>") || !v1Js.includes("function openPartnerInbox") || !v1Js.includes("function setZhihuNav") || !v1Js.includes("data-zhihu-nav")) {
   throw new Error("伙伴递交页没有接上首次看到的求助帖入口");
 }
-if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || !v1Html.includes('id="gameResourceHud"') || !v1Html.includes('id="thinkingResource"') || !v1Html.includes('ui-patience-6.png') || !v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Html.includes('id="commentCardChoices"') || !v1Html.includes('id="commentDropZone"') || !v1Html.includes('maxlength="220"') || !v1Html.includes('aria-label="素材卡正文"') || !v1Html.includes('readonly placeholder="理性发言，友善互动"') || !v1Html.includes('comment-editor-toolbar') || !v1Js.includes('placeholder = "理性发言，友善互动"') || v1Html.includes('id="cardDetailReturnPost"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("function getAvailableCardDetails") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("function renderTray") || !v1Js.includes("function selectCommentCard") || !v1Js.includes("function parseDraggedCard") || !v1Js.includes('application/x-co-read-card') || !v1Js.includes('dataTransfer.dropEffect = "copy"') || !v1Js.includes('if (!state.commentDraft)') || !v1Js.includes('type: draft?.type || "普通评论"') || !v1Js.includes("posted-comment-actions") || v1Js.includes("function returnToPostFromCard") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".comment-card-drop-zone") || !v1Css.includes(".comment-editor-toolbar") || !v1Css.includes(".posted-comment-actions") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
+if (!v1Html.includes('id="homeFeed"') || !v1Html.includes('id="firstHelpPost"') || v1Html.includes('id="gameResourceHud"') || v1Html.includes('id="thinkingResource"') || !v1Html.includes('class="patience-icon"') || v1Html.includes('class="resource-icon cooldown-icon"') || v1Html.includes('class="resource-icon thinking-icon"') || v1Html.includes('class="thinking-icon-art"') || v1Html.includes('ui-thinking-0.png') || v1Html.includes('id="questionCooldownValue">0') || v1Html.includes('ui-question-cooldown-0.png') || !v1Html.includes('avatar-sprite') || !v1Html.includes('avatar-lotus-elder') || !v1Html.includes('id="feedCount"') || !v1Html.includes('id="questionPanel"') || !v1Html.includes('id="postCommentButton"') || !v1Html.includes('id="postLikeButton"') || !v1Html.includes('id="trayCardCount"') || !v1Html.includes('id="cardDetailModal"') || !v1Html.includes('id="commentComposer"') || !v1Html.includes('id="commentDraftCard"') || !v1Html.includes('id="commentCardChoices"') || !v1Html.includes('id="commentDropZone"') || !v1Html.includes('maxlength="220"') || !v1Html.includes('aria-label="发给提问者的话"') || !v1Html.includes('readonly placeholder="确认后发给提问者"') || !v1Html.includes('comment-editor-toolbar') || !v1Js.includes('placeholder = "确认后发给提问者"') || v1Html.includes('id="cardDetailReturnPost"') || !v1Js.includes("helpPostOpened") || !v1Js.includes("function openHelpPost") || !v1Js.includes("function openCommentGate") || !v1Js.includes("function unlockResearchFeed") || !v1Js.includes("function renderResourceHud") || !v1Js.includes("function settlePatience") || !v1Js.includes("function showAskerReply") || !v1Js.includes("function handleMaterialAction") || !v1Js.includes("material-fragment-card") || !v1Js.includes("function getAvailableCardDetails") || !v1Js.includes('actionText = "展开检查"') || !v1Js.includes('id: "softAd"') || !v1Js.includes("function getCardDetail") || !v1Js.includes("materialCardProfiles") || !v1Js.includes("materialReplyCards") || !v1Js.includes('type: isSourceCard ? "来源卡" : profile.type') || !v1Js.includes("faceText") || !v1Js.includes("function renderTray") || !v1Js.includes("function selectCommentCard") || !v1Js.includes("function parseDraggedCard") || !v1Js.includes('application/x-co-read-card') || !v1Js.includes('dataTransfer.dropEffect = "copy"') || !v1Js.includes('if (!state.commentDraft)') || !v1Js.includes('type: draft?.type || "普通评论"') || !v1Js.includes("posted-comment-actions") || v1Js.includes("function returnToPostFromCard") || !v1Js.includes("function sendCommentToPost") || !v1Css.includes('avatar-sprite-v1.png') || !v1Css.includes('avatar-lotus-elder-v1.png') || !v1Css.includes(".zhihu-feed-card") || !v1Css.includes(".intake-stage") || !css.includes(".material-fragments") || !v1Css.includes(".card-detail-modal") || !v1Css.includes(".comment-composer") || !v1Css.includes(".comment-card-drop-zone") || !v1Css.includes(".comment-editor-toolbar") || !v1Css.includes(".posted-comment-actions") || !v1Css.includes(".reply-composer") || !v1Css.includes(".collectible-card") || !v1Css.includes("zhihu-first-post-pulse")) {
   throw new Error("v2 求助帖首点、AI 解锁六条回答或知乎信息流排版缺失");
 }
-if (v1Js.includes("游戏虚构") || !v1Js.includes('elements.modalCaution.hidden = material.id === "official"')) {
-  throw new Error("素材详情仍显示游戏虚构或医院提示语未隐藏");
+if (!v1Html.includes('id="postAuthorState"') || !v1Html.includes('id="postAuthorMood"') || !v1Html.includes('aria-label="楼主状态：焦急；耐心值 7"') || !v1Html.includes('class="patience-icon-art"') || !v1Html.includes('ui-patience-7.png') || v1Html.includes('id="postAuthorPatience"') || v1Html.includes('id="patienceValue"') || !v1Js.includes("askerMood") || !v1Js.includes("renderPostAuthorState") || !v1Js.includes("patienceDelta") || !v1Js.includes("misleading: -2") || !v1Js.includes("maxPatience = 7") || !v1Js.includes("function updateCompanionStatusPlacement") || !v1Js.includes("patienceIconAssets") || !v1Js.includes("patience-icon-art") || v1Css.includes(".ai-character > .game-resource-hud") || v1Css.includes(".ai-character.status-flip-left > .game-resource-hud") || !v1Css.includes("--patience-heart") || !v1Css.includes("background: transparent") || v1Html.includes('id="askerNote"') || v1Js.includes("elements.askerNote") || v1Css.includes(".asker-note") || v1Css.includes(".ai-dialogue > .game-resource-hud { display: none !important; }") || v1Html.includes('<small>耐心</small>') || v1Html.includes('耐心 7 · 回合')) {
+  throw new Error("帖子作者状态、7 点耐心图标或房间资源 HUD 没有按图标形式呈现");
+}
+if (v1Html.includes('class="co-read-indicator"') || v1Html.includes("共读中</span>") || v1Html.includes('id="trayCount">') || v1Html.includes('id="trayCardCount">')) {
+  throw new Error("顶部共读状态或整理桌数量提示仍显示");
+}
+if (v1Js.includes('selected-item-header"><span class="source-kind')) {
+  throw new Error("整理桌素材标题旁仍显示来源标签");
+}
+if (v1Js.includes("游戏虚构") || !v1Js.includes("function renderMaterialClip") || !v1Js.includes("getMaterialArticleParagraphs") || !v1Js.includes('elements.modalCaution.hidden = true') || !v1Js.includes("知乎文章素材") || !v1Js.includes("阅读后自己判断") || !v1Js.includes("阅读全文") || ["data-clip-prev", "data-clip-play", "data-clip-next", "上一镜", "下一镜", "播放短片"].some((token) => v1Js.includes(token))) {
+  throw new Error("素材弹窗没有改成知乎文章阅读形式");
+}
+if (!["对策卡", "流程卡", "共情卡", "追问卡", "来源卡", "参照卡", "方法卡", "风险卡", "处境卡", "faceText", "commentText"].every((token) => v1Js.includes(token))) {
+  throw new Error("整理桌没有区分卡牌类型、卡面摘要和完整评论正文");
 }
 if (!v1Js.includes('state.materialsSubmitted ? "素材提取完成" : "等待提交"')) {
   throw new Error("整理桌仍显示旧的卡牌呈现文案");
@@ -276,14 +321,34 @@ if (!v1Js.includes("function consumeCollectedMaterialsAfterReply") || !v1Js.incl
   throw new Error("素材卡发送后的消耗与整次回复后的清空没有接入");
 }
 const postCommentRenderBlock = v1Js.slice(v1Js.indexOf("function renderPostComments"), v1Js.indexOf("function renderCommentCardChoices"));
-if (postCommentRenderBlock.includes("getCardFaceMarkup") || !v1Js.includes("function getPostAuthorReply") || !v1Js.includes("isAuthorReply") || !v1Js.includes("对方已经回了你的评论")) {
+if (postCommentRenderBlock.includes("getCardFaceMarkup") || !v1Js.includes("function getPostAuthorReply") || !v1Js.includes("isAuthorReply") || !v1Js.includes("对方已经回了你的评论") || !v1Js.includes("function appendPlayerDialogue") || !v1Js.includes("appendPlayerDialogue(option.prompt)") || !v1Js.includes("共读答主接话") || !v1Js.includes("你先别急着把所有流程都记住") || !v1Js.includes("你先别急着把转行变成一份完整计划")) {
   throw new Error("评论区仍展示素材卡面，或发送后没有接入提问者回复");
 }
 if (!v1Html.includes('id="dialogueTurnPanel"') || !v1Html.includes('id="dialogueActionList"') || !v1Html.includes('id="dialogueTurnStatus"') || !v1Js.includes("function renderDialogueTurn") || !v1Js.includes("function chooseDialogueAction") || !v1Js.includes("function chooseDialogueQuestion") || !v1Js.includes("dialogueAwaitingAction") || !v1Js.includes("askCharges") || !v1Js.includes("稍等，我查一下") || !v1Css.includes(".dialogue-turn-panel") || !v1Css.includes(".dialogue-action")) {
   throw new Error("评论区回复后的回合操作面板没有接入完整");
 }
-if (!v1Css.includes("flex-direction: column") || !v1Css.includes(".posted-comment.is-author-reply::before") || !v1Css.includes("margin: -1px 0 0 44px")) {
+if (!v1Css.includes("flex-direction: column") || !v1Css.includes(".posted-comment.is-author-reply::before") || !v1Css.includes("margin: -1px 0 0 44px") || !v1Css.includes(".posted-comment-status") || !v1Css.includes(".comment-patience-icon") || !v1Css.includes(".comment-thinking-icon") || !v1Css.includes(".thinking-icon.is-image") || !v1Css.includes(".thinking-resource .resource-readout strong")) {
   throw new Error("评论区没有按上下楼层显示对方追评");
+}
+if (![
+  "function getCommentStatusMarkup",
+  "function getCommentThinkingSnapshot",
+  "function getCommentPatienceSnapshot",
+  "function getCommentProgressSnapshot",
+  "function getCommentThinkingIconMarkup",
+  "thinkingRemaining: getCommentThinkingSnapshot()",
+  "dialogueProgress: getDialogueProgressSnapshot()",
+  "patience: getCommentPatienceSnapshot()",
+  ".patience-icon:not(.comment-patience-icon)",
+  ".thinking-icon:not(.comment-thinking-icon)",
+  "thinkingIconAssets",
+  "thinking-icon-art"
+].every((token) => v1Js.includes(token))) {
+  throw new Error("评论流没有记录双方发言当刻的状态快照");
+}
+const sendCommentBlock = v1Js.slice(v1Js.indexOf("function sendCommentToPost"), v1Js.indexOf("function selectMaterial"));
+if (sendCommentBlock.indexOf('settlePatience({ grade: "neutral" })') > sendCommentBlock.indexOf("appendDialogueReply(getPostAuthorReply(draft))")) {
+  throw new Error("发出素材回复后，楼主评论没有拿到更新后的耐心值");
 }
 const trayActionBlock = v1Js.slice(v1Js.indexOf("function handleTrayAction"), v1Js.indexOf("function deriveMisjudgmentHistory"));
 if (!trayActionBlock.includes("openCommentGate()") || trayActionBlock.includes("openDecision()") || !v1Js.includes("回到评论区，看对方回复")) {
@@ -301,13 +366,13 @@ if (!v1Js.includes('recordMemory({ id: "ending"') || !v1Css.includes(".ending-ov
 if (!v1Html.includes('id="roomComputerMessage"') || !v1Js.includes("receiveFirstQuestion()") || !v1Js.includes("openFirstQuestionFromComputer()") || !v1Js.includes("state.browserUnlocked") || !v1Css.includes(".room-computer.has-new-message")) {
   throw new Error("v1 开场没有经过房间收信、电脑未读提示与玩家主动打开提问");
 }
-if (!v1Html.includes('id="companionNaming"') || !v1Html.includes('id="aiSpeaker"') || v1Html.includes("尚未命名") || !v1Js.includes('state.step = "chapter-naming"') || !v1Js.includes("updateCompanionIdentity()")) {
-  throw new Error("v1 伙伴命名没有在第一章行为形成后接入后续身份");
+if (v1Html.includes('id="companionNaming"') || !v1Html.includes('id="aiSpeaker"') || v1Html.includes("尚未命名") || v1Js.includes('state.step = "chapter-naming"') || v1Js.includes("resolveCompanionName") || !v1Js.includes('return "小助手"') || !v1Js.includes("updateCompanionIdentity()")) {
+  throw new Error("v1 AI 角色没有按文档固定统称为小助手");
 }
 if (!v1Css.includes(".ai-dialogue.is-resting") || !v1Css.includes("bottom: 8%") || !v1Css.includes("left: 50%") || !v1Css.includes("translateX(-50%)") || !v1Js.includes("letDialogueRest")) {
   throw new Error("v1 房间对话仍未改为可收起的底部对话栏");
 }
-if (!v1Html.includes("伙伴的整理桌") || !v1Html.includes("两份素材并排放好，提交后才会显示四张卡牌") || v1Html.includes("把一份检查过的材料拖进房间") || v1Html.includes("playerBackpack") || v1Html.includes("backpackModal") || !v1Js.includes("companionEnvironmentThoughts") || !v1Js.includes("maybeSpeakEnvironmentThought(interactionId)")) {
+if (!v1Html.includes("伙伴的整理桌") || !v1Html.includes("两份素材并排放好，提交后才会显示四张回复卡") || v1Html.includes("把一份检查过的材料拖进房间") || v1Html.includes("playerBackpack") || v1Html.includes("backpackModal") || !v1Js.includes("companionEnvironmentThoughts") || !v1Js.includes("maybeSpeakEnvironmentThought(interactionId)")) {
   throw new Error("v1 整理桌左右并排与直接呈现卡牌的流程缺失，或伙伴缺少环境自主观察");
 }
 const rewrittenDecisionPaths = [
@@ -320,7 +385,7 @@ const rewrittenDecisionPaths = [
   "先算算他的存款具体能撑到什么时候", "先别用那个人的失败劝他留下", "先选一种没那么冒险的试法"
 ];
 const removedDecisionJargon = ["先核对市场和缓冲", "给离职设一道门槛", "先拿到触感", "把准备搬到离职以前", "对照成功者的前置条件"];
-if (!v1Js.includes("看完这些材料，你们准备先替悠一做什么") || !rewrittenDecisionPaths.every((copy) => v1Js.includes(copy)) || removedDecisionJargon.some((copy) => v1Js.includes(copy)) || !v1Js.includes("decisionConsequences") || !v1Js.includes("buildHospitalPartnerSynthesis") || !v1Js.includes("buildCareerPartnerSynthesis") || !v1Js.includes("会影响他接下来相信什么") || v1Js.includes("summary-supported") || v1Css.includes(".summary-seam") || !v1Css.includes(".partner-synthesis")) {
+if (!v1Js.includes("看完这些材料，你们准备先替林一舟做什么") || !rewrittenDecisionPaths.every((copy) => v1Js.includes(copy)) || removedDecisionJargon.some((copy) => v1Js.includes(copy)) || !v1Js.includes("decisionConsequences") || !v1Js.includes("buildHospitalPartnerSynthesis") || !v1Js.includes("buildCareerPartnerSynthesis") || !v1Js.includes("会影响他接下来相信什么") || v1Js.includes("summary-supported") || v1Css.includes(".summary-seam") || !v1Css.includes(".partner-synthesis")) {
   throw new Error("v1 材料整理仍像系统报告，或伙伴判断没有随两章材料变化");
 }
 if (!v1Js.includes("validateHiddenChoiceSystem()") || !v1Js.includes('triggerHiddenTraitEvent("career-entry")') || !v1Js.includes('triggerHiddenTraitEvent("ending")') || !v1Js.includes("permissionTendencies") || !v1Js.includes("careerDraftApproaches") || !v1Js.includes("开头先把他自己的情况摆出来") || !v1Js.includes("刚才决定了先回哪件事，现在第一句话怎么说？") || !v1Js.includes("伙伴遇到说得很完整的材料，会先找它的来源")) {
@@ -344,8 +409,8 @@ if (!v1Js.includes("刚才那句是我问的，大家别把它当医院答复") 
 if (!v1Js.includes("function evaluateChapterChoice") || !v1Js.includes('grade = "overcautious"') || !v1Js.includes('grade = "misleading"') || !v1Js.includes("tendencyDeltas") || !v1Js.includes("getChapterTwoReviewProfile") || !v1Js.includes("recordMemory({ id: \"hospital\"") || !v1Css.includes(".principle-card.memory-ledger")) {
   throw new Error("v1 隐藏属性、持续记忆与跨章错误习惯尚未接成同一条后果链");
 }
-if (!v1Js.includes("buildHospitalIncident") || !v1Js.includes("那明明是我在问") || !v1Js.includes("悠一在旧窗口走错了路") || !v1Js.includes("悠一不再确定哪些话能信") || v1Js.includes("我把回复给医院老师看时")) {
-  throw new Error("v1 悠一的不同错误仍未拆成被曲解、走错路与失去信任三种具体事件");
+if (!v1Js.includes("buildHospitalIncident") || !v1Js.includes("那明明是我在问") || !v1Js.includes("林一舟在旧窗口走错了路") || !v1Js.includes("林一舟不再确定哪些话能信") || v1Js.includes("我把回复给医院老师看时")) {
+  throw new Error("v1 林一舟的不同错误仍未拆成被曲解、走错路与失去信任三种具体事件");
 }
 if (!v1Js.includes("你们放着新的不用，反而拿一张五年前的攻略给我") || !v1Js.includes("我点开原图看了下，2021 年发的") || v1Js.includes("回答里最好把年份写出来") || v1Js.includes("那张图越完整，我越以为能从头照着走")) {
   throw new Error("v1 旧攻略分支仍把实际受害者和查证路人写成场外审核者");
@@ -362,28 +427,28 @@ if (!v1Html.includes('id="accountabilityPanel"') || !v1Js.includes("const accoun
 if (!v1Js.includes("const publicVoices") || !v1Js.includes('name: "江声"') || !v1Js.includes('name: "米酒汤圆"') || !v1Js.includes("const accountabilityAftermathChoices") || !v1Js.includes('state.step = "followup-second-choice"') || !v1Js.includes("repairState") || !v1Css.includes(".public-comment.is-system")) {
   throw new Error("v1 公开讨论缺少固定路人声线、自动往返、二次回应或可延续的修复状态");
 }
-if (!v1Js.includes('name: "林岸"') || !v1Js.includes("function getCareerPublicCopy") || !v1Js.includes("function runCareerPublicExchange") || (v1Js.match(/renderInitialPublicDiscussion\(state\.outcome\)/g) || []).length !== 1 || !v1Js.includes("试投的岗位和目标方向能对上") || !v1Js.includes("直接删掉的话，刚才看过的人也不知道哪些地方错了") || !v1Css.includes('[data-voice="lin"]')) {
-  throw new Error("v1 第二章正常与错误回访没有统一接入公开评论区、固定路人和林岸账号");
+if (!v1Js.includes('name: "小满"') || !v1Js.includes("function getCareerPublicCopy") || !v1Js.includes("function runCareerPublicExchange") || (v1Js.match(/renderInitialPublicDiscussion\(state\.outcome\)/g) || []).length !== 1 || !v1Js.includes("试投的岗位和目标方向能对上") || !v1Js.includes("直接删掉的话，刚才看过的人也不知道哪些地方错了") || !v1Css.includes('[data-voice="lin"]')) {
+  throw new Error("v1 第二章正常与错误回访没有统一接入公开评论区、固定路人和小满账号");
 }
 if (!v1Js.includes('const repairState = state.accountabilityResolution?.repairState') || !v1Js.includes('repairState === "full"') || !v1Js.includes('repairState === "late"') || !v1Js.includes('repairState === "quiet"')) {
   throw new Error("v1 第一章二次回应没有改变第二章伙伴的主动程度");
 }
 if (!v1Html.includes('id="accountabilityReactionLabel"') || !v1Js.includes("const careerMisuseFacts") || !v1Js.includes("getCareerMisuseDetails") || !v1Js.includes("const careerAccountabilityChoices") || !["repair", "askImpact", "defend", "erase"].every((choice) => v1Js.includes(`${choice}: {`)) || !v1Js.includes('tone: "career-conflict"') || !v1Js.includes("resolveCareerAccountabilityChoice") || !v1Js.includes("getFinalCompanionLine")) {
-  throw new Error("v1 第二章材料误用仍未按具体来源结算，或林岸回访缺少责任回应与最终关系回声");
+  throw new Error("v1 第二章材料误用仍未按具体来源结算，或小满回访缺少责任回应与最终关系回声");
 }
-if (!v1Js.includes("林岸照着建议投了三份，却全投错了方向") || !v1Js.includes("两个晚上重查") || !v1Js.includes("林岸说：后面的建议我不敢照着做") || !v1Js.includes("我浪费了一个周末，还投错了三份") || !v1Js.includes("上次你把错留给了我，这次没有") || v1Js.includes("其中一张材料被用错了")) {
+if (!v1Js.includes("小满照着建议投了三份，却全投错了方向") || !v1Js.includes("两个晚上重查") || !v1Js.includes("小满说：后面的建议我不敢照着做") || !v1Js.includes("我浪费了一个周末，还投错了三份") || !v1Js.includes("上次你把错留给了我，这次没有") || v1Js.includes("其中一张材料被用错了")) {
   throw new Error("v1 第二章双重误用仍被压成单一提示，或第一章关系没有进入最终房间");
 }
-if (!v1Js.includes("你把“${material.kindLabel}”标成了“${tagLabel}”") || !v1Js.includes("我只是说了自己每个月花多少钱、现在还没有作品") || v1Js.includes("林岸只留下了回信的前半段") || v1Js.includes("信任断在后半段") || v1Js.includes("，具体来说，") || v1Js.includes("不是市场规律")) {
-  throw new Error("v1 林岸的误用回访仍把系统说明塞进角色对白，或保留无法直接理解的比喻与抽象判断");
+if (!v1Js.includes("你把“${material.kindLabel}”标成了“${tagLabel}”") || !v1Js.includes("我只是说了自己每个月花多少钱、现在还没有作品") || v1Js.includes("小满只留下了回信的前半段") || v1Js.includes("信任断在后半段") || v1Js.includes("，具体来说，") || v1Js.includes("不是市场规律")) {
+  throw new Error("v1 小满的误用回访仍把系统说明塞进角色对白，或保留无法直接理解的比喻与抽象判断");
 }
 if (!v1Js.includes("看那张图写得挺全，就直接照着整理了") || !v1Js.includes("行，我先把那张图删了") || !v1Js.includes("照着图写的那几段也一起改掉") || !v1Js.includes("行，改完我再看") || v1Js.includes("先被完整的流程图吸引") || v1Js.includes("哪句错了、改成了什么") || v1Js.includes("我先把原回答改了，刚才为什么会弄错")) {
   throw new Error("v1 先解释后更正的第二轮回复仍存在时态冲突或报告腔");
 }
 if (!v1Js.includes("每天下班以后累得什么都不想做") || !v1Js.includes("我怕一年以后还在干现在这份工作") || v1Js.includes("最后还是留在原地")) {
-  throw new Error("v1 第二章题主正文仍使用场外概括，没有落到林岸的具体处境");
+  throw new Error("v1 第二章题主正文仍使用场外概括，没有落到小满的具体处境");
 }
-if (!v1Js.includes('asker: ""') || !v1Js.includes("elements.askerNote.hidden = !chapter.asker") || !v1Html.includes('id="askerNote" hidden') || (v1Js.match(/kindLabel: "题主后来回复"/g) || []).length !== 2 || !v1Js.includes("同学说学校医保可能要先办手续") || !v1Js.includes("连一份能投的作品都没有") || !v1Js.includes("房租加日常开支每月差不多五千") || !v1Js.includes("还要确认离职补偿，以及目标岗位是否接受没有相关经验的人") || ["我不是立刻想走，我是怕再拖一年", "我最怕的不是排队，是到了窗口", "最怕的不是暂时没收入，而是", "还缺每月开支、离职补偿", 'kindLabel: "题主补充"', 'kindLabel: "题主评论"'].some((copy) => v1Js.includes(copy) || v1Html.includes(copy))) {
+if (!v1Js.includes('askerMood: "焦急"') || !v1Js.includes('askerMood: "焦虑"') || !v1Js.includes('asker: "第一次独自去医院，人在外地上大学，还没确认目标医院当天的挂号和医保要求。"') || !v1Js.includes('asker: "已经工作三年，想转行但下班后没有精力，存款大约只能支撑三个月，目前还没有可投递的作品。"') || v1Html.includes('id="askerNote"') || v1Js.includes("elements.askerNote") || (v1Js.match(/kindLabel: "题主后来回复"/g) || []).length !== 2 || !v1Js.includes("同学说学校医保可能要先办手续") || !v1Js.includes("连一份能投的作品都没有") || !v1Js.includes("房租加日常开支每月差不多五千") || !v1Js.includes("还要确认离职补偿，以及目标岗位是否接受没有相关经验的人") || ["我不是立刻想走，我是怕再拖一年", "我最怕的不是排队，是到了窗口", "最怕的不是暂时没收入，而是", "还缺每月开支、离职补偿", 'kindLabel: "题主补充"', 'kindLabel: "题主评论"'].some((copy) => v1Js.includes(copy) || v1Html.includes(copy))) {
   throw new Error("v1 两章题面仍重复展示题主补充，或后来回复没有提供新增条件");
 }
 if (["递进房间", "请先展开检查", "结果不会在这里立刻判分", "原来这次最先要做的，不是", "那共同署名算什么", "那不叫听见", "并在第二天回来"].some((copy) => v1Js.includes(copy) || v1Html.includes(copy))) {
@@ -463,6 +528,67 @@ if (!v1Css.includes("width: 3.1%") || !v1Css.includes("width: 3.9%") || !v1Css.i
 if (!v1Css.includes("filter: drop-shadow(4px 6px 0 rgba(31, 24, 27, .42))") || v1Css.includes(".room-canvas::after") || !v1Css.includes("--note-mark") || !v1Css.includes(".room-scene.memory-lamp .room-canvas::before")) {
   throw new Error("v1 原房间或人物被成长视觉误改，或成长设施缺少自身的环境光融合");
 }
+const rewardCopy = [
+  "const rewardSkillProfile",
+  "function settleRewardProgress",
+  "state.rewardPoints",
+  "state.askerFollowed",
+  "state.skillCardPatience.sourceCheck",
+  "技能卡耐心",
+  "已关注你",
+  "appendRewardTrail()"
+];
+if (!rewardCopy.every((token) => v1Js.includes(token)) || !v1Js.includes("答复被判定为可靠") || !v1Js.includes("奖励较少") || !v1Css.includes(".growth-list .growth-reward") || v1Js.includes("playerPatience") || v1Js.includes("你的耐心")) {
+  throw new Error("v1 回复奖励没有按可靠、部分可靠和较差结果完整结算");
+}
+if (["getMaterialSentences", "sentenceSelections", "privateMessagesPanel", "profilePanel", "roomControlEnabled", "companionAtComputer"].some((token) => v1Js.includes(token) || v1Html.includes(token))) {
+  throw new Error("v1 仍残留本轮已取消的逐句摘取、房间控制或额外入口实现");
+}
+const dialogueProgressMechanic = [
+  "const DIALOGUE_PROGRESS_TARGET = 3",
+  "state.dialogueProgress",
+  "function advanceDialogueProgress",
+  "state.patience <= 0",
+  "progressComplete",
+  "getPatienceExhaustedReply"
+];
+if (!dialogueProgressMechanic.every((token) => v1Js.includes(token)) || v1Js.includes("HOSPITAL_DIALOGUE_LIMIT") || v1Js.includes("dialogueLimit: 3") || !v1Js.includes("hospitalCompleted") || !v1Js.includes("getHospitalThankYouReply") || !v1Js.includes("进度 ${DIALOGUE_PROGRESS_TARGET} / ${DIALOGUE_PROGRESS_TARGET} 完成") || !v1Js.includes("state.step = \"hospital-complete\"")) {
+  throw new Error("v1 没有按三格进度与耐心归零两种条件结束回访");
+}
+if (!v1Html.includes('id="codexPanel"') || !v1Html.includes('id="codexGrid"') || !v1Js.includes("state.codexCards") || !v1Js.includes("zhihu.local/codex") || !v1Css.includes(".codex-panel") || !v1Css.includes(".codex-card-full")) {
+  throw new Error("v1 图鉴入口、卡牌收录或奖励展示没有完整接入");
+}
+const codexReferenceTokens = [
+  'aria-label="回答手册与帖子图鉴"',
+  'id="answerHandbookTitle"',
+  'id="postCodexTitle"',
+  "codex-handbook-table",
+  "codex-post-table",
+  "急性子",
+  "迷茫小白",
+  "焦虑崩溃型",
+  "求助者主页",
+  "过时章",
+  "清单牌 + 结论牌",
+  "两张强样错牌",
+  "先认清求助者缺什么，再决定要喂哪类帖子"
+];
+if (!codexReferenceTokens.every((token) => v1Html.includes(token)) || v1Html.includes("一起读过的东西") || v1Js.includes("完成三次回访")) {
+  throw new Error("v1 图鉴缺少回答手册或帖子图鉴表格");
+}
+const helpFlowSequenceMatch = v1Js.match(/const helpFlowSequence = \[([^\]]+)\]/);
+const helpFlowIds = helpFlowSequenceMatch ? [...helpFlowSequenceMatch[1].matchAll(/"([^"\\]+)"/g)].map((match) => match[1]) : [];
+if (helpFlowIds.length !== 12 || helpFlowIds[0] !== "hospital" || helpFlowIds[1] !== "career" || helpFlowIds.at(-1) !== "flow12" || !v1Js.includes("function loadNextHelpFlow") || !v1Js.includes("state.flowRewards") || !v1Js.includes("熟人回访")) {
+  throw new Error(`v1 十二条连续求助流程未完整接入：${helpFlowIds.length} 条`);
+}
+const tutorialBlock = v1Js.slice(v1Js.indexOf("const tutorialSlides"), v1Js.indexOf("function renderTutorialStep"));
+const tutorialSlideCount = (tutorialBlock.match(/number: "\d+"/g) || []).length;
+if (tutorialSlideCount !== 6 || !v1Js.includes("state.tutorialOpen") || !v1Js.includes("if (dualWindowStart) openTutorial()") || !v1Js.includes("tutorial-is-open")) {
+  throw new Error(`v1 六页新手教程未完整接入：${tutorialSlideCount} 页`);
+}
+if ((v1Js.match(/id: "flow\d+"/g) || []).length < 10 || !v1Js.includes("extendedHelpFlowSpecs.forEach(createExtendedHelpFlow)")) {
+  throw new Error("v1 后续熟人求助缺少完整的独立档案数据");
+}
 
 console.log("PASS app.js 语法可解析");
 console.log(`PASS ${requiredHtml.length} 个界面节点存在`);
@@ -480,12 +606,13 @@ console.log("PASS v1 误判后改正、坚持误判与普通误判均保留过�
 console.log(`PASS v1 第二章 4 份材料、${careerCombinationKeys.length} 种组合与 18 个动态回应已接线`);
 console.log("PASS v1 第一章完成态、新档案通知、跨章权限与三路线回声已接线");
 console.log("PASS v1 第二章通过可点击的几周后来信通知打开冻结路线回访");
+console.log("PASS v1 六页新手教程自动打开、可跳过并支持任务栏重看");
 console.log("PASS v1 320ms 跨窗材料转移、后层提示与减少动画分支已接线");
 console.log("PASS v1 五种互斥伙伴情绪、冲突停顿与橙色灯已接线");
 console.log("PASS v1 第一章设施分拍、三路线实体回声与自主折页已接线");
 console.log("PASS v1 七种回复选择均冻结当下结果与延迟回声");
 console.log("PASS v1 隐藏属性、札记事件与下一章伙伴习惯已接入持续后果");
-console.log("PASS v1 多份来源错标会按材料身份分别解释，不再让悠一第三人称指认自己");
+console.log("PASS v1 多份来源错标会按材料身份分别解释，不再让林一舟第三人称指认自己");
 if (!v1Js.includes("hospitalDraftApproaches") || !v1Js.includes("hospitalFollowupReplyChoices") || !v1Js.includes('state.step = "followup-conversation-closing"') || !v1Js.includes("hospitalConversationResolution")) {
   throw new Error("v1 第一章缺少发送前草稿取舍、评论追问、二次回应或跨章回声");
 }
@@ -493,7 +620,7 @@ const followupActionSource = v1Js.match(/const hospitalFollowupReplyChoices = \{
 if ((followupActionSource.match(/icon:/g) || []).length !== 3 || !["✉", "♡", "⌕"].every((icon) => followupActionSource.includes(`icon: "${icon}"`)) || !v1Js.includes("followup-action-choice")) {
   throw new Error("v1 回访阶段没有锁定为三个带图标的回应动作");
 }
-if (!v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "四张卡已经摆在整理桌上"')) {
+if (!v1Css.includes(".onboarding-guide") || !v1Js.includes('title: "四张回复卡已经摆在整理桌上"')) {
   throw new Error("v1 缺少分步任务提示或跨窗口引导");
 }
 if (v1Html.includes('class="browser-toolbar"') || !v1Css.includes(".browser-toolbar { display: none; }")) {
